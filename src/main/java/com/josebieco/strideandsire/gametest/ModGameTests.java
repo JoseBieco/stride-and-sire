@@ -120,6 +120,14 @@ public final class ModGameTests {
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
         TEST_FUNCTIONS.register("saddlebag_items_are_registered_with_container",
             () -> SaddlebagItemGameTest::saddlebagItemsAreRegisteredWithContainer);
+        TEST_FUNCTIONS.register("saddlebag_attachment_set_then_get_keeps_contents",
+            () -> SaddlebagAttachmentGameTest::setThenGetKeepsContents);
+        TEST_FUNCTIONS.register("saddlebag_attachment_persists_across_save_and_load",
+            () -> SaddlebagAttachmentGameTest::persistsAcrossSaveAndLoad);
+        TEST_FUNCTIONS.register("saddlebag_attachment_ineligible_llama_has_no_saddlebag",
+            () -> SaddlebagAttachmentGameTest::ineligibleLlamaHasNoSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_attachment_drops_saddlebag_on_death_with_contents",
+            () -> SaddlebagAttachmentGameTest::dropsSaddlebagOnDeathWithContents);
     }
 
     private ModGameTests() {}
