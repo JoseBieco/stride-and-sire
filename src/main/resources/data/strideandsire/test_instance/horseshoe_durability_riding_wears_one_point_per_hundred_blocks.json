@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_durability_riding_wears_one_point_per_hundred_blocks",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 100
+}

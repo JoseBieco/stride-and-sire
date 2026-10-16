@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_durability_lava_walker_drain_is_throttled",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty_11x5x11",
+  "max_ticks": 150
+}

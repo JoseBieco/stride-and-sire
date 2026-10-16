@@ -1,0 +1,21 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.strideandsire.feather_step"
+  },
+  "max_cost": {
+    "base": 20,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#strideandsire:enchantable/feather_step",
+  "slots": [
+    "any"
+  ],
+  "supported_items": "#strideandsire:enchantable/feather_step",
+  "weight": 5
+}

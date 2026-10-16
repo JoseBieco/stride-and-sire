@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_enchant_lava_walker_stands_on_lava",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty_11x5x11",
+  "max_ticks": 200
+}
