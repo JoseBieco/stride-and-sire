@@ -128,6 +128,18 @@ public final class ModGameTests {
             () -> SaddlebagAttachmentGameTest::ineligibleLlamaHasNoSaddlebag);
         TEST_FUNCTIONS.register("saddlebag_attachment_drops_saddlebag_on_death_with_contents",
             () -> SaddlebagAttachmentGameTest::dropsSaddlebagOnDeathWithContents);
+        TEST_FUNCTIONS.register("saddlebag_menu_slot_requires_saddle",
+            () -> SaddlebagMenuGameTest::slotRequiresSaddle);
+        TEST_FUNCTIONS.register("saddlebag_menu_donkey_chest_and_bag_are_isolated",
+            () -> SaddlebagMenuGameTest::donkeyChestAndBagAreIsolated);
+        TEST_FUNCTIONS.register("saddlebag_menu_removing_bag_carries_contents",
+            () -> SaddlebagMenuGameTest::removingBagCarriesContents);
+        TEST_FUNCTIONS.register("saddlebag_menu_sub_slot_writes_reach_storage",
+            () -> SaddlebagMenuGameTest::subSlotWritesReachStorage);
+        TEST_FUNCTIONS.register("saddlebag_menu_sub_slot_rejects_saddlebag",
+            () -> SaddlebagMenuGameTest::subSlotRejectsSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_menu_tracking_sync_omits_contents",
+            () -> SaddlebagMenuGameTest::trackingSyncOmitsContents);
     }
 
     private ModGameTests() {}

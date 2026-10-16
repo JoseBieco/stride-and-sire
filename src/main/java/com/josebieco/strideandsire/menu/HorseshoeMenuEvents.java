@@ -17,7 +17,7 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * Opens {@link HorseshoeHorseMenu} instead of vanilla's horse inventory for eligible horses.
+ * Opens {@link StrideAndSireHorseMenu} instead of vanilla's horse inventory for eligible horses.
  *
  * <p>Vanilla opens the horse inventory through {@code AbstractHorse.openCustomInventoryScreen}, which calls
  * {@code ServerPlayer.openHorseInventory}; neither fires a Forge event, so the two player-facing entry points are
@@ -107,7 +107,7 @@ public final class HorseshoeMenuEvents {
     /** Opens the horseshoe menu for {@code horse}, like {@code ServerPlayer.openHorseInventory} does for vanilla's. */
     public static void open(ServerPlayer player, AbstractHorse horse) {
         player.openMenu(
-            new SimpleMenuProvider((containerId, inventory, p) -> new HorseshoeHorseMenu(containerId, inventory, horse), horse.getDisplayName()),
-            data -> HorseshoeHorseMenu.writeOpenData(data, horse));
+            new SimpleMenuProvider((containerId, inventory, p) -> new StrideAndSireHorseMenu(containerId, inventory, horse), horse.getDisplayName()),
+            data -> StrideAndSireHorseMenu.writeOpenData(data, horse));
     }
 }

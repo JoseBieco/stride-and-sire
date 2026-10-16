@@ -1,7 +1,7 @@
 package com.josebieco.strideandsire.gametest;
 
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
-import com.josebieco.strideandsire.menu.HorseshoeHorseMenu;
+import com.josebieco.strideandsire.menu.StrideAndSireHorseMenu;
 import com.josebieco.strideandsire.menu.HorseshoeSlot;
 import com.josebieco.strideandsire.registry.ModItems;
 import net.minecraft.core.component.DataComponents;
@@ -39,7 +39,7 @@ public final class HorseshoeMenuGameTest {
     public static void slotAcceptsOnlyHorseshoes(GameTestHelper helper) {
         Horse horse = tamedHorse(helper);
         ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
-        HorseshoeHorseMenu menu = new HorseshoeHorseMenu(1, player.getInventory(), horse);
+        StrideAndSireHorseMenu menu = new StrideAndSireHorseMenu(1, player.getInventory(), horse);
         HorseshoeSlot shoeSlot = menu.getHorseshoeSlot();
 
         helper.assertTrue(!shoeSlot.mayPlace(new ItemStack(Items.DIAMOND)), "horseshoe slot must reject a diamond");
@@ -68,16 +68,20 @@ public final class HorseshoeMenuGameTest {
         helper.assertTrue(donkey.hasChest() && donkey.getInventoryColumns() > 0, "donkey should have a chest");
 
         for (AbstractHorse animal : new AbstractHorse[] {horse, donkey}) {
-            HorseshoeHorseMenu menu = new HorseshoeHorseMenu(1, player.getInventory(), animal);
+            StrideAndSireHorseMenu menu = new StrideAndSireHorseMenu(1, player.getInventory(), animal);
             HorseInventoryMenu vanilla = new HorseInventoryMenu(
-                2, player.getInventory(), HorseshoeHorseMenu.horseInventory(animal), animal, animal.getInventoryColumns());
-            helper.assertValueEqual(menu.slots.size(), vanilla.slots.size() + 1, animal.getType() + " slot count");
+                2, player.getInventory(), StrideAndSireHorseMenu.horseInventory(animal), animal, animal.getInventoryColumns());
+            // + horseshoe slot, saddlebag slot and the saddlebag's 9 container slots (Fase B)
+            helper.assertValueEqual(menu.slots.size(), vanilla.slots.size() + 2 + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS,
+                animal.getType() + " slot count");
             for (int i = 0; i < vanilla.slots.size(); i++) {
                 Slot ours = menu.getSlot(i);
                 Slot theirs = vanilla.getSlot(i);
                 helper.assertTrue(ours.container == theirs.container || ours.container.getClass() == theirs.container.getClass(),
                     animal.getType() + " slot " + i + " container differs");
-                helper.assertTrue(ours.getContainerSlot() == theirs.getContainerSlot() && ours.x == theirs.x && ours.y == theirs.y
+                // Player slots are drawn lower to make room for the saddlebag row; everything else is vanilla.
+                int expectedY = theirs.y + (theirs.container instanceof Inventory ? StrideAndSireHorseMenu.PLAYER_INVENTORY_Y_OFFSET : 0);
+                helper.assertTrue(ours.getContainerSlot() == theirs.getContainerSlot() && ours.x == theirs.x && ours.y == expectedY
                     && ours.getClass() == theirs.getClass(), animal.getType() + " slot " + i + " differs");
             }
             helper.assertValueEqual(menu.getHorseshoeSlotIndex(), vanilla.slots.size(), animal.getType() + " horseshoe slot index");
@@ -85,7 +89,7 @@ public final class HorseshoeMenuGameTest {
         }
 
         // A horseshoe shift-clicked out of the donkey's chest goes to the player inventory, never the horseshoe slot (vanilla parity).
-        HorseshoeHorseMenu menu = new HorseshoeHorseMenu(1, player.getInventory(), donkey);
+        StrideAndSireHorseMenu menu = new StrideAndSireHorseMenu(1, player.getInventory(), donkey);
         player.getInventory().clearContent();
         menu.getSlot(2).set(new ItemStack(ModItems.IRON_HORSESHOE.get()));
         menu.quickMoveStack(player, 2);
@@ -99,7 +103,7 @@ public final class HorseshoeMenuGameTest {
         Horse horse = tamedHorse(helper);
         ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
         Inventory inventory = player.getInventory();
-        HorseshoeHorseMenu menu = new HorseshoeHorseMenu(1, inventory, horse);
+        StrideAndSireHorseMenu menu = new StrideAndSireHorseMenu(1, inventory, horse);
         int shoeIndex = menu.getHorseshoeSlotIndex();
         int playerStart = 2; // horse without chest: saddle, armor, then 27 main + 9 hotbar
         int firstMainSlot = playerStart; // inventory slot 9
@@ -179,7 +183,7 @@ public final class HorseshoeMenuGameTest {
         for (AbstractHorse target : new AbstractHorse[] {horse, donkey}) {
             for (ItemStack stack : held) {
                 sneakInteract(player, target, stack.copy());
-                helper.assertTrue(player.containerMenu instanceof HorseshoeHorseMenu,
+                helper.assertTrue(player.containerMenu instanceof StrideAndSireHorseMenu,
                     "sneak-click on " + target.getType() + " holding " + stack + " opened " + player.containerMenu);
             }
         }
@@ -195,7 +199,7 @@ public final class HorseshoeMenuGameTest {
         tag.set(DataComponents.CUSTOM_NAME, Component.literal("Epona"));
 
         sneakInteract(player, horse, tag);
-        helper.assertTrue(!(player.containerMenu instanceof HorseshoeHorseMenu), "named name tag opened the horseshoe menu");
+        helper.assertTrue(!(player.containerMenu instanceof StrideAndSireHorseMenu), "named name tag opened the horseshoe menu");
         helper.assertTrue(horse.getCustomName() != null && "Epona".equals(horse.getCustomName().getString()),
             "named name tag should rename the horse, name is " + horse.getCustomName());
         helper.succeed();

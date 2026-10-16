@@ -1,6 +1,7 @@
 package com.josebieco.strideandsire.client;
 
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
+import com.josebieco.strideandsire.menu.StrideAndSireHorseMenu;
 import com.josebieco.strideandsire.network.ModNetwork;
 import com.josebieco.strideandsire.network.OpenHorseshoeMenuPacket;
 import com.josebieco.strideandsire.registry.ModMenus;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.entity.state.EquineRenderState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
-import net.minecraft.world.inventory.HorseInventoryMenu;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
@@ -47,8 +47,8 @@ public final class StrideAndSireClient {
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> MenuScreens.<HorseInventoryMenu, HorseshoeHorseScreen>register(
-            ModMenus.HORSESHOE_HORSE.get(), HorseshoeHorseScreen::new));
+        event.enqueueWork(() -> MenuScreens.<StrideAndSireHorseMenu, StrideAndSireHorseScreen>register(
+            ModMenus.HORSESHOE_HORSE.get(), StrideAndSireHorseScreen::new));
     }
 
     /**
