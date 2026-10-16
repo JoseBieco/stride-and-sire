@@ -72,6 +72,8 @@ public final class ModGameTests {
             () -> HorseshoeEnchantmentGameTest::lavaWalkerStandsOnLava);
         TEST_FUNCTIONS.register("horseshoe_enchant_frost_step_horse_removed_mid_tick",
             () -> HorseshoeEnchantmentGameTest::frostStepHorseRemovedMidTick);
+        TEST_FUNCTIONS.register("horseshoe_enchant_lava_walker_ridden_no_fall_damage_on_landing",
+            () -> HorseshoeEnchantmentGameTest::lavaWalkerRiddenNoFallDamageOnLanding);
     }
 
     private ModGameTests() {}

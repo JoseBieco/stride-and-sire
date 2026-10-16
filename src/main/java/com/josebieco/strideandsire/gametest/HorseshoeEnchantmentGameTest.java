@@ -7,7 +7,9 @@ import com.josebieco.strideandsire.item.horseshoe.HorseshoeEnchantmentKind;
 import com.josebieco.strideandsire.item.horseshoe.HorseshoeItem;
 import com.josebieco.strideandsire.item.horseshoe.HorseshoeMaterial;
 import com.josebieco.strideandsire.registry.ModItems;
+import com.mojang.authlib.GameProfile;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -15,13 +17,16 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -308,6 +313,91 @@ public final class HorseshoeEnchantmentGameTest {
     }
 
     // ---- (e) Lava Walker ----------------------------------------------------------------------------------------
+
+    /** Puts a saddled horse under a survival rider so the rider controls it (client-authoritative movement). */
+    private static Player mountController(GameTestHelper helper, AbstractHorse horse) {
+        horse.setTamed(true);
+        horse.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+        // Like GameTestHelper.makeMockPlayer, but client-authoritative, as a real player's rider client is.
+        Player rider = new Player(helper.getLevel(), new GameProfile(UUID.randomUUID(), "test-mock-rider")) {
+            @Override
+            public GameType gameMode() {
+                return GameType.SURVIVAL;
+            }
+
+            @Override
+            public boolean isClientAuthoritative() {
+                return true;
+            }
+        };
+        helper.assertTrue(rider.startRiding(horse, true, false), "could not mount horse");
+        helper.assertTrue(horse.getControllingPassenger() == rider, "rider must control the horse");
+        helper.assertTrue(!horse.canSimulateMovement(), "server must not simulate a rider-controlled horse");
+        helper.addCleanup(passed -> rider.stopRiding());
+        return rider;
+    }
+
+    /**
+     * Rider-controlled horses on lava: the server only sees the client's vehicle packets, which report
+     * onGround=false over lava, so it runs doCheckFallDamage with negative dy (charged jumps landing back on the lava).
+     * With Lava Walker that fall distance must not survive to the landing on solid ground; without it (control)
+     * the accumulated fall hurts horse and rider, proving the scenario is real.
+     */
+    public static void lavaWalkerRiddenNoFallDamageOnLanding(GameTestHelper helper) {
+        buildPool(helper, Blocks.LAVA);
+        ServerLevel level = helper.getLevel();
+        Horse walker = stillHorse(helper, 2, 2, 2);
+        HorseshoeAccess.set(walker, shoe(helper, ModItems.NETHERITE_HORSESHOE.get(), HorseshoeEnchantments.LAVA_WALKER));
+        Horse control = stillHorse(helper, 8, 2, 8);
+        HorseshoeAccess.set(control, shoe(helper, ModItems.NETHERITE_HORSESHOE.get(), null));
+        Player walkerRider = mountController(helper, walker);
+        Player controlRider = mountController(helper, control);
+
+        BlockPos lavaPos = helper.absolutePos(new BlockPos(2, 0, 2));
+        double surface = lavaPos.getY() + level.getFluidState(lavaPos).getHeight(level, lavaPos);
+        for (Horse horse : List.of(walker, control)) {
+            // Where the rider's client keeps the horse: exactly on the lava surface.
+            horse.snapTo(horse.getX(), surface, horse.getZ());
+            // Move the rider off its construction position (world spawn, possibly inside blocks) right away.
+            horse.getPassengers().forEach(horse::positionRider);
+        }
+        float[] start = new float[4];
+
+        helper.startSequence()
+            .thenExecute(() -> {
+                start[0] = walker.getHealth();
+                start[1] = walkerRider.getHealth();
+                start[2] = control.getHealth();
+                start[3] = controlRider.getHealth();
+            })
+            // 40 ticks of vehicle packets, each a downward step reported as not on ground.
+            .thenExecuteFor(40, () -> {
+                for (Horse horse : List.of(walker, control)) {
+                    horse.doCheckFallDamage(0.0, -0.3, 0.0, false);
+                }
+            })
+            .thenExecute(() -> {
+                helper.assertTrue(control.fallDistance > 6.0, "control: fall distance should accumulate, was " + control.fallDistance);
+                // Land both on the stone path (relative y=1 is its top), as the first onGround=true packet does.
+                BlockPos land = helper.absolutePos(new BlockPos(4, 1, 5));
+                walker.snapTo(land.getX() + 0.5, land.getY(), land.getZ() + 0.5);
+                BlockPos land2 = helper.absolutePos(new BlockPos(6, 1, 5));
+                control.snapTo(land2.getX() + 0.5, land2.getY(), land2.getZ() + 0.5);
+                walker.doCheckFallDamage(0.0, -0.1, 0.0, true);
+                control.doCheckFallDamage(0.0, -0.1, 0.0, true);
+
+                helper.assertValueEqual(walker.getHealth(), start[0], "lava walker horse health after landing");
+                helper.assertValueEqual(walkerRider.getHealth(), start[1], "lava walker rider health after landing (last damage: "
+                    + walkerRider.getLastDamageSource() + ", fall=" + walkerRider.fallDistance + ")");
+                helper.assertTrue(control.getHealth() < start[2]
+                        && control.getLastDamageSource() != null && control.getLastDamageSource().is(DamageTypes.FALL),
+                    "control: horse without Lava Walker should take fall damage");
+                helper.assertTrue(controlRider.getHealth() < start[3]
+                        && controlRider.getLastDamageSource() != null && controlRider.getLastDamageSource().is(DamageTypes.FALL),
+                    "control: its rider should take fall damage");
+            })
+            .thenSucceed();
+    }
 
     /** (e) A Lava-Walker netherite horse stands on the lava surface like a Strider; a plain netherite horse sinks. */
     public static void lavaWalkerStandsOnLava(GameTestHelper helper) {

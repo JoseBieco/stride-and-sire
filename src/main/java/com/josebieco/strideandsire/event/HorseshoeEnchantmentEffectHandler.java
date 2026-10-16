@@ -59,11 +59,13 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
  *       surface, its downward velocity is cancelled and it is marked on-ground (so it walks at ground speed and can
  *       jump). Deeper than that it floats up exactly like {@code Strider.floatStrider}. It runs only on the side that
  *       simulates the horse's movement ({@link AbstractHorse#canSimulateMovement()}: the server for free horses, the
- *       rider's client for a ridden horse), so it never fights interpolation.</li>
+ *       rider's client for a ridden horse), so it never fights interpolation. Fall distance is reset on every side
+ *       while the horse is supported, so the server never accumulates it from the rider's vehicle packets.</li>
  * </ul>
  *
  * <p>Per-entity state: only {@link #LAST_FROST_POS} (the block a frost-step horse last froze from), a
- * {@link WeakHashMap} keyed by entity identity, touched only on the server thread, and cleaned when the horse dies,
+ * {@link WeakHashMap} keyed by the horse (note: {@code Entity.equals/hashCode} are based on the entity id, not
+ * identity; ids are unique per running server, so entries cannot collide in practice), touched only on the server thread, and cleaned when the horse dies,
  * loses the enchantment or leaves the level.
  */
 public final class HorseshoeEnchantmentEffectHandler {
@@ -139,8 +141,9 @@ public final class HorseshoeEnchantmentEffectHandler {
     }
 
     /**
-     * Extension point: called once per fall that would have damaged the horse and was negated by Feather Step
-     * (server and/or client, wherever vanilla computes the fall). Durability consumption (Task 8) hooks in here.
+     * Extension point: called once per fall that would have damaged the horse and was negated by Feather Step.
+     * {@link LivingFallEvent} can fire on the client too (wherever vanilla computes the fall), so durability
+     * consumption (Task 8) hooking in here must guard with {@code !horse.level().isClientSide()}.
      */
     private static void onFeatherStepNegatedFall(AbstractHorse horse, double fallDistance) {
         // Intentionally empty until Task 8.
@@ -208,8 +211,7 @@ public final class HorseshoeEnchantmentEffectHandler {
     // ---- Lava Walker -------------------------------------------------------------------------------------------
 
     private static void tickLavaWalker(AbstractHorse horse) {
-        if (!horse.canSimulateMovement() || horse.isPassenger() || horse.noPhysics
-                || level(horse, HorseshoeEnchantments.LAVA_WALKER) <= 0) {
+        if (horse.isPassenger() || horse.noPhysics || level(horse, HorseshoeEnchantments.LAVA_WALKER) <= 0) {
             return;
         }
         Level level = horse.level();
@@ -218,32 +220,44 @@ public final class HorseshoeEnchantmentEffectHandler {
         if (!fluid.is(FluidTags.LAVA)) {
             return;
         }
+        boolean simulating = horse.canSimulateMovement();
         Vec3 motion = horse.getDeltaMovement();
         double surface = feet.getY() + fluid.getHeight(level, feet);
         double y = horse.getY();
         boolean submerged = level.getFluidState(feet.above()).is(FluidTags.LAVA);
         if (submerged || surface - y > LAVA_STAND_MAX_DEPTH) {
-            // Strider.floatStrider: rise towards the surface.
-            horse.setDeltaMovement(motion.scale(0.5).add(0.0, 0.05, 0.0));
+            if (simulating) {
+                // Strider.floatStrider: rise towards the surface.
+                horse.setDeltaMovement(motion.scale(0.5).add(0.0, 0.05, 0.0));
+            }
             return;
         }
         if (y > surface + LAVA_SURFACE_EPSILON) {
             return; // airborne above the lava (e.g. mid-jump)
         }
-        if (y < surface) {
-            horse.setPos(horse.getX(), surface, horse.getZ());
+        if (simulating) {
+            if (y < surface) {
+                horse.setPos(horse.getX(), surface, horse.getZ());
+            }
+            if (motion.y < 0.0) {
+                horse.setDeltaMovement(motion.x, 0.0, motion.z);
+            }
+            horse.setOnGround(true);
         }
-        if (motion.y < 0.0) {
-            horse.setDeltaMovement(motion.x, 0.0, motion.z);
-        }
-        horse.setOnGround(true);
+        // On every side, including the server for a rider-controlled horse: there, movement arrives through
+        // ServerboundMoveVehiclePacket, whose handler runs doCheckFallDamage with the client's onGround flag. Over lava
+        // that flag is false (vanilla move() clears it after travel), so every downward step (e.g. each charged jump
+        // landing back on the lava) would add to fallDistance, never be reset, and hurt horse and rider on reaching
+        // land. Standing on lava is not falling.
         horse.resetFallDistance();
-        onLavaWalkerSupported(horse);
+        if (!level.isClientSide()) {
+            onLavaWalkerSupported(horse);
+        }
     }
 
     /**
-     * Extension point: called once per tick, on the side simulating the horse's movement, while Lava Walker holds the
-     * horse on a lava surface. Durability consumption (Task 8) hooks in here (guard with {@code !isClientSide()}).
+     * Extension point: called once per server tick while Lava Walker holds the horse on a lava surface (also for a
+     * horse whose movement is simulated by its rider's client). Durability consumption (Task 8) hooks in here.
      */
     private static void onLavaWalkerSupported(AbstractHorse horse) {
         // Intentionally empty until Task 8.
