@@ -182,6 +182,8 @@ public final class ModGameTests {
             () -> SaddlebagRecipeGameTest::smithingMenuPreservesContents);
         TEST_FUNCTIONS.register("saddlebag_layer_material_to_render_matches_equipped_tier",
             () -> SaddlebagLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
+        TEST_FUNCTIONS.register("saddlebag_review_focus_chest_bag_isolation_and_explosion",
+            () -> SaddlebagReviewFocusGameTest::chestBagIsolationAndSameTickExplosion);
     }
 
     private ModGameTests() {}

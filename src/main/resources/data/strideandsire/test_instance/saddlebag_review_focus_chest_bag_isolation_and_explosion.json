@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_review_focus_chest_bag_isolation_and_explosion",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 60
+}
