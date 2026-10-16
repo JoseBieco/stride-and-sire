@@ -118,6 +118,78 @@ public final class ModGameTests {
             () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
+        TEST_FUNCTIONS.register("saddlebag_items_are_registered_with_container",
+            () -> SaddlebagItemGameTest::saddlebagItemsAreRegisteredWithContainer);
+        TEST_FUNCTIONS.register("saddlebag_attachment_set_then_get_keeps_contents",
+            () -> SaddlebagAttachmentGameTest::setThenGetKeepsContents);
+        TEST_FUNCTIONS.register("saddlebag_attachment_persists_across_save_and_load",
+            () -> SaddlebagAttachmentGameTest::persistsAcrossSaveAndLoad);
+        TEST_FUNCTIONS.register("saddlebag_attachment_ineligible_llama_has_no_saddlebag",
+            () -> SaddlebagAttachmentGameTest::ineligibleLlamaHasNoSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_attachment_drops_saddlebag_on_death_with_contents",
+            () -> SaddlebagAttachmentGameTest::dropsSaddlebagOnDeathWithContents);
+        TEST_FUNCTIONS.register("saddlebag_menu_slot_requires_saddle",
+            () -> SaddlebagMenuGameTest::slotRequiresSaddle);
+        TEST_FUNCTIONS.register("saddlebag_menu_donkey_chest_and_bag_are_isolated",
+            () -> SaddlebagMenuGameTest::donkeyChestAndBagAreIsolated);
+        TEST_FUNCTIONS.register("saddlebag_menu_removing_bag_carries_contents",
+            () -> SaddlebagMenuGameTest::removingBagCarriesContents);
+        TEST_FUNCTIONS.register("saddlebag_menu_sub_slot_writes_reach_storage",
+            () -> SaddlebagMenuGameTest::subSlotWritesReachStorage);
+        TEST_FUNCTIONS.register("saddlebag_menu_sub_slot_rejects_saddlebag",
+            () -> SaddlebagMenuGameTest::subSlotRejectsSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_menu_tracking_sync_omits_contents",
+            () -> SaddlebagMenuGameTest::trackingSyncOmitsContents);
+        TEST_FUNCTIONS.register("saddlebag_saddle_no_bag_removal_does_nothing_extra",
+            () -> SaddlebagSaddleDependencyGameTest::noBagRemovalDoesNothingExtra);
+        TEST_FUNCTIONS.register("saddlebag_saddle_removing_saddle_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::removingSaddleDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_menu_removal_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::menuSaddleRemovalDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_shears_removal_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::shearsRemovalDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_death_drops_bag_exactly_once",
+            () -> SaddlebagSaddleDependencyGameTest::deathDropsBagExactlyOnce);
+        TEST_FUNCTIONS.register("saddlebag_bonus_iron_keeps_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::ironBagKeepsContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_leather_loses_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::leatherBagLosesContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_same_explosion_only_iron_keeps",
+            () -> SaddlebagBonusEffectGameTest::sameExplosionOnlyIronKeepsContents);
+        TEST_FUNCTIONS.register("saddlebag_bonus_no_bag_explosion_drops_vanilla",
+            () -> SaddlebagBonusEffectGameTest::noBagExplosionDeathDropsVanilla);
+        TEST_FUNCTIONS.register("saddlebag_bonus_empty_netherite_survives_fire",
+            () -> SaddlebagBonusEffectGameTest::emptyNetheriteBagSurvivesFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_netherite_keeps_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::netheriteBagKeepsContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_iron_loses_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::ironBagLosesContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_empty_iron_explosion_no_throw",
+            () -> SaddlebagBonusEffectGameTest::emptyIronBagExplosionDeathDoesNotThrow);
+        TEST_FUNCTIONS.register("saddlebag_bonus_gold_bag_piglin_neutral",
+            () -> SaddlebagBonusEffectGameTest::goldBagMakesPiglinsNeutral);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_leather",
+            () -> SaddlebagRecipeGameTest::craftsLeatherSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_iron",
+            () -> SaddlebagRecipeGameTest::craftsIronSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_gold",
+            () -> SaddlebagRecipeGameTest::craftsGoldSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_no_crafting_for_netherite",
+            () -> SaddlebagRecipeGameTest::noCraftingRecipeForNetherite);
+        TEST_FUNCTIONS.register("saddlebag_recipe_netherite_smithing_preserves_contents",
+            () -> SaddlebagRecipeGameTest::netheriteSmithingPreservesContents);
+        TEST_FUNCTIONS.register("saddlebag_recipe_smithing_menu_preserves_contents",
+            () -> SaddlebagRecipeGameTest::smithingMenuPreservesContents);
+        TEST_FUNCTIONS.register("saddlebag_layer_material_to_render_matches_equipped_tier",
+            () -> SaddlebagLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
+        TEST_FUNCTIONS.register("saddlebag_review_focus_chest_bag_isolation_and_explosion",
+            () -> SaddlebagReviewFocusGameTest::chestBagIsolationAndSameTickExplosion);
+        TEST_FUNCTIONS.register("saddlebag_fix_bundle_refuses_saddlebag",
+            () -> SaddlebagFinalFixGameTest::bundleRefusesSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_fix_destroyed_bag_spills_contents",
+            () -> SaddlebagFinalFixGameTest::destroyedBagSpillsContents);
+        TEST_FUNCTIONS.register("saddlebag_fix_join_with_bag_no_saddle_drops_next_tick",
+            () -> SaddlebagFinalFixGameTest::joinWithBagButNoSaddleDropsNextTick);
     }
 
     private ModGameTests() {}

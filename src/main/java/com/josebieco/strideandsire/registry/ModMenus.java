@@ -1,7 +1,7 @@
 package com.josebieco.strideandsire.registry;
 
 import com.josebieco.strideandsire.StrideAndSire;
-import com.josebieco.strideandsire.menu.HorseshoeHorseMenu;
+import com.josebieco.strideandsire.menu.StrideAndSireHorseMenu;
 import com.josebieco.strideandsire.menu.HorseshoeMenuEvents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -13,9 +13,9 @@ import net.minecraftforge.registries.RegistryObject;
 public final class ModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, StrideAndSire.MODID);
 
-    /** Horse inventory with the horseshoe slot; extra open data is written by {@link HorseshoeHorseMenu#writeOpenData}. */
-    public static final RegistryObject<MenuType<HorseshoeHorseMenu>> HORSESHOE_HORSE =
-        MENUS.register("horseshoe_horse", () -> IForgeMenuType.create(HorseshoeHorseMenu::fromNetwork));
+    /** Horse inventory with the horseshoe and saddlebag slots; extra open data is written by {@link StrideAndSireHorseMenu#writeOpenData}. */
+    public static final RegistryObject<MenuType<StrideAndSireHorseMenu>> HORSESHOE_HORSE =
+        MENUS.register("horseshoe_horse", () -> IForgeMenuType.create(StrideAndSireHorseMenu::fromNetwork));
 
     private ModMenus() {}
 

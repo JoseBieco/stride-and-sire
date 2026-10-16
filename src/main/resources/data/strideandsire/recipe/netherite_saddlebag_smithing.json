@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "strideandsire:iron_saddlebag",
+  "addition": "#minecraft:netherite_tool_materials",
+  "result": {
+    "id": "strideandsire:netherite_saddlebag"
+  }
+}

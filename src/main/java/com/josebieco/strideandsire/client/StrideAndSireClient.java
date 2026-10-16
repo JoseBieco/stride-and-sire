@@ -1,6 +1,7 @@
 package com.josebieco.strideandsire.client;
 
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
+import com.josebieco.strideandsire.menu.StrideAndSireHorseMenu;
 import com.josebieco.strideandsire.network.ModNetwork;
 import com.josebieco.strideandsire.network.OpenHorseshoeMenuPacket;
 import com.josebieco.strideandsire.registry.ModMenus;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.entity.state.EquineRenderState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
-import net.minecraft.world.inventory.HorseInventoryMenu;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
@@ -30,25 +30,29 @@ public final class StrideAndSireClient {
         EntityRenderersEvent.AddLayers.BUS.addListener(StrideAndSireClient::onAddLayers);
     }
 
-    /** Attaches the hoof layer to every horseshoe-eligible renderer (not Llama/Camel). Fires on each resource reload. */
+    /** Renderers that get the mod's equipment layers: the horseshoe/saddlebag-eligible types (not Llama/Camel). */
+    private static final List<EntityType<? extends AbstractHorse>> EQUIPMENT_LAYER_TYPES = List.of(
+        EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE);
+
+    /** Attaches the hoof and saddlebag layers to every eligible renderer. Fires on each resource reload. */
     private static void onAddLayers(EntityRenderersEvent.AddLayers event) {
-        for (EntityType<? extends AbstractHorse> type : List.of(
-                EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
+        for (EntityType<? extends AbstractHorse> type : EQUIPMENT_LAYER_TYPES) {
             Object renderer = event.getEntityRenderer(type);
             if (renderer instanceof AbstractHorseRenderer<?, ?, ?> horseRenderer) {
-                addHoofLayer(horseRenderer);
+                addEquipmentLayers(horseRenderer);
             }
         }
     }
 
-    private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addHoofLayer(
+    private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addEquipmentLayers(
             AbstractHorseRenderer<?, S, M> renderer) {
         renderer.addLayer(new HorseshoeLayer<>(renderer));
+        renderer.addLayer(new SaddlebagLayer<>(renderer));
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> MenuScreens.<HorseInventoryMenu, HorseshoeHorseScreen>register(
-            ModMenus.HORSESHOE_HORSE.get(), HorseshoeHorseScreen::new));
+        event.enqueueWork(() -> MenuScreens.<StrideAndSireHorseMenu, StrideAndSireHorseScreen>register(
+            ModMenus.HORSESHOE_HORSE.get(), StrideAndSireHorseScreen::new));
     }
 
     /**

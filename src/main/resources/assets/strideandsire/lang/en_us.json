@@ -5,5 +5,13 @@
   "item.strideandsire.netherite_horseshoe": "Netherite Horseshoe",
   "enchantment.strideandsire.feather_step": "Feather Step",
   "enchantment.strideandsire.frost_step": "Frost Step",
-  "enchantment.strideandsire.lava_walker": "Lava Walker"
+  "enchantment.strideandsire.lava_walker": "Lava Walker",
+  "item.strideandsire.leather_saddlebag": "Leather Saddlebag",
+  "item.strideandsire.iron_saddlebag": "Iron Saddlebag",
+  "item.strideandsire.gold_saddlebag": "Gold Saddlebag",
+  "item.strideandsire.netherite_saddlebag": "Netherite Saddlebag",
+  "item.strideandsire.saddlebag.bonus.leather": "No special bonus",
+  "item.strideandsire.saddlebag.bonus.iron": "Contents survive explosions",
+  "item.strideandsire.saddlebag.bonus.gold": "Contents survive explosions; Piglins stay neutral while riding",
+  "item.strideandsire.saddlebag.bonus.netherite": "Contents survive explosions and fire"
 }

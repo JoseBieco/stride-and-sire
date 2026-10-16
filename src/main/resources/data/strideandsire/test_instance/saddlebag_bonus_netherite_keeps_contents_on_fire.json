@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_bonus_netherite_keeps_contents_on_fire",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 60
+}

@@ -1,7 +1,7 @@
 package com.josebieco.strideandsire.attachment;
 
 import com.josebieco.strideandsire.event.HorseshoePassiveEffectHandler;
-import com.josebieco.strideandsire.network.HorseshoeSyncPacket;
+import com.josebieco.strideandsire.network.HorseEquipmentSyncPacket;
 import com.josebieco.strideandsire.registry.ModAttachments;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.camel.Camel;
@@ -44,7 +44,7 @@ public final class HorseshoeAccess {
         storage.setValue(HorseshoeAttachment.of(stack));
         HorseshoePassiveEffectHandler.refreshGoldSpeedModifier(horse);
         if (!horse.level().isClientSide()) {
-            HorseshoeSyncPacket.sendToTracking(horse);
+            HorseEquipmentSyncPacket.sendToTracking(horse, HorseEquipmentSlot.HORSESHOE);
         }
     }
 

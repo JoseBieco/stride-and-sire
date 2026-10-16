@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": "minecraft:leather",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "I I",
+    "L L",
+    "LLL"
+  ],
+  "result": {
+    "id": "strideandsire:iron_saddlebag"
+  }
+}
