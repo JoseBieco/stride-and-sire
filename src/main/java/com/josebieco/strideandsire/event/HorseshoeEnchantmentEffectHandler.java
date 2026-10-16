@@ -141,12 +141,13 @@ public final class HorseshoeEnchantmentEffectHandler {
     }
 
     /**
-     * Extension point: called once per fall that would have damaged the horse and was negated by Feather Step.
-     * {@link LivingFallEvent} can fire on the client too (wherever vanilla computes the fall), so durability
-     * consumption (Task 8) hooking in here must guard with {@code !horse.level().isClientSide()}.
+     * Called once per fall that would have damaged the horse and was negated by Feather Step: 1 point of wear.
+     * {@link LivingFallEvent} can fire on the client too (wherever vanilla computes the fall); wear is server only.
      */
     private static void onFeatherStepNegatedFall(AbstractHorse horse, double fallDistance) {
-        // Intentionally empty until Task 8.
+        if (!horse.level().isClientSide()) {
+            HorseshoeDurabilityHandler.consume(horse, HorseshoeDurabilityHandler.Trigger.FEATHER_STEP_FALL);
+        }
     }
 
     // ---- Frost Step --------------------------------------------------------------------------------------------
@@ -201,11 +202,14 @@ public final class HorseshoeEnchantmentEffectHandler {
     }
 
     /**
-     * Extension point: called (server side) each time Frost Step applies its freezing disk, i.e. whenever vanilla Frost
-     * Walker's {@code location_changed} effect would fire. Durability consumption (Task 8) hooks in here.
+     * Called (server side) each time Frost Step applies its freezing disk, i.e. whenever vanilla Frost Walker's
+     * {@code location_changed} effect would fire. Wears the horseshoe (throttled) only while the horse is actually
+     * carried over water by the ice, not while it walks on land.
      */
     private static void onFrostStepFroze(AbstractHorse horse) {
-        // Intentionally empty until Task 8.
+        if (HorseshoeDurabilityHandler.isOverFrostedIce(horse)) {
+            HorseshoeDurabilityHandler.consume(horse, HorseshoeDurabilityHandler.Trigger.FROST_STEP_FREEZING);
+        }
     }
 
     // ---- Lava Walker -------------------------------------------------------------------------------------------
@@ -256,10 +260,10 @@ public final class HorseshoeEnchantmentEffectHandler {
     }
 
     /**
-     * Extension point: called once per server tick while Lava Walker holds the horse on a lava surface (also for a
-     * horse whose movement is simulated by its rider's client). Durability consumption (Task 8) hooks in here.
+     * Called once per server tick while Lava Walker holds the horse on a lava surface (also for a horse whose
+     * movement is simulated by its rider's client). Wear is throttled by {@link HorseshoeDurabilityHandler}.
      */
     private static void onLavaWalkerSupported(AbstractHorse horse) {
-        // Intentionally empty until Task 8.
+        HorseshoeDurabilityHandler.consume(horse, HorseshoeDurabilityHandler.Trigger.LAVA_WALKER_SUPPORT);
     }
 }

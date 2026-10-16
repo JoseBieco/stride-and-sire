@@ -156,11 +156,11 @@ public final class HorseshoePassiveEffectHandler {
     }
 
     /**
-     * Extension point: called once per fire/lava damage instance negated by a Netherite horseshoe (server side).
-     * Durability consumption (Task 8) hooks in here. Note that {@link LivingAttackEvent} fires before vanilla's
-     * hurt-invulnerability-frame check, so this may be called more often than the horse would actually be hurt.
+     * Called once per fire/lava damage instance negated by a Netherite horseshoe (server side). Note that
+     * {@link LivingAttackEvent} fires before vanilla's hurt-invulnerability-frame check, i.e. every tick while
+     * exposed; {@link HorseshoeDurabilityHandler} throttles the resulting wear.
      */
     private static void onFireDamageNegated(AbstractHorse horse, DamageSource source, float amount) {
-        // Intentionally empty until Task 8.
+        HorseshoeDurabilityHandler.consume(horse, HorseshoeDurabilityHandler.Trigger.FIRE_NEGATED);
     }
 }

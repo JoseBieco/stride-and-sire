@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_durability_fire_negation_is_throttled",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 100
+}

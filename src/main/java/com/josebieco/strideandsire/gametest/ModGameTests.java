@@ -74,6 +74,22 @@ public final class ModGameTests {
             () -> HorseshoeEnchantmentGameTest::frostStepHorseRemovedMidTick);
         TEST_FUNCTIONS.register("horseshoe_enchant_lava_walker_ridden_no_fall_damage_on_landing",
             () -> HorseshoeEnchantmentGameTest::lavaWalkerRiddenNoFallDamageOnLanding);
+        TEST_FUNCTIONS.register("horseshoe_durability_breaks_on_last_point",
+            () -> HorseshoeDurabilityGameTest::breaksOnLastPoint);
+        TEST_FUNCTIONS.register("horseshoe_durability_non_breaking_step_adds_one_damage",
+            () -> HorseshoeDurabilityGameTest::nonBreakingStepAddsOneDamage);
+        TEST_FUNCTIONS.register("horseshoe_durability_fire_negation_is_throttled",
+            () -> HorseshoeDurabilityGameTest::fireNegationIsThrottled);
+        TEST_FUNCTIONS.register("horseshoe_durability_gold_break_removes_speed_modifier",
+            () -> HorseshoeDurabilityGameTest::goldBreakRemovesSpeedModifier);
+        TEST_FUNCTIONS.register("horseshoe_durability_mending_repairs_from_rider_xp",
+            () -> HorseshoeDurabilityGameTest::mendingRepairsFromRiderXp);
+        TEST_FUNCTIONS.register("horseshoe_durability_mending_needs_rider",
+            () -> HorseshoeDurabilityGameTest::mendingNeedsRider);
+        TEST_FUNCTIONS.register("horseshoe_durability_frost_step_drains_only_over_water",
+            () -> HorseshoeDurabilityGameTest::frostStepDrainsOnlyOverWater);
+        TEST_FUNCTIONS.register("horseshoe_durability_lava_walker_drain_is_throttled",
+            () -> HorseshoeDurabilityGameTest::lavaWalkerDrainIsThrottled);
     }
 
     private ModGameTests() {}
