@@ -30,7 +30,7 @@ import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
  *       It is added/removed by {@link #refreshGoldSpeedModifier}, which {@link HorseshoeAccess#set} calls on every
  *       write (idempotent, so the menu's double write never stacks it), and re-applied when a horse joins a server
  *       level (transient modifiers are not saved, the horseshoe is).</li>
- *   <li><b>Gold Piglin neutrality</b>: a rider whose mount is gold-shod is treated by Piglins like a player wearing
+ *   <li><b>Gold Piglin neutrality</b>: a rider whose mount is gold-shod (or carries a Gold saddlebag) is treated by Piglins like a player wearing
  *       gold armor. Vanilla's gold check ({@code PiglinAi.isWearingSafeArmor}) only looks at the player's own armor
  *       slots and Forge's {@code IForgeItem.makesPiglinsNeutral} is per worn item, so neither reaches the mount. The
  *       hook is {@link LivingChangeTargetEvent} (fired by {@code StartAttacking} before a Piglin sets its attack
@@ -108,9 +108,13 @@ public final class HorseshoePassiveEffectHandler {
 
     // ---- Gold: Piglin neutrality -------------------------------------------------------------------------------
 
-    /** Whether {@code player} is riding a horse whose own horseshoe has the gold passive. */
+    /**
+     * Whether {@code player} is riding a horse whose own horseshoe has the gold passive, or whose own saddlebag has
+     * the Gold Piglin passive ({@link SaddlebagBonusEffectHandler#hasGoldPiglinPassive}); either one suffices.
+     */
     public static boolean mountMakesPiglinsNeutral(Player player) {
-        return player.getVehicle() instanceof AbstractHorse horse && hasGoldPassive(horse);
+        return player.getVehicle() instanceof AbstractHorse horse
+            && (hasGoldPassive(horse) || SaddlebagBonusEffectHandler.hasGoldPiglinPassive(horse));
     }
 
     /**

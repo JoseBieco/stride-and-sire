@@ -150,6 +150,24 @@ public final class ModGameTests {
             () -> SaddlebagSaddleDependencyGameTest::shearsRemovalDropsBag);
         TEST_FUNCTIONS.register("saddlebag_saddle_death_drops_bag_exactly_once",
             () -> SaddlebagSaddleDependencyGameTest::deathDropsBagExactlyOnce);
+        TEST_FUNCTIONS.register("saddlebag_bonus_iron_keeps_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::ironBagKeepsContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_leather_loses_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::leatherBagLosesContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_same_explosion_only_iron_keeps",
+            () -> SaddlebagBonusEffectGameTest::sameExplosionOnlyIronKeepsContents);
+        TEST_FUNCTIONS.register("saddlebag_bonus_no_bag_explosion_drops_vanilla",
+            () -> SaddlebagBonusEffectGameTest::noBagExplosionDeathDropsVanilla);
+        TEST_FUNCTIONS.register("saddlebag_bonus_empty_netherite_survives_fire",
+            () -> SaddlebagBonusEffectGameTest::emptyNetheriteBagSurvivesFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_netherite_keeps_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::netheriteBagKeepsContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_iron_loses_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::ironBagLosesContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_empty_iron_explosion_no_throw",
+            () -> SaddlebagBonusEffectGameTest::emptyIronBagExplosionDeathDoesNotThrow);
+        TEST_FUNCTIONS.register("saddlebag_bonus_gold_bag_piglin_neutral",
+            () -> SaddlebagBonusEffectGameTest::goldBagMakesPiglinsNeutral);
     }
 
     private ModGameTests() {}

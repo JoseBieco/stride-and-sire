@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_bonus_no_bag_explosion_drops_vanilla",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 60
+}

@@ -1,5 +1,6 @@
 package com.josebieco.strideandsire.attachment;
 
+import com.josebieco.strideandsire.event.SaddlebagBonusEffectHandler;
 import com.josebieco.strideandsire.network.HorseEquipmentSyncPacket;
 import com.josebieco.strideandsire.registry.ModAttachments;
 import java.util.Collection;
@@ -81,12 +82,12 @@ public final class HorseEquipmentEvents {
     }
 
     /**
-     * The stack a dying horse drops for its equipped saddlebag {@code bag} when killed by {@code source}.
-     * Currently returns {@code bag} unchanged (contents intact). Hook for Task 6: clear the container here for
-     * explosion / fire deaths unless the bag's material protects against that damage.
+     * The stack a dying horse drops for its equipped saddlebag {@code bag} when killed by {@code source}: the bag,
+     * with its container cleared on an explosion / fire death unless its material protects against that damage
+     * (see {@link SaddlebagBonusEffectHandler}).
      */
     static ItemStack saddlebagDeathDrop(ItemStack bag, DamageSource source) {
-        return bag;
+        return SaddlebagBonusEffectHandler.deathDrop(bag, source);
     }
 
     private static ItemEntity itemEntity(AbstractHorse horse, ItemStack stack) {
