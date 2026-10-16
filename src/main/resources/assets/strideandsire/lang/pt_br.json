@@ -9,5 +9,9 @@
   "item.strideandsire.leather_saddlebag": "Alforje de Couro",
   "item.strideandsire.iron_saddlebag": "Alforje de Ferro",
   "item.strideandsire.gold_saddlebag": "Alforje de Ouro",
-  "item.strideandsire.netherite_saddlebag": "Alforje de Netherite"
+  "item.strideandsire.netherite_saddlebag": "Alforje de Netherite",
+  "item.strideandsire.saddlebag.bonus.leather": "Sem bônus especial",
+  "item.strideandsire.saddlebag.bonus.iron": "O conteúdo sobrevive a explosões",
+  "item.strideandsire.saddlebag.bonus.gold": "O conteúdo sobrevive a explosões; Piglins ficam neutros durante a montaria",
+  "item.strideandsire.saddlebag.bonus.netherite": "O conteúdo sobrevive a explosões e ao fogo"
 }

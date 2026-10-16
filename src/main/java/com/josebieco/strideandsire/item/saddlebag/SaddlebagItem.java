@@ -1,16 +1,27 @@
 package com.josebieco.strideandsire.item.saddlebag;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 /**
  * A saddlebag of a given {@link SaddlebagMaterial}. Stack size 1, no durability, not enchantable; its contents live in
  * the vanilla {@code container} data component (present, empty, on every fresh stack). Netherite is fire-resistant as
- * an item. The component tooltip lists contained items, shulker-box style.
+ * an item. The component tooltip lists contained items, shulker-box style; one extra line describes the tier bonus.
+ *
+ * <p>Like shulker boxes, a saddlebag never fits inside another container item (bundles, shulker boxes, other bags), so
+ * nesting depth stays bounded; and a destroyed saddlebag item entity spills its contents instead of deleting them.
  */
 public class SaddlebagItem extends Item {
     private final SaddlebagMaterial material;
@@ -44,6 +55,33 @@ public class SaddlebagItem extends Item {
         int size = containerSize(stack);
         List<ItemStack> bounded = items.size() > size ? items.subList(0, size) : items;
         stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(bounded));
+    }
+
+    /** Bags hold a container, so they may not go inside container items (bundle / shulker box): no unbounded nesting. */
+    @Override
+    public boolean canFitInsideContainerItems() {
+        return false;
+    }
+
+    /** Destroyed as an item entity (lava, fire, cactus, explosion...): spill the contents, like bundles/shulker boxes. */
+    @Override
+    public void onDestroyed(ItemEntity entity) {
+        ItemContainerContents contents = entity.getItem().set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        if (contents != null) {
+            ItemUtils.onContainerDestroyed(entity, contents.nonEmptyItemCopyStream());
+        }
+    }
+
+    /** Translation key of this tier's bonus tooltip line ({@code item.strideandsire.saddlebag.bonus.<tier>}). */
+    public String bonusTooltipKey() {
+        return "item.strideandsire.saddlebag.bonus." + material.name().toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> builder, TooltipFlag flag) {
+        builder.accept(Component.translatable(bonusTooltipKey()).withStyle(ChatFormatting.GRAY));
     }
 
     private static Item.Properties applyMaterial(SaddlebagMaterial material, Item.Properties properties) {

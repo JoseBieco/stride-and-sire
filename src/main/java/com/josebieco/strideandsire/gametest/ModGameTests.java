@@ -184,6 +184,12 @@ public final class ModGameTests {
             () -> SaddlebagLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
         TEST_FUNCTIONS.register("saddlebag_review_focus_chest_bag_isolation_and_explosion",
             () -> SaddlebagReviewFocusGameTest::chestBagIsolationAndSameTickExplosion);
+        TEST_FUNCTIONS.register("saddlebag_fix_bundle_refuses_saddlebag",
+            () -> SaddlebagFinalFixGameTest::bundleRefusesSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_fix_destroyed_bag_spills_contents",
+            () -> SaddlebagFinalFixGameTest::destroyedBagSpillsContents);
+        TEST_FUNCTIONS.register("saddlebag_fix_join_with_bag_no_saddle_drops_next_tick",
+            () -> SaddlebagFinalFixGameTest::joinWithBagButNoSaddleDropsNextTick);
     }
 
     private ModGameTests() {}
