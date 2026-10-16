@@ -1,0 +1,9 @@
+{
+  "type": "strideandsire:horseshoe_smithing_upgrade",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "strideandsire:iron_horseshoe",
+  "addition": "#minecraft:netherite_tool_materials",
+  "result": {
+    "id": "strideandsire:netherite_horseshoe"
+  }
+}

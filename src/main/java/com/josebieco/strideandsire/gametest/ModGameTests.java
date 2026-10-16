@@ -90,6 +90,18 @@ public final class ModGameTests {
             () -> HorseshoeDurabilityGameTest::frostStepDrainsOnlyOverWater);
         TEST_FUNCTIONS.register("horseshoe_durability_lava_walker_drain_is_throttled",
             () -> HorseshoeDurabilityGameTest::lavaWalkerDrainIsThrottled);
+        TEST_FUNCTIONS.register("horseshoe_recipe_copper_horseshoe",
+            () -> HorseshoeRecipeGameTest::craftsCopperHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_iron_horseshoe",
+            () -> HorseshoeRecipeGameTest::craftsIronHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_gold_horseshoe",
+            () -> HorseshoeRecipeGameTest::craftsGoldHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_no_netherite_crafting",
+            () -> HorseshoeRecipeGameTest::noCraftingRecipeForNetherite);
+        TEST_FUNCTIONS.register("horseshoe_recipe_netherite_smithing_keeps_enchants_and_ratio",
+            () -> HorseshoeRecipeGameTest::netheriteSmithingKeepsEnchantsAndDamageRatio);
+        TEST_FUNCTIONS.register("horseshoe_recipe_netherite_smithing_menu",
+            () -> HorseshoeRecipeGameTest::smithingMenuProducesNetheriteHorseshoe);
     }
 
     private ModGameTests() {}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:gold_ingot"
+  },
+  "pattern": [
+    "I I",
+    "I I",
+    " I "
+  ],
+  "result": {
+    "id": "strideandsire:gold_horseshoe"
+  }
+}
