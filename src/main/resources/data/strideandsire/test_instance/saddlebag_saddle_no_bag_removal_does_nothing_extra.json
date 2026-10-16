@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_saddle_no_bag_removal_does_nothing_extra",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 40
+}

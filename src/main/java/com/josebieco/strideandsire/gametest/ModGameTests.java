@@ -140,6 +140,16 @@ public final class ModGameTests {
             () -> SaddlebagMenuGameTest::subSlotRejectsSaddlebag);
         TEST_FUNCTIONS.register("saddlebag_menu_tracking_sync_omits_contents",
             () -> SaddlebagMenuGameTest::trackingSyncOmitsContents);
+        TEST_FUNCTIONS.register("saddlebag_saddle_no_bag_removal_does_nothing_extra",
+            () -> SaddlebagSaddleDependencyGameTest::noBagRemovalDoesNothingExtra);
+        TEST_FUNCTIONS.register("saddlebag_saddle_removing_saddle_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::removingSaddleDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_menu_removal_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::menuSaddleRemovalDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_shears_removal_drops_bag",
+            () -> SaddlebagSaddleDependencyGameTest::shearsRemovalDropsBag);
+        TEST_FUNCTIONS.register("saddlebag_saddle_death_drops_bag_exactly_once",
+            () -> SaddlebagSaddleDependencyGameTest::deathDropsBagExactlyOnce);
     }
 
     private ModGameTests() {}

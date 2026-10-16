@@ -25,6 +25,7 @@ public final class StrideAndSire {
         ModAttachments.register();
         ModMenus.register(modBusGroup);
         HorseshoePassiveEffectHandler.register();
+        com.josebieco.strideandsire.event.SaddlebagSaddleDependencyHandler.register();
         HorseshoeEnchantmentEffectHandler.register();
         HorseshoeDurabilityHandler.register();
         ModGameTests.register(modBusGroup);
