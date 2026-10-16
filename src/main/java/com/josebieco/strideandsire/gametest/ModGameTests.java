@@ -102,6 +102,8 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::netheriteSmithingKeepsEnchantsAndDamageRatio);
         TEST_FUNCTIONS.register("horseshoe_recipe_netherite_smithing_menu",
             () -> HorseshoeRecipeGameTest::smithingMenuProducesNetheriteHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_review_focus_iron_to_netherite_flow",
+            () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
     }
