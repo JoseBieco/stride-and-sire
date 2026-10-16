@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_menu_slot_accepts_only_horseshoes",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 20
+}

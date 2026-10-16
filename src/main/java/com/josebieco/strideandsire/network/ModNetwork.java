@@ -16,6 +16,8 @@ public final class ModNetwork {
             .play()
                 .clientbound()
                     .addMain(HorseshoeSyncPacket.class, HorseshoeSyncPacket.STREAM_CODEC, HorseshoeSyncPacket::handle)
+                .serverbound()
+                    .addMain(OpenHorseshoeMenuPacket.class, OpenHorseshoeMenuPacket.STREAM_CODEC, OpenHorseshoeMenuPacket::handle)
         .build();
 
     private ModNetwork() {}

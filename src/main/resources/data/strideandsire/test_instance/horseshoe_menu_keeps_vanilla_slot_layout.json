@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_menu_keeps_vanilla_slot_layout",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 20
+}
