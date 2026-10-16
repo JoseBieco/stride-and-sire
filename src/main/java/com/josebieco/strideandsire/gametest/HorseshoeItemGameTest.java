@@ -8,6 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
+import java.util.Locale;
 
 /** Test instance: data/strideandsire/test_instance/horseshoe_items_are_registered_with_correct_material.json */
 public final class HorseshoeItemGameTest {
@@ -22,7 +23,7 @@ public final class HorseshoeItemGameTest {
     }
 
     private static void check(GameTestHelper helper, RegistryObject<? extends Item> holder, HorseshoeMaterial expected) {
-        String name = expected.name().toLowerCase() + "_horseshoe";
+        String name = expected.name().toLowerCase(Locale.ROOT) + "_horseshoe";
         helper.assertTrue(holder != null && holder.isPresent(), name + " is not registered");
         helper.assertTrue(holder.getId().toString().equals("strideandsire:" + name), name + " has wrong id " + holder.getId());
 
