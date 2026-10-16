@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.strideandsire.frost_step"
+  },
+  "exclusive_set": "#strideandsire:exclusive_set/terrain",
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#strideandsire:enchantable/frost_step",
+  "slots": [
+    "any"
+  ],
+  "supported_items": "#strideandsire:enchantable/frost_step",
+  "weight": 2
+}

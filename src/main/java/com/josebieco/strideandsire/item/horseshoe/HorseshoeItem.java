@@ -1,6 +1,10 @@
 package com.josebieco.strideandsire.item.horseshoe;
 
+import com.josebieco.strideandsire.enchantment.HorseshoeEnchantments;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
  * A horseshoe of a given {@link HorseshoeMaterial}. Max damage comes from
@@ -17,6 +21,15 @@ public class HorseshoeItem extends Item {
 
     public HorseshoeMaterial getMaterial() {
         return material;
+    }
+
+    /**
+     * Enchanting-table gate: vanilla's {@code primary_items} check, AND the horseshoe eligibility matrix for the three
+     * horseshoe enchantments (the anvil path is enforced by the enchantments' {@code supported_items} tags).
+     */
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Holder<Enchantment> enchantment) {
+        return super.canApplyAtEnchantingTable(stack, enchantment) && HorseshoeEnchantments.allowsOnHorseshoe(stack, enchantment);
     }
 
     private static Item.Properties applyMaterial(HorseshoeMaterial material, Item.Properties properties) {

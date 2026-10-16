@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.strideandsire.lava_walker"
+  },
+  "exclusive_set": "#strideandsire:exclusive_set/terrain",
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#strideandsire:enchantable/lava_walker",
+  "slots": [
+    "any"
+  ],
+  "supported_items": "#strideandsire:enchantable/lava_walker",
+  "weight": 1
+}

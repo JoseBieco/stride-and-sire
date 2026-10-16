@@ -58,6 +58,20 @@ public final class ModGameTests {
             () -> HorseshoePassiveEffectGameTest::piglinTargetSuppressed);
         TEST_FUNCTIONS.register("horseshoe_passive_gold_speed_survives_reload",
             () -> HorseshoePassiveEffectGameTest::goldSpeedSurvivesReload);
+        TEST_FUNCTIONS.register("horseshoe_enchant_frost_step_rejected_on_netherite",
+            () -> HorseshoeEnchantmentGameTest::frostStepRejectedOnNetherite);
+        TEST_FUNCTIONS.register("horseshoe_enchant_lava_walker_rejected_on_iron",
+            () -> HorseshoeEnchantmentGameTest::lavaWalkerRejectedOnIron);
+        TEST_FUNCTIONS.register("horseshoe_enchant_tags_match_eligibility_matrix",
+            () -> HorseshoeEnchantmentGameTest::tagsMatchEligibilityMatrix);
+        TEST_FUNCTIONS.register("horseshoe_enchant_feather_step_negates_fall_damage",
+            () -> HorseshoeEnchantmentGameTest::featherStepNegatesFallDamage);
+        TEST_FUNCTIONS.register("horseshoe_enchant_frost_step_freezes_water_like_frost_walker_ii",
+            () -> HorseshoeEnchantmentGameTest::frostStepFreezesWaterLikeFrostWalkerII);
+        TEST_FUNCTIONS.register("horseshoe_enchant_lava_walker_stands_on_lava",
+            () -> HorseshoeEnchantmentGameTest::lavaWalkerStandsOnLava);
+        TEST_FUNCTIONS.register("horseshoe_enchant_frost_step_horse_removed_mid_tick",
+            () -> HorseshoeEnchantmentGameTest::frostStepHorseRemovedMidTick);
     }
 
     private ModGameTests() {}
