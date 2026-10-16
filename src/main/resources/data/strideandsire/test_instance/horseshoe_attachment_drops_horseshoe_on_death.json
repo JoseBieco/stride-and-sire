@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_attachment_drops_horseshoe_on_death",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 60
+}

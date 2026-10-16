@@ -1,6 +1,7 @@
 package com.josebieco.strideandsire;
 
 import com.josebieco.strideandsire.gametest.ModGameTests;
+import com.josebieco.strideandsire.registry.ModAttachments;
 import com.josebieco.strideandsire.registry.ModItems;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +14,7 @@ public final class StrideAndSire {
     public StrideAndSire(FMLJavaModLoadingContext context) {
         BusGroup modBusGroup = context.getModBusGroup();
         ModItems.register(modBusGroup);
+        ModAttachments.register();
         ModGameTests.register(modBusGroup);
     }
 }

@@ -30,6 +30,16 @@ public final class ModGameTests {
     static {
         TEST_FUNCTIONS.register("horseshoe_items_are_registered_with_correct_material",
             () -> HorseshoeItemGameTest::horseshoeItemsAreRegisteredWithCorrectMaterial);
+        TEST_FUNCTIONS.register("horseshoe_attachment_set_then_get_on_horse",
+            () -> HorseshoeAttachmentGameTest::setThenGetOnHorse);
+        TEST_FUNCTIONS.register("horseshoe_attachment_all_eligible_types_store_horseshoe",
+            () -> HorseshoeAttachmentGameTest::allEligibleTypesStoreHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_attachment_persists_across_save_and_load",
+            () -> HorseshoeAttachmentGameTest::persistsAcrossSaveAndLoad);
+        TEST_FUNCTIONS.register("horseshoe_attachment_ineligible_entities_have_no_horseshoe",
+            () -> HorseshoeAttachmentGameTest::ineligibleEntitiesHaveNoHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_attachment_drops_horseshoe_on_death",
+            () -> HorseshoeAttachmentGameTest::dropsHorseshoeOnDeath);
     }
 
     private ModGameTests() {}
