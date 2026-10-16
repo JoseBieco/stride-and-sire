@@ -4,10 +4,17 @@ import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.network.ModNetwork;
 import com.josebieco.strideandsire.network.OpenHorseshoeMenuPacket;
 import com.josebieco.strideandsire.registry.ModMenus;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
+import net.minecraft.client.renderer.entity.state.EquineRenderState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.inventory.HorseInventoryMenu;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -20,6 +27,23 @@ public final class StrideAndSireClient {
     public static void init(BusGroup modBusGroup) {
         FMLClientSetupEvent.getBus(modBusGroup).addListener(StrideAndSireClient::onClientSetup);
         TickEvent.ClientTickEvent.Pre.BUS.addListener(StrideAndSireClient::onClientTickPre);
+        EntityRenderersEvent.AddLayers.BUS.addListener(StrideAndSireClient::onAddLayers);
+    }
+
+    /** Attaches the hoof layer to every horseshoe-eligible renderer (not Llama/Camel). Fires on each resource reload. */
+    private static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        for (EntityType<? extends AbstractHorse> type : List.of(
+                EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
+            Object renderer = event.getEntityRenderer(type);
+            if (renderer instanceof AbstractHorseRenderer<?, ?, ?> horseRenderer) {
+                addHoofLayer(horseRenderer);
+            }
+        }
+    }
+
+    private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addHoofLayer(
+            AbstractHorseRenderer<?, S, M> renderer) {
+        renderer.addLayer(new HorseshoeLayer<>(renderer));
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
