@@ -46,6 +46,10 @@ public final class ModGameTests {
             () -> HorseshoeMenuGameTest::keepsVanillaSlotLayout);
         TEST_FUNCTIONS.register("horseshoe_menu_quick_move_and_place_route_to_storage",
             () -> HorseshoeMenuGameTest::quickMoveAndPlaceRouteToStorage);
+        TEST_FUNCTIONS.register("horseshoe_menu_sneak_interact_with_item_opens_horseshoe_menu",
+            () -> HorseshoeMenuGameTest::sneakInteractWithItemOpensHorseshoeMenu);
+        TEST_FUNCTIONS.register("horseshoe_menu_sneak_interact_name_tag_left_to_vanilla",
+            () -> HorseshoeMenuGameTest::sneakInteractNameTagLeftToVanilla);
         TEST_FUNCTIONS.register("horseshoe_passive_gold_speed_modifier",
             () -> HorseshoePassiveEffectGameTest::goldSpeedModifier);
         TEST_FUNCTIONS.register("horseshoe_passive_netherite_fire_immunity",
@@ -90,6 +94,12 @@ public final class ModGameTests {
             () -> HorseshoeDurabilityGameTest::frostStepDrainsOnlyOverWater);
         TEST_FUNCTIONS.register("horseshoe_durability_lava_walker_drain_is_throttled",
             () -> HorseshoeDurabilityGameTest::lavaWalkerDrainIsThrottled);
+        TEST_FUNCTIONS.register("horseshoe_durability_mending_still_breaks_on_last_point",
+            () -> HorseshoeDurabilityGameTest::mendingHorseshoeStillBreaksOnLastPoint);
+        TEST_FUNCTIONS.register("horseshoe_durability_riding_wears_one_point_per_hundred_blocks",
+            () -> HorseshoeDurabilityGameTest::ridingWearsOnePointPerHundredBlocks);
+        TEST_FUNCTIONS.register("horseshoe_durability_unridden_horse_does_not_wear_from_moving",
+            () -> HorseshoeDurabilityGameTest::unriddenHorseDoesNotWearFromMoving);
         TEST_FUNCTIONS.register("horseshoe_recipe_copper_horseshoe",
             () -> HorseshoeRecipeGameTest::craftsCopperHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_iron_horseshoe",
@@ -102,6 +112,8 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::netheriteSmithingKeepsEnchantsAndDamageRatio);
         TEST_FUNCTIONS.register("horseshoe_recipe_netherite_smithing_menu",
             () -> HorseshoeRecipeGameTest::smithingMenuProducesNetheriteHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_frost_step_blocks_netherite_upgrade",
+            () -> HorseshoeRecipeGameTest::frostStepBlocksNetheriteUpgrade);
         TEST_FUNCTIONS.register("horseshoe_review_focus_iron_to_netherite_flow",
             () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",

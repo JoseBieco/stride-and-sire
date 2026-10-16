@@ -1,5 +1,6 @@
 package com.josebieco.strideandsire.recipe;
 
+import com.josebieco.strideandsire.enchantment.HorseshoeEnchantments;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -20,11 +21,18 @@ import net.minecraft.world.item.crafting.TransmuteRecipe;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.display.SmithingRecipeDisplay;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.Level;
 
 /**
  * A {@code smithing_transform} that, unlike vanilla, preserves the input's damage <em>ratio</em> instead of its absolute
  * damage (an Iron horseshoe at 100/200 becomes a Netherite one at 200/400). Components (enchantments, ...) are copied
  * exactly like vanilla. Reuses vanilla's smithing recipe type, so the Smithing Table picks it up unchanged.
+ *
+ * <p>Unlike vanilla, it does not match a base carrying a horseshoe enchantment the result tier cannot hold (e.g. Frost
+ * Step on the Iron-to-Netherite upgrade): copying it would leave the result with an ineligible enchantment that also
+ * blocks, through the terrain exclusive set, the one it should be able to take (Lava Walker). The Smithing Table then
+ * shows no result, so the player has to remove the enchantment (grindstone) first.
  */
 public class HorseshoeSmithingUpgradeRecipe extends SimpleSmithingRecipe {
     public static final MapCodec<HorseshoeSmithingUpgradeRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(
@@ -59,6 +67,21 @@ public class HorseshoeSmithingUpgradeRecipe extends SimpleSmithingRecipe {
         this.base = base;
         this.addition = addition;
         this.result = result;
+    }
+
+    @Override
+    public boolean matches(SmithingRecipeInput input, Level level) {
+        return super.matches(input, level) && resultCanHoldEnchantmentsOf(input.base());
+    }
+
+    /** Whether every horseshoe enchantment on {@code base} is eligible on this recipe's result tier. */
+    private boolean resultCanHoldEnchantmentsOf(ItemStack base) {
+        ItemEnchantments enchantments = base.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        if (enchantments.isEmpty()) {
+            return true;
+        }
+        ItemStack out = this.result.create();
+        return enchantments.keySet().stream().allMatch(enchantment -> HorseshoeEnchantments.allowsOnHorseshoe(out, enchantment));
     }
 
     @Override

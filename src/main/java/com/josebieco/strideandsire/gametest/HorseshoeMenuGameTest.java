@@ -4,7 +4,9 @@ import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.menu.HorseshoeHorseMenu;
 import com.josebieco.strideandsire.menu.HorseshoeSlot;
 import com.josebieco.strideandsire.registry.ModItems;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityTypes;
@@ -142,6 +144,60 @@ public final class HorseshoeMenuGameTest {
         // A horseshoe set through HorseshoeAccess shows up in the slot (the slot reads storage).
         HorseshoeAccess.set(horse, new ItemStack(ModItems.NETHERITE_HORSESHOE.get()));
         helper.assertTrue(menu.getHorseshoeSlot().getItem().is(ModItems.NETHERITE_HORSESHOE.get()), "slot should read storage");
+        helper.succeed();
+    }
+
+    /** A ServerPlayer with a real (embedded) connection, which {@code openMenu} needs; removed when the test ends. */
+    @SuppressWarnings("removal")
+    private static ServerPlayer connectedPlayer(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        helper.addCleanup(passed -> helper.getLevel().getServer().getPlayerList().remove(player));
+        return player;
+    }
+
+    /** Sneak + right-click on a tamed adult horse with {@code held} in the main hand, as the server sees it. */
+    private static void sneakInteract(ServerPlayer player, AbstractHorse horse, ItemStack held) {
+        player.closeContainer();
+        player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        player.setShiftKeyDown(true);
+        player.interactOn(horse, InteractionHand.MAIN_HAND, horse.position());
+    }
+
+    /**
+     * Vanilla's tamed-adult sneak path ({@code Horse}/{@code AbstractChestedHorse.mobInteract} skip item handling, then
+     * {@code AbstractHorse.mobInteract} opens the inventory) runs whatever the player holds; so must ours.
+     */
+    public static void sneakInteractWithItemOpensHorseshoeMenu(GameTestHelper helper) {
+        Horse horse = tamedHorse(helper);
+        Donkey donkey = helper.spawn(EntityTypes.DONKEY, 0, 1, 0);
+        donkey.setTamed(true);
+        ServerPlayer player = connectedPlayer(helper);
+
+        ItemStack[] held = {ItemStack.EMPTY, new ItemStack(ModItems.IRON_HORSESHOE.get()), new ItemStack(Items.APPLE),
+            new ItemStack(Items.NAME_TAG)}; // an unnamed name tag does nothing in vanilla, so the inventory opens
+        for (AbstractHorse target : new AbstractHorse[] {horse, donkey}) {
+            for (ItemStack stack : held) {
+                sneakInteract(player, target, stack.copy());
+                helper.assertTrue(player.containerMenu instanceof HorseshoeHorseMenu,
+                    "sneak-click on " + target.getType() + " holding " + stack + " opened " + player.containerMenu);
+            }
+        }
+        helper.assertTrue(HorseshoeAccess.get(horse).isEmpty(), "sneak-click must not equip the held horseshoe");
+        helper.succeed();
+    }
+
+    /** Interactions vanilla runs before {@code mobInteract} (a named name tag) still win over our menu. */
+    public static void sneakInteractNameTagLeftToVanilla(GameTestHelper helper) {
+        Horse horse = tamedHorse(helper);
+        ServerPlayer player = connectedPlayer(helper);
+        ItemStack tag = new ItemStack(Items.NAME_TAG);
+        tag.set(DataComponents.CUSTOM_NAME, Component.literal("Epona"));
+
+        sneakInteract(player, horse, tag);
+        helper.assertTrue(!(player.containerMenu instanceof HorseshoeHorseMenu), "named name tag opened the horseshoe menu");
+        helper.assertTrue(horse.getCustomName() != null && "Epona".equals(horse.getCustomName().getString()),
+            "named name tag should rename the horse, name is " + horse.getCustomName());
         helper.succeed();
     }
 }

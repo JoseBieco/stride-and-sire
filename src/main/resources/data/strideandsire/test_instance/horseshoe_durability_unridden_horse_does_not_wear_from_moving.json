@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:horseshoe_durability_unridden_horse_does_not_wear_from_moving",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 100
+}

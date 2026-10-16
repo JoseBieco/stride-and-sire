@@ -12,12 +12,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
@@ -244,6 +246,80 @@ public final class HorseshoeDurabilityGameTest {
                 helper.assertTrue(damage >= 1, "lava walker must lose durability while supported");
                 helper.assertTrue(damage <= maxAllowed, "lava walker drain must be throttled: damage " + damage + " > " + maxAllowed);
             })
+            .thenSucceed();
+    }
+
+    /** Spec section 9 "with and without Mending": Mending does not stop a horseshoe on its last point from breaking. */
+    public static void mendingHorseshoeStillBreaksOnLastPoint(GameTestHelper helper) {
+        helper.makeFloor();
+        Horse horse = stillHorse(helper, 2, 1, 2);
+        ItemStack stack = shoe(helper, ModItems.IRON_HORSESHOE.get(), Enchantments.MENDING);
+        stack.setDamageValue(stack.getMaxDamage() - 1);
+        HorseshoeAccess.set(horse, stack);
+
+        HorseshoeDurabilityHandler.consume(horse, HorseshoeDurabilityHandler.Trigger.FEATHER_STEP_FALL);
+        helper.assertTrue(HorseshoeAccess.get(horse).isEmpty(), "Mending horseshoe on its last point must still break");
+        helper.succeed();
+    }
+
+    private static final int RIDE_STEP = 4;
+
+    /**
+     * Moves {@code horse} back and forth {@value #RIDE_STEP} blocks along x (one call per tick, on the
+     * ground, as the rider's vehicle packets would leave it).
+     */
+    private static void shuttle(GameTestHelper helper, Horse horse, int[] tick) {
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        double x = origin.getX() + 0.5 + (tick[0]++ % 2 == 0 ? RIDE_STEP : 0);
+        horse.snapTo(x, origin.getY() + 1, origin.getZ() + 2.5);
+        horse.setOnGround(true);
+    }
+
+    private static Horse saddledHorse(GameTestHelper helper) {
+        Horse horse = stillHorse(helper, 0, 1, 2);
+        horse.setTamed(true);
+        horse.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+        HorseshoeAccess.set(horse, shoe(helper, ModItems.IRON_HORSESHOE.get()));
+        return horse;
+    }
+
+    /**
+     * Riding wears the horseshoe: 1 point per {@value HorseshoeDurabilityHandler#RIDING_BLOCKS_PER_POINT} blocks on the
+     * ground. 96 blocks plus two teleport-sized jumps cost nothing; 120 blocks cost exactly one point.
+     */
+    public static void ridingWearsOnePointPerHundredBlocks(GameTestHelper helper) {
+        helper.makeFloor();
+        Horse horse = saddledHorse(helper);
+        ServerPlayer rider = serverPlayer(helper);
+        helper.addCleanup(passed -> removePlayer(helper, rider));
+        helper.assertTrue(rider.startRiding(horse, true, false), "could not mount horse");
+        helper.assertTrue(horse.getControllingPassenger() == rider, "rider must control the saddled horse");
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        int[] tick = {0};
+
+        helper.startSequence()
+            .thenExecuteFor(24, () -> shuttle(helper, horse, tick)) // ~96 blocks
+            .thenExecute(() -> horse.snapTo(origin.getX() + 0.5, origin.getY() + 1, origin.getZ() + 12.5)) // 10-block jump
+            .thenIdle(1)
+            .thenExecute(() -> horse.snapTo(origin.getX() + 0.5, origin.getY() + 1, origin.getZ() + 2.5)) // and back
+            .thenIdle(1)
+            .thenExecute(() -> helper.assertValueEqual(damageOf(horse), 0, "damage below 100 blocks (teleports ignored)"))
+            .thenExecuteFor(6, () -> shuttle(helper, horse, tick)) // +24 -> ~120 blocks
+            .thenIdle(1)
+            .thenExecute(() -> helper.assertValueEqual(damageOf(horse), 1, "damage after ~120 ridden blocks"))
+            .thenSucceed();
+    }
+
+    /** Control: the same distance without a rider costs nothing. */
+    public static void unriddenHorseDoesNotWearFromMoving(GameTestHelper helper) {
+        helper.makeFloor();
+        Horse horse = saddledHorse(helper);
+        int[] tick = {0};
+
+        helper.startSequence()
+            .thenExecuteFor(40, () -> shuttle(helper, horse, tick)) // ~160 blocks
+            .thenIdle(1)
+            .thenExecute(() -> helper.assertValueEqual(damageOf(horse), 0, "unridden horse damage after ~160 blocks"))
             .thenSucceed();
     }
 }

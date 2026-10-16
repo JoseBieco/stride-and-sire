@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 
 /**
@@ -32,6 +33,8 @@ import net.minecraftforge.event.entity.player.PlayerXpEvent;
  *       under the moving horse (see {@link #isOverFrostedIce}).</li>
  *   <li>{@link Trigger#LAVA_WALKER_SUPPORT}: 1 point per {@value #THROTTLE_TICKS} ticks while Lava Walker holds the
  *       horse up.</li>
+ *   <li>{@link Trigger#RIDING}: 1 point per {@value #RIDING_BLOCKS_PER_POINT} blocks travelled horizontally while the
+ *       horse is ridden (has a controlling passenger) and on the ground, every tier (see {@link #tickRidingWear}).</li>
  * </ul>
  * Throttled triggers allow at most one point per {@value #THROTTLE_TICKS} game ticks per horse and per
  * {@link Channel}. Fire negation and Lava Walker share the {@link Channel#HEAT} window, so a netherite horse walking
@@ -52,6 +55,14 @@ import net.minecraftforge.event.entity.player.PlayerXpEvent;
 public final class HorseshoeDurabilityHandler {
     /** Throttle window for continuous triggers: at most one point per this many game ticks. */
     public static final int THROTTLE_TICKS = 20;
+    /** Riding wear: one point per this many blocks travelled horizontally, ridden and on the ground. */
+    public static final int RIDING_BLOCKS_PER_POINT = 100;
+    /** A horizontal move longer than this in one tick is a teleport, not riding, and is not counted. */
+    public static final double MAX_RIDING_STEP = 8.0;
+
+    private static final String RIDE_LAST_X_KEY = StrideAndSire.MODID + ".riding_wear.last_x";
+    private static final String RIDE_LAST_Z_KEY = StrideAndSire.MODID + ".riding_wear.last_z";
+    private static final String RIDE_DISTANCE_KEY = StrideAndSire.MODID + ".riding_wear.distance";
 
     private static final String PICKUP_TICK_KEY = StrideAndSire.MODID + ".xp_orb_pickup_tick";
 
@@ -68,7 +79,9 @@ public final class HorseshoeDurabilityHandler {
         FEATHER_STEP_FALL(Channel.NONE),
         FIRE_NEGATED(Channel.HEAT),
         FROST_STEP_FREEZING(Channel.FROST),
-        LAVA_WALKER_SUPPORT(Channel.HEAT);
+        LAVA_WALKER_SUPPORT(Channel.HEAT),
+        /** Distance-based, metered by {@link #tickRidingWear}; no time throttle. */
+        RIDING(Channel.NONE);
 
         private final Channel channel;
 
@@ -86,6 +99,7 @@ public final class HorseshoeDurabilityHandler {
     public static void register() {
         PlayerXpEvent.PickupXp.BUS.addListener(HorseshoeDurabilityHandler::onPickupXp);
         PlayerXpEvent.XpChange.BUS.addListener(HorseshoeDurabilityHandler::onXpChange);
+        LivingEvent.LivingTickEvent.BUS.addListener(HorseshoeDurabilityHandler::onLivingTick);
     }
 
     // ---- wear ----------------------------------------------------------------------------------------------------
@@ -156,6 +170,49 @@ public final class HorseshoeDurabilityHandler {
             }
         }
         return false;
+    }
+
+    // ---- riding wear -----------------------------------------------------------------------------------------------
+
+    private static void onLivingTick(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() instanceof AbstractHorse horse && !horse.level().isClientSide() && HorseshoeAccess.isEligible(horse)) {
+            tickRidingWear(horse);
+        }
+    }
+
+    /**
+     * Meters riding wear for {@code horse} (server side, once per tick): the horizontal distance since the previous
+     * tick is added to a per-horse accumulator (Forge persistent data, like the throttle windows) while the horse is
+     * ridden and on the ground; every {@value #RIDING_BLOCKS_PER_POINT} blocks cost one point through {@link #consume}.
+     * Steps longer than {@value #MAX_RIDING_STEP} blocks (teleports) are skipped. Nothing is tracked, and stale state is
+     * dropped, while the horse has no damageable horseshoe.
+     */
+    public static void tickRidingWear(AbstractHorse horse) {
+        CompoundTag data = horse.getPersistentData();
+        ItemStack shoe = HorseshoeAccess.get(horse);
+        if (!horse.isAlive() || shoe.isEmpty() || !shoe.isDamageableItem()) {
+            data.remove(RIDE_LAST_X_KEY);
+            data.remove(RIDE_LAST_Z_KEY);
+            data.remove(RIDE_DISTANCE_KEY);
+            return;
+        }
+        double x = horse.getX();
+        double z = horse.getZ();
+        boolean hasLast = data.contains(RIDE_LAST_X_KEY) && data.contains(RIDE_LAST_Z_KEY);
+        double step = hasLast ? Math.hypot(x - data.getDoubleOr(RIDE_LAST_X_KEY, x), z - data.getDoubleOr(RIDE_LAST_Z_KEY, z)) : 0.0;
+        data.putDouble(RIDE_LAST_X_KEY, x);
+        data.putDouble(RIDE_LAST_Z_KEY, z);
+        if (step <= 0.0 || step > MAX_RIDING_STEP || horse.getControllingPassenger() == null || !horse.onGround()) {
+            return;
+        }
+        double distance = data.getDoubleOr(RIDE_DISTANCE_KEY, 0.0) + step;
+        if (distance >= RIDING_BLOCKS_PER_POINT) {
+            distance -= RIDING_BLOCKS_PER_POINT;
+            data.putDouble(RIDE_DISTANCE_KEY, distance);
+            consume(horse, Trigger.RIDING); // may break the shoe; the next tick then drops the state
+        } else {
+            data.putDouble(RIDE_DISTANCE_KEY, distance);
+        }
     }
 
     // ---- Mending ---------------------------------------------------------------------------------------------------

@@ -145,4 +145,33 @@ public final class HorseshoeRecipeGameTest {
         helper.assertTrue(out.has(DataComponents.ENCHANTMENTS), "menu result lost enchantments");
         helper.succeed();
     }
+
+    /**
+     * An Iron horseshoe carrying Frost Step (not allowed on Netherite) has no smithing result, neither through the
+     * recipe lookup nor in the Smithing Table: the upgrade would otherwise carry an ineligible enchantment (which,
+     * through the terrain exclusive set, would also block Lava Walker forever).
+     */
+    public static void frostStepBlocksNetheriteUpgrade(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Holder<Enchantment> frost = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(HorseshoeEnchantments.FROST_STEP);
+        ItemStack frostOnly = iron(level, 50, false);
+        frostOnly.enchant(frost, 1);
+        ItemStack frostAndFeather = iron(level, 0, true);
+        frostAndFeather.enchant(frost, 1);
+
+        for (ItemStack base : List.of(frostOnly, frostAndFeather)) {
+            helper.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.SMITHING, smithingInput(base), level).isEmpty(),
+                "Frost Step horseshoe must not match the netherite upgrade: " + base);
+
+            Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+            SmithingMenu menu = new SmithingMenu(0, player.getInventory());
+            menu.getSlot(0).set(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
+            menu.getSlot(1).set(base.copy());
+            menu.getSlot(2).set(new ItemStack(Items.NETHERITE_INGOT));
+            menu.createResult();
+            helper.assertTrue(menu.getSlot(menu.getResultSlot()).getItem().isEmpty(),
+                "smithing menu must show no result for " + base + ", got " + menu.getSlot(menu.getResultSlot()).getItem());
+        }
+        helper.succeed();
+    }
 }
