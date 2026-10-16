@@ -118,6 +118,8 @@ public final class ModGameTests {
             () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
+        TEST_FUNCTIONS.register("saddlebag_items_are_registered_with_container",
+            () -> SaddlebagItemGameTest::saddlebagItemsAreRegisteredWithContainer);
     }
 
     private ModGameTests() {}

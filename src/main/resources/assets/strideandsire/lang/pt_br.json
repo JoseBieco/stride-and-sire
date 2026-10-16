@@ -5,5 +5,9 @@
   "item.strideandsire.netherite_horseshoe": "Ferradura de Netherite",
   "enchantment.strideandsire.feather_step": "Passos de Pena",
   "enchantment.strideandsire.frost_step": "Passos Congelantes",
-  "enchantment.strideandsire.lava_walker": "Caminhante de Lava"
+  "enchantment.strideandsire.lava_walker": "Caminhante de Lava",
+  "item.strideandsire.leather_saddlebag": "Alforje de Couro",
+  "item.strideandsire.iron_saddlebag": "Alforje de Ferro",
+  "item.strideandsire.gold_saddlebag": "Alforje de Ouro",
+  "item.strideandsire.netherite_saddlebag": "Alforje de Netherite"
 }
