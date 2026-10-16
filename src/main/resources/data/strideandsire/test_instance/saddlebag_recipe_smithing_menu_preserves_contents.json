@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_recipe_smithing_menu_preserves_contents",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 20
+}

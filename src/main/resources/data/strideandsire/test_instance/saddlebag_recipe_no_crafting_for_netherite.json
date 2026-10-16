@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:saddlebag_recipe_no_crafting_for_netherite",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 20
+}

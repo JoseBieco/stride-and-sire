@@ -168,6 +168,18 @@ public final class ModGameTests {
             () -> SaddlebagBonusEffectGameTest::emptyIronBagExplosionDeathDoesNotThrow);
         TEST_FUNCTIONS.register("saddlebag_bonus_gold_bag_piglin_neutral",
             () -> SaddlebagBonusEffectGameTest::goldBagMakesPiglinsNeutral);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_leather",
+            () -> SaddlebagRecipeGameTest::craftsLeatherSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_iron",
+            () -> SaddlebagRecipeGameTest::craftsIronSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_gold",
+            () -> SaddlebagRecipeGameTest::craftsGoldSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_no_crafting_for_netherite",
+            () -> SaddlebagRecipeGameTest::noCraftingRecipeForNetherite);
+        TEST_FUNCTIONS.register("saddlebag_recipe_netherite_smithing_preserves_contents",
+            () -> SaddlebagRecipeGameTest::netheriteSmithingPreservesContents);
+        TEST_FUNCTIONS.register("saddlebag_recipe_smithing_menu_preserves_contents",
+            () -> SaddlebagRecipeGameTest::smithingMenuPreservesContents);
     }
 
     private ModGameTests() {}
