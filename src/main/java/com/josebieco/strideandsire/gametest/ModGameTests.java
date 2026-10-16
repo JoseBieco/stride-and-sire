@@ -46,6 +46,18 @@ public final class ModGameTests {
             () -> HorseshoeMenuGameTest::keepsVanillaSlotLayout);
         TEST_FUNCTIONS.register("horseshoe_menu_quick_move_and_place_route_to_storage",
             () -> HorseshoeMenuGameTest::quickMoveAndPlaceRouteToStorage);
+        TEST_FUNCTIONS.register("horseshoe_passive_gold_speed_modifier",
+            () -> HorseshoePassiveEffectGameTest::goldSpeedModifier);
+        TEST_FUNCTIONS.register("horseshoe_passive_netherite_fire_immunity",
+            () -> HorseshoePassiveEffectGameTest::netheriteFireImmunity);
+        TEST_FUNCTIONS.register("horseshoe_passive_speed_modifier_isolation",
+            () -> HorseshoePassiveEffectGameTest::speedModifierIsolation);
+        TEST_FUNCTIONS.register("horseshoe_passive_piglin_neutral_when_riding_gold",
+            () -> HorseshoePassiveEffectGameTest::piglinNeutralWhenRidingGold);
+        TEST_FUNCTIONS.register("horseshoe_passive_piglin_target_suppressed",
+            () -> HorseshoePassiveEffectGameTest::piglinTargetSuppressed);
+        TEST_FUNCTIONS.register("horseshoe_passive_gold_speed_survives_reload",
+            () -> HorseshoePassiveEffectGameTest::goldSpeedSurvivesReload);
     }
 
     private ModGameTests() {}

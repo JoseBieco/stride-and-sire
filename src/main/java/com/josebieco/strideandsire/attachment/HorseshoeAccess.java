@@ -1,5 +1,6 @@
 package com.josebieco.strideandsire.attachment;
 
+import com.josebieco.strideandsire.event.HorseshoePassiveEffectHandler;
 import com.josebieco.strideandsire.network.HorseshoeSyncPacket;
 import com.josebieco.strideandsire.registry.ModAttachments;
 import net.minecraft.world.entity.Entity;
@@ -41,6 +42,7 @@ public final class HorseshoeAccess {
             return;
         }
         storage.setValue(HorseshoeAttachment.of(stack));
+        HorseshoePassiveEffectHandler.refreshGoldSpeedModifier(horse);
         if (!horse.level().isClientSide()) {
             HorseshoeSyncPacket.sendToTracking(horse);
         }

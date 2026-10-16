@@ -1,6 +1,7 @@
 package com.josebieco.strideandsire;
 
 import com.josebieco.strideandsire.client.StrideAndSireClient;
+import com.josebieco.strideandsire.event.HorseshoePassiveEffectHandler;
 import com.josebieco.strideandsire.gametest.ModGameTests;
 import com.josebieco.strideandsire.registry.ModAttachments;
 import com.josebieco.strideandsire.registry.ModItems;
@@ -20,6 +21,7 @@ public final class StrideAndSire {
         ModItems.register(modBusGroup);
         ModAttachments.register();
         ModMenus.register(modBusGroup);
+        HorseshoePassiveEffectHandler.register();
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             StrideAndSireClient.init(modBusGroup);
