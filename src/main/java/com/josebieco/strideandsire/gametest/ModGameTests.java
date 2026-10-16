@@ -180,6 +180,8 @@ public final class ModGameTests {
             () -> SaddlebagRecipeGameTest::netheriteSmithingPreservesContents);
         TEST_FUNCTIONS.register("saddlebag_recipe_smithing_menu_preserves_contents",
             () -> SaddlebagRecipeGameTest::smithingMenuPreservesContents);
+        TEST_FUNCTIONS.register("saddlebag_layer_material_to_render_matches_equipped_tier",
+            () -> SaddlebagLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
     }
 
     private ModGameTests() {}
