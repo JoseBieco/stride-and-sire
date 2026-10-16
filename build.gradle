@@ -33,7 +33,10 @@ minecraft {
             args '--nogui'
         }
 
-        register('gameTestServer')
+        register('gameTestServer') {
+            // Only run this mod's tests; an empty selection makes the server exit(-1) instead of silently passing.
+            args '--tests', 'strideandsire:*'
+        }
 
         register('data') {
             workingDir = layout.projectDirectory.dir('run-data')
