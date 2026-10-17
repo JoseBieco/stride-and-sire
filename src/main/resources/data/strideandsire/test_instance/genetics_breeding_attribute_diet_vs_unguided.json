@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:genetics_breeding_attribute_diet_vs_unguided",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 40
+}

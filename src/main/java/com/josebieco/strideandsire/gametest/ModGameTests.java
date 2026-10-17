@@ -198,6 +198,8 @@ public final class ModGameTests {
             () -> HorseGeneticsAttachmentGameTest::setThenGetOnHorse);
         TEST_FUNCTIONS.register("genetics_attachment_persists_across_save_and_load",
             () -> HorseGeneticsAttachmentGameTest::persistsAcrossSaveAndLoadAndChecksEligibility);
+        TEST_FUNCTIONS.register("genetics_breeding_attribute_diet_vs_unguided",
+            () -> HorseBreedingAttributeGameTest::dietGuidedProducesGradeAOrSWhileUnguidedNeverDoes);
     }
 
     private ModGameTests() {}
