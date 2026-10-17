@@ -16,18 +16,13 @@ import org.jspecify.annotations.Nullable;
  * Server-side {@link Container} view over the {@code container} component of the saddlebag currently equipped on a
  * horse (no vanilla helper binds a slot to an item's container component).
  *
- * <p>Every access first re-reads {@link SaddlebagAccess#get}: if the equipped stack is a different instance, or its
- * component object was replaced by anyone else, the working copy is reloaded from it. So the view always follows the
- * bag that is equipped <i>now</i>: once the bag is taken out, swapped or removed (by this menu, a quick-move, another
- * player's menu or any other code), the slots read empty and writes are dropped instead of reaching the removed bag,
- * whose contents travel with it inside its own (immutable) component. Writes go to the live stack via
- * {@link SaddlebagItem#setContents} followed by {@link SaddlebagAccess#set} (the write choke point). Stacks returned by
- * {@link #getItem} belong to the working copy, so vanilla's in-place edits followed by {@link #setChanged} are written
- * back like on any other container.
+ * <p>Always maintains a working copy of all {@link SaddlebagItem#DRAFT_CONTAINER_SIZE} (18) slots so items in slots
+ * 1–9 (and 10–18) are preserved intact even when the horse's {@code Draft} trait is gained or lost.
  */
 final class SaddlebagContentsContainer implements Container {
     private final AbstractHorse horse;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items =
+        NonNullList.withSize(SaddlebagItem.DRAFT_CONTAINER_SIZE, ItemStack.EMPTY);
     private ItemStack bag = ItemStack.EMPTY;
     private @Nullable ItemContainerContents loaded;
 
@@ -38,7 +33,7 @@ final class SaddlebagContentsContainer implements Container {
     /** Re-binds to the currently equipped bag if it, or its stored contents, changed since the last access. */
     private void refresh() {
         ItemStack current = SaddlebagAccess.get(horse);
-        if (SaddlebagItem.containerSize(current) == 0) {
+        if (SaddlebagItem.maxContainerSize(current) == 0) {
             current = ItemStack.EMPTY;
         }
         ItemContainerContents contents = current.get(DataComponents.CONTAINER);
@@ -47,7 +42,7 @@ final class SaddlebagContentsContainer implements Container {
         }
         bag = current;
         loaded = contents;
-        NonNullList<ItemStack> stored = SaddlebagItem.getContents(current);
+        NonNullList<ItemStack> stored = SaddlebagItem.getContents(current, SaddlebagItem.DRAFT_CONTAINER_SIZE);
         for (int i = 0; i < items.size(); i++) {
             items.set(i, i < stored.size() ? stored.get(i) : ItemStack.EMPTY);
         }

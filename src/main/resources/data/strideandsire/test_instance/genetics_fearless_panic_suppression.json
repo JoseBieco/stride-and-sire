@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "strideandsire:genetics_fearless_panic_suppression",
+  "max_ticks": 200,
+  "setup_ticks": 0,
+  "required": true,
+  "structure": "strideandsire:empty"
+}

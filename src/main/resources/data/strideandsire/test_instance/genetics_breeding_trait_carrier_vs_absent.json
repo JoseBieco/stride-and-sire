@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:genetics_breeding_trait_carrier_vs_absent",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 40
+}

@@ -1,6 +1,9 @@
 package com.josebieco.strideandsire.menu;
 
+import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
+import com.josebieco.strideandsire.genetics.LineageTrait;
+import com.josebieco.strideandsire.item.saddlebag.SaddlebagItem;
 import com.josebieco.strideandsire.registry.ModMenus;
 import java.lang.reflect.Field;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +13,7 @@ import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractMountInventoryMenu;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.HorseInventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -17,22 +21,10 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Vanilla's horse inventory plus the mod's equipment: a horseshoe slot, a saddlebag slot and the equipped saddlebag's
- * container slots.
- *
- * <p>Extends {@link HorseInventoryMenu}, so the saddle slot (index 0), body-armor slot (1), chest slots (2..) and the
- * 36 player slots are built by vanilla code and keep their vanilla indices; the player slots are only drawn
- * {@link #PLAYER_INVENTORY_Y_OFFSET} lower, to make room for the saddlebag row. Appended after them, in this order
- * (C = chest size, 0 or {@code 3 * inventoryColumns}):
- * <ul>
- *   <li>{@code 2 + C + 36}: the {@link HorseshoeSlot} ({@link #getHorseshoeSlotIndex()});</li>
- *   <li>{@code 2 + C + 37}: the {@link SaddlebagSlot} ({@link #getSaddlebagSlotIndex()});</li>
- *   <li>{@code 2 + C + 38} to {@code 2 + C + 46}: the 9 {@link SaddlebagContentSlot}s
- *       ({@link #getSaddlebagContentStart()}), bound to the equipped bag's container and active only while a bag is
- *       equipped.</li>
- * </ul>
- * The native chest (Donkey/Mule) and the saddlebag container are separate containers; {@link #quickMoveStack} only
- * moves items between either of them and the player inventory, never between the two. Only used for horses that
- * {@link HorseshoeAccess#isEligible} accepts; Llamas and Camels keep the vanilla menu.
+ * container slots. All {@link #DRAFT_SADDLEBAG_CONTENT_SLOTS} (18) bag sub-slots are always present (stable indices,
+ * identical slot lists on server and client); slots 10-18 are only active while the horse's {@link LineageTrait#DRAFT}
+ * is {@code MANIFEST}. The server checks that live on every access (Review Focus item 5); the client learns it through a
+ * menu {@link DataSlot}, never from tracking-synced genetics.
  */
 public class StrideAndSireHorseMenu extends HorseInventoryMenu {
     /** Slot positions (item origins) in the screen: the left equipment column, below the body-armor slot. */
@@ -40,12 +32,17 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
     public static final int HORSESHOE_SLOT_Y = 54;
     public static final int SADDLEBAG_SLOT_X = 8;
     public static final int SADDLEBAG_SLOT_Y = 72;
-    /** The saddlebag's container: one row of 9 between the horse area and the player inventory. */
+    /** Base saddlebag container slots (one row of 9) for horses without the Draft trait. */
     public static final int SADDLEBAG_CONTENT_SLOTS = 9;
+    /** Expanded saddlebag container slots (two rows of 9 = 18) for horses with the Draft trait manifest. */
+    public static final int DRAFT_SADDLEBAG_CONTENT_SLOTS = SaddlebagItem.DRAFT_CONTAINER_SIZE;
     public static final int SADDLEBAG_CONTENT_X = 8;
     public static final int SADDLEBAG_CONTENT_Y = 94;
-    /** How much lower than vanilla (y 84 / 142) the player inventory and hotbar are drawn. */
-    public static final int PLAYER_INVENTORY_Y_OFFSET = 44;
+    /**
+     * How much lower than vanilla (y 84 / 142) the player inventory and hotbar are drawn: room for both bag rows
+     * (y 94 and 112, frames down to y 130) plus the inventory label, for every horse so the layout never shifts.
+     */
+    public static final int PLAYER_INVENTORY_Y_OFFSET = 62;
     private static final int PLAYER_INVENTORY_SLOTS = 36;
 
     private static final Field HORSE_INVENTORY_FIELD = horseInventoryField();
@@ -57,17 +54,14 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
     private final SaddlebagSlot saddlebagSlot;
     private final int saddlebagSlotIndex;
     private final int saddlebagContentStart;
+    /** Server: the horse's live Draft state; client: the value the server sent through this data slot. */
+    private final DataSlot draftManifest;
 
     /** Server-side constructor: uses the horse's real inventory, exactly like {@code AbstractHorse.openCustomInventoryScreen}. */
     public StrideAndSireHorseMenu(int containerId, Inventory playerInventory, AbstractHorse horse) {
         this(containerId, playerInventory, horseInventory(horse), horse, horse.getInventoryColumns());
     }
 
-    /**
-     * On the server the saddlebag container slots view the equipped bag's container component
-     * ({@link SaddlebagContentsContainer}); on the client they are a plain 9-slot container filled by the menu's normal
-     * slot sync, so the client never needs a copy of the bag's contents from the horse tracking sync.
-     */
     public StrideAndSireHorseMenu(int containerId, Inventory playerInventory, Container horseInventory, AbstractHorse horse, int inventoryColumns) {
         if (!HorseshoeAccess.isEligible(horse)) {
             throw new IllegalArgumentException("No horseshoe slot for " + horse.getType());
@@ -79,13 +73,39 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
         this.horseshoeSlotIndex = this.horseshoeSlot.index;
         this.saddlebagSlot = (SaddlebagSlot) this.addSlot(new SaddlebagSlot(horse, SADDLEBAG_SLOT_X, SADDLEBAG_SLOT_Y));
         this.saddlebagSlotIndex = this.saddlebagSlot.index;
-        Container bagContents = horse.level().isClientSide()
-            ? new SimpleContainer(SADDLEBAG_CONTENT_SLOTS)
+        boolean clientSide = horse.level().isClientSide();
+        this.draftManifest = this.addDataSlot(clientSide ? DataSlot.standalone() : new DataSlot() {
+            @Override
+            public int get() {
+                return HorseGeneticsAccess.hasManifest(horse, LineageTrait.DRAFT) ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                // server side: always the live trait state
+            }
+        });
+        Container bagContents = clientSide
+            ? new SimpleContainer(DRAFT_SADDLEBAG_CONTENT_SLOTS)
             : new SaddlebagContentsContainer(horse);
         this.saddlebagContentStart = this.slots.size();
-        for (int i = 0; i < SADDLEBAG_CONTENT_SLOTS; i++) {
-            this.addSlot(new SaddlebagContentSlot(bagContents, i, horse, SADDLEBAG_CONTENT_X + i * 18, SADDLEBAG_CONTENT_Y));
+        for (int i = 0; i < DRAFT_SADDLEBAG_CONTENT_SLOTS; i++) {
+            int col = i % SADDLEBAG_CONTENT_SLOTS;
+            int row = i / SADDLEBAG_CONTENT_SLOTS;
+            this.addSlot(new SaddlebagContentSlot(
+                bagContents,
+                i,
+                horse,
+                this::isDraftManifest,
+                SADDLEBAG_CONTENT_X + col * 18,
+                SADDLEBAG_CONTENT_Y + row * 18
+            ));
         }
+    }
+
+    /** Whether the Draft bag slots (10-18) are unlocked: live on the server, synced value on the client. */
+    public boolean isDraftManifest() {
+        return this.draftManifest.get() != 0;
     }
 
     /** Vanilla's player inventory and hotbar, moved down by {@link #PLAYER_INVENTORY_Y_OFFSET} (same slots, same order). */
@@ -159,13 +179,29 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
         return saddlebagSlotIndex;
     }
 
-    /** Menu index of the first of the {@link #SADDLEBAG_CONTENT_SLOTS} saddlebag container slots. */
+    /** Menu index of the first saddlebag container slot. */
     public int getSaddlebagContentStart() {
         return saddlebagContentStart;
     }
 
+    /** Number of saddlebag container slots in every menu instance (always 18; see {@link #getActiveSaddlebagSlotCount}). */
+    public int getSaddlebagContentSlotCount() {
+        return DRAFT_SADDLEBAG_CONTENT_SLOTS;
+    }
+
+    /** Number of currently active (addressable) saddlebag container slots in this menu (0, 9, or 18); always a prefix. */
+    public int getActiveSaddlebagSlotCount() {
+        int active = 0;
+        for (int i = 0; i < DRAFT_SADDLEBAG_CONTENT_SLOTS; i++) {
+            if (this.getSlot(saddlebagContentStart + i).isActive()) {
+                active++;
+            }
+        }
+        return active;
+    }
+
     public boolean isSaddlebagContentSlot(int slotIndex) {
-        return slotIndex >= saddlebagContentStart && slotIndex < saddlebagContentStart + SADDLEBAG_CONTENT_SLOTS;
+        return slotIndex >= saddlebagContentStart && slotIndex < saddlebagContentStart + DRAFT_SADDLEBAG_CONTENT_SLOTS;
     }
 
     /** True while a saddlebag is equipped, i.e. its container slots are usable. */
@@ -173,19 +209,6 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
         return this.getSlot(saddlebagContentStart).isActive();
     }
 
-    /**
-     * Vanilla {@code AbstractMountInventoryMenu.quickMoveStack}, with the player range bounded to the 36 player slots
-     * (vanilla uses {@code slots.size()}, which would now include the appended slots), plus:
-     * <ul>
-     *   <li>from the horseshoe slot, the saddlebag slot or a saddlebag container slot: into the player inventory only
-     *       (like vanilla's saddle/armor/chest slots);</li>
-     *   <li>from the player inventory, after vanilla's armor and saddle checks: a horseshoe to the empty horseshoe slot,
-     *       a saddlebag to the empty saddlebag slot (saddled horse only), then other items to the native chest if
-     *       there is one and it takes anything, else to the equipped saddlebag's container, else vanilla's
-     *       main-inventory/hotbar swap.</li>
-     * </ul>
-     * So chest items and saddlebag items only ever move to or from the player inventory, never between each other.
-     */
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         ItemStack clicked = ItemStack.EMPTY;
@@ -244,7 +267,8 @@ public class StrideAndSireHorseMenu extends HorseInventoryMenu {
         if (this.mountContainer.getContainerSize() > 0 && this.moveItemStackTo(stack, 2, chestEnd, false)) {
             return true;
         }
-        return this.hasSaddlebagContents() && SaddlebagContentSlot.canStore(stack)
-            && this.moveItemStackTo(stack, this.saddlebagContentStart, this.saddlebagContentStart + SADDLEBAG_CONTENT_SLOTS, false);
+        int activeSlots = this.getActiveSaddlebagSlotCount();
+        return activeSlots > 0 && SaddlebagContentSlot.canStore(stack)
+            && this.moveItemStackTo(stack, this.saddlebagContentStart, this.saddlebagContentStart + activeSlots, false);
     }
 }

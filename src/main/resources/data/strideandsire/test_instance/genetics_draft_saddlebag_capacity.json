@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "strideandsire:genetics_draft_saddlebag_capacity",
+  "max_ticks": 100,
+  "setup_ticks": 0,
+  "required": true,
+  "structure": "strideandsire:empty"
+}

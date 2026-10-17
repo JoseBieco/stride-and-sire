@@ -71,8 +71,9 @@ public final class HorseshoeMenuGameTest {
             StrideAndSireHorseMenu menu = new StrideAndSireHorseMenu(1, player.getInventory(), animal);
             HorseInventoryMenu vanilla = new HorseInventoryMenu(
                 2, player.getInventory(), StrideAndSireHorseMenu.horseInventory(animal), animal, animal.getInventoryColumns());
-            // + horseshoe slot, saddlebag slot and the saddlebag's 9 container slots (Fase B)
-            helper.assertValueEqual(menu.slots.size(), vanilla.slots.size() + 2 + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS,
+            // + horseshoe slot, saddlebag slot and all 18 saddlebag container slots (Fase B row + Fase C Draft row,
+            // always present so server and client slot lists match)
+            helper.assertValueEqual(menu.slots.size(), vanilla.slots.size() + 2 + StrideAndSireHorseMenu.DRAFT_SADDLEBAG_CONTENT_SLOTS,
                 animal.getType() + " slot count");
             for (int i = 0; i < vanilla.slots.size(); i++) {
                 Slot ours = menu.getSlot(i);

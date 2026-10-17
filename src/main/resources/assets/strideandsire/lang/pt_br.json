@@ -13,5 +13,17 @@
   "item.strideandsire.saddlebag.bonus.leather": "Sem bônus especial",
   "item.strideandsire.saddlebag.bonus.iron": "O conteúdo sobrevive a explosões",
   "item.strideandsire.saddlebag.bonus.gold": "O conteúdo sobrevive a explosões; Piglins ficam neutros durante a montaria",
-  "item.strideandsire.saddlebag.bonus.netherite": "O conteúdo sobrevive a explosões e ao fogo"
+  "item.strideandsire.saddlebag.bonus.netherite": "O conteúdo sobrevive a explosões e ao fogo",
+  "gui.strideandsire.spyglass.title": "Lente do Criador: %s",
+  "gui.strideandsire.spyglass.section.attributes": "Notas de Atributos",
+  "gui.strideandsire.spyglass.attr.speed": "Velocidade",
+  "gui.strideandsire.spyglass.attr.jump": "Impulsão",
+  "gui.strideandsire.spyglass.attr.health": "Vitalidade",
+  "gui.strideandsire.spyglass.section.traits": "Traços de Linhagem",
+  "trait.strideandsire.draft": "Dorso Largo",
+  "trait.strideandsire.sure_footed": "Casco Firme",
+  "trait.strideandsire.fearless": "Sangue Frio",
+  "gui.strideandsire.spyglass.state.manifest": "Manifestado",
+  "gui.strideandsire.spyglass.state.latent": "Latente (Portador)",
+  "gui.strideandsire.spyglass.state.absent": "Ausente"
 }

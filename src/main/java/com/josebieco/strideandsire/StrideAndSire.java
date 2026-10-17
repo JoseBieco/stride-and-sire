@@ -28,6 +28,11 @@ public final class StrideAndSire {
         com.josebieco.strideandsire.event.SaddlebagSaddleDependencyHandler.register();
         HorseshoeEnchantmentEffectHandler.register();
         HorseshoeDurabilityHandler.register();
+        com.josebieco.strideandsire.event.HorseBreedingFoodHandler.register();
+        com.josebieco.strideandsire.event.HorseBreedingGeneticsHandler.register();
+        com.josebieco.strideandsire.event.BreederSpyglassInteractionHandler.register();
+        com.josebieco.strideandsire.event.SureFootedStepHandler.register();
+        com.josebieco.strideandsire.event.FearlessPanicSuppressionHandler.register();
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             StrideAndSireClient.init(modBusGroup);

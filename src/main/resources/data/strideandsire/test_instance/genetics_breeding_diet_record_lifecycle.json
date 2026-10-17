@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:genetics_breeding_diet_record_lifecycle",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 40
+}

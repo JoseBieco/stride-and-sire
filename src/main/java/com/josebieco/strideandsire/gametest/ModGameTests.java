@@ -190,6 +190,32 @@ public final class ModGameTests {
             () -> SaddlebagFinalFixGameTest::destroyedBagSpillsContents);
         TEST_FUNCTIONS.register("saddlebag_fix_join_with_bag_no_saddle_drops_next_tick",
             () -> SaddlebagFinalFixGameTest::joinWithBagButNoSaddleDropsNextTick);
+        TEST_FUNCTIONS.register("genetics_attribute_range_holds_ceiling_values",
+            () -> AttributeRangeExpansionGameTest::horsesHoldCeilingValuesGradeSAndPersist);
+        TEST_FUNCTIONS.register("genetics_attribute_range_wild_spawn_never_exceeds_vanilla_max",
+            () -> AttributeRangeExpansionGameTest::wildSpawnNeverExceedsVanillaMax);
+        TEST_FUNCTIONS.register("genetics_attachment_set_then_get_on_horse",
+            () -> HorseGeneticsAttachmentGameTest::setThenGetOnHorse);
+        TEST_FUNCTIONS.register("genetics_attachment_persists_across_save_and_load",
+            () -> HorseGeneticsAttachmentGameTest::persistsAcrossSaveAndLoadAndChecksEligibility);
+        TEST_FUNCTIONS.register("genetics_breeding_attribute_diet_vs_unguided",
+            () -> HorseBreedingAttributeGameTest::dietGuidedProducesGradeAOrSWhileUnguidedNeverDoes);
+        TEST_FUNCTIONS.register("genetics_breeding_trait_carrier_vs_absent",
+            () -> HorseBreedingTraitGameTest::carrierParentPassesTraitMoreOftenThanAbsentParents);
+        TEST_FUNCTIONS.register("genetics_breeding_food_glistering_melon_triggers_love",
+            () -> HorseBreedingFoodGameTest::glisteringMelonTriggersLoveMode);
+        TEST_FUNCTIONS.register("genetics_spyglass_report_and_interaction",
+            () -> BreederSpyglassGameTest::buildReportAndInteraction);
+        TEST_FUNCTIONS.register("genetics_sure_footed_step_manifest_vs_latent",
+            () -> SureFootedStepGameTest::manifestClimbsOnePointFiveBlockLedgeWhileLatentDoesNot);
+        TEST_FUNCTIONS.register("genetics_fearless_panic_suppression",
+            () -> FearlessPanicSuppressionGameTest::fearlessSuppressesRearingWhileLatentKeepsVanillaRearing);
+        TEST_FUNCTIONS.register("genetics_draft_saddlebag_capacity",
+            () -> DraftSaddlebagCapacityGameTest::draftTraitUnlocksEighteenSlotsAndPreservesItems);
+        TEST_FUNCTIONS.register("genetics_review_focus_edge_cases",
+            () -> GeneticsReviewFocusGameTest::dualCarrierInheritanceFearlessDamageAndDraftLiveRecompute);
+        TEST_FUNCTIONS.register("genetics_breeding_diet_record_lifecycle",
+            () -> HorseBreedingDietRecordGameTest::dietRecordUnionEnchantedAppleStaleAndPersistence);
     }
 
     private ModGameTests() {}
