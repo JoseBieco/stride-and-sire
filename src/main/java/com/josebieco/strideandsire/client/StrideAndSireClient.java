@@ -36,18 +36,32 @@ public final class StrideAndSireClient {
     private static final List<EntityType<? extends AbstractHorse>> EQUIPMENT_LAYER_TYPES = List.of(
         EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE);
 
+    /** Renderers that get the recessive coat override layer: strictly vanilla Horse. */
+    private static final List<EntityType<? extends AbstractHorse>> COAT_LAYER_TYPES = List.of(EntityTypes.HORSE);
+
     private static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SaddlebagModel.LAYER, SaddlebagModel::createBodyLayer);
     }
 
-    /** Attaches the hoof and saddlebag layers to every eligible renderer. Fires on each resource reload. */
+    /** Attaches the coat override, hoof, and saddlebag layers to every eligible renderer. Fires on each resource reload. */
     private static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        for (EntityType<? extends AbstractHorse> type : COAT_LAYER_TYPES) {
+            Object renderer = event.getEntityRenderer(type);
+            if (renderer instanceof AbstractHorseRenderer<?, ?, ?> horseRenderer) {
+                addCoatLayer(horseRenderer);
+            }
+        }
         for (EntityType<? extends AbstractHorse> type : EQUIPMENT_LAYER_TYPES) {
             Object renderer = event.getEntityRenderer(type);
             if (renderer instanceof AbstractHorseRenderer<?, ?, ?> horseRenderer) {
                 addEquipmentLayers(horseRenderer, event.getEntityModels());
             }
         }
+    }
+
+    private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addCoatLayer(
+            AbstractHorseRenderer<?, S, M> renderer) {
+        renderer.addLayer(new HorseCoatOverrideLayer<>(renderer));
     }
 
     private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addEquipmentLayers(
