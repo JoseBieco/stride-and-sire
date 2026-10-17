@@ -28,6 +28,7 @@ public final class StrideAndSire {
         com.josebieco.strideandsire.event.SaddlebagSaddleDependencyHandler.register();
         HorseshoeEnchantmentEffectHandler.register();
         HorseshoeDurabilityHandler.register();
+        com.josebieco.strideandsire.event.AttributeRangeExpansionHandler.register();
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             StrideAndSireClient.init(modBusGroup);

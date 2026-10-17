@@ -190,6 +190,10 @@ public final class ModGameTests {
             () -> SaddlebagFinalFixGameTest::destroyedBagSpillsContents);
         TEST_FUNCTIONS.register("saddlebag_fix_join_with_bag_no_saddle_drops_next_tick",
             () -> SaddlebagFinalFixGameTest::joinWithBagButNoSaddleDropsNextTick);
+        TEST_FUNCTIONS.register("genetics_attribute_range_movement_speed_accepts_fifteen_percent_above_vanilla_max",
+            () -> AttributeRangeExpansionGameTest::movementSpeedAcceptsFifteenPercentAboveVanillaMax);
+        TEST_FUNCTIONS.register("genetics_attribute_range_wild_spawn_never_exceeds_vanilla_max",
+            () -> AttributeRangeExpansionGameTest::wildSpawnNeverExceedsVanillaMax);
     }
 
     private ModGameTests() {}
