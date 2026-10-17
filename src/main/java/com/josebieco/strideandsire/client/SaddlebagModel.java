@@ -37,7 +37,7 @@ import net.minecraft.resources.Identifier;
  * On a chested Donkey/Mule ({@link DonkeyRenderState#hasChest}, rule {@link SaddlebagRendering#placementFor}) that
  * volume would sit inside the chest box, so {@link #setupAnim} swaps to an identical pair dropped by 6.3 px: bag
  * y 0.3..5.3, flap y 0.05..3.05, entirely below the chest's bottom face (y 0) and never intersecting it. The bags then
- * hang under the chests against the belly/upper hind legs (hind legs sit at x within ±5, y from 3, z 1..5), with the
+ * hang under the chests against the belly/upper hind legs (hind legs sit at x within ±5, y from 2, z 1..5), with the
  * whole outer face, flap and buckle visible. No bag face is coplanar with a body, saddle or chest face.
  * The right bag uses {@code mirror()} so both outer faces sample the same texture region.
  *

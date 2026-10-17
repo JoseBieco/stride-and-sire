@@ -49,6 +49,8 @@ Arte coberta pelo script:
   equipado e visível. O seam comum `SaddlebagRendering.materialToRender` continua
   sendo a fonte de verdade; só a forma de desenhar muda.
 - Burro/Mula com baú nativo: as bolsas ficam atrás dos baús, sem sobrepor.
+  Implementado: as bolsas pendem *sob* os baús (colocá-las "atrás" não é
+  geometricamente possível: baú z −4..4, corpo termina em z 5).
 - A mancha plana atual (overlay de textura da Fase B) é removida.
 
 ## 5. Ícones de Slot Vazio

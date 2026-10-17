@@ -66,7 +66,7 @@ public final class HorseshoePassiveEffectGameTest {
         HorseshoeAccess.set(horse, ItemStack.EMPTY);
         helper.assertTrue(!hasGoldSpeed(horse), "unequipping gold must remove the modifier");
 
-        for (Item other : new Item[] {ModItems.COPPER_HORSESHOE.get(), ModItems.IRON_HORSESHOE.get(), ModItems.NETHERITE_HORSESHOE.get()}) {
+        for (Item other : new Item[] {ModItems.COPPER_HORSESHOE.get(), ModItems.IRON_HORSESHOE.get(), ModItems.DIAMOND_HORSESHOE.get(), ModItems.NETHERITE_HORSESHOE.get()}) {
             HorseshoeAccess.set(horse, shoe(ModItems.GOLD_HORSESHOE.get()));
             HorseshoeAccess.set(horse, shoe(other));
             helper.assertTrue(!hasGoldSpeed(horse), "switching gold -> " + other + " must remove the modifier");
