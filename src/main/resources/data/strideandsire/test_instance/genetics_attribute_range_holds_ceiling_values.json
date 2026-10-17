@@ -1,6 +1,6 @@
 {
   "type": "minecraft:function",
-  "function": "strideandsire:genetics_attribute_range_movement_speed_accepts_fifteen_percent_above_vanilla_max",
+  "function": "strideandsire:genetics_attribute_range_holds_ceiling_values",
   "environment": "minecraft:default",
   "structure": "strideandsire:empty",
   "max_ticks": 20

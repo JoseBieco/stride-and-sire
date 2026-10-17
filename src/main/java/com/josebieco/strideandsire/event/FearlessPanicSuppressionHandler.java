@@ -3,33 +3,43 @@ package com.josebieco.strideandsire.event;
 import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.genetics.LineageTrait;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.zombie.Zombie;
-import net.minecraft.world.level.levelgen.PositionalRandomFactory;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Handles sudden panic-inducing damage (zombie attack or nearby creeper/explosion) on mounted eligible horses:
- * <ul>
- *   <li>When {@link LineageTrait#FEARLESS} is {@code MANIFEST}, suppresses rearing ({@code standIfPossible}) and rider
- *       dismount while still applying the full damage to the horse's health (Review Focus item 4).</li>
- *   <li>When {@link LineageTrait#FEARLESS} is {@code LATENT} or {@code ABSENT}, triggers the panic reaction (rearing
- *       and dismounting the rider).</li>
- * </ul>
+ * Sangue Frio (Fearless). Vanilla 26.3 {@code AbstractHorse.hurtServer} makes a hurt horse rear
+ * ({@code standIfPossible()}) one time in three, right after the damage is applied; it never ejects the rider. A horse
+ * with {@link LineageTrait#FEARLESS} {@code MANIFEST} does not rear from sudden zombie / creeper / explosion damage:
+ * the damage event marks the horse, and its standing state is cleared at the next level-tick boundary — before the
+ * entity data is ever broadcast, so clients never see it rear. The damage itself is untouched (Review Focus item 4).
+ * Horses without the manifest trait (ABSENT or LATENT) keep vanilla behaviour exactly; nothing is done to them.
  */
 public final class FearlessPanicSuppressionHandler {
-    private static final Field ENTITY_RANDOM_FIELD = entityRandomField();
+    /** Fearless horses hurt by a panic source since the last level-tick boundary (server thread only). */
+    private static List<AbstractHorse> pendingClear = new ArrayList<>();
 
     private FearlessPanicSuppressionHandler() {}
 
     public static void register() {
         LivingDamageEvent.BUS.addListener(FearlessPanicSuppressionHandler::onLivingDamage);
+        TickEvent.LevelTickEvent.Pre.BUS.addListener(event -> {
+            if (event.side() == LogicalSide.SERVER) {
+                clearPendingRears();
+            }
+        });
+        TickEvent.LevelTickEvent.Post.BUS.addListener(event -> {
+            if (event.side() == LogicalSide.SERVER) {
+                clearPendingRears();
+            }
+        });
     }
 
     /** True if {@code source} is a zombie hit, a creeper attack/explosion, or any explosion damage. */
@@ -45,121 +55,26 @@ public final class FearlessPanicSuppressionHandler {
     }
 
     private static void onLivingDamage(LivingDamageEvent event) {
-        if (!(event.getEntity() instanceof AbstractHorse horse)
-                || horse.level().isClientSide()
-                || !HorseshoeAccess.isEligible(horse)
-                || !isPanicSource(event.getSource())) {
+        if (event.getEntity() instanceof AbstractHorse horse
+                && !horse.level().isClientSide()
+                && HorseshoeAccess.isEligible(horse)
+                && isPanicSource(event.getSource())
+                && HorseGeneticsAccess.hasManifest(horse, LineageTrait.FEARLESS)) {
+            pendingClear.add(horse);
+        }
+    }
+
+    /** Undoes the rear vanilla may have rolled after the damage of a marked Fearless horse. */
+    public static void clearPendingRears() {
+        if (pendingClear.isEmpty()) {
             return;
         }
-        if (HorseGeneticsAccess.hasManifest(horse, LineageTrait.FEARLESS)) {
-            horse.clearStanding();
-            suppressNextRearRoll(horse);
-        } else if (horse.isVehicle()) {
-            horse.standIfPossible();
-            horse.ejectPassengers();
-        }
-    }
-
-    /**
-     * {@code AbstractHorse.hurtServer} calls {@code this.random.nextInt(3) == 0} immediately after
-     * {@code super.hurtServer} (which fires {@link LivingDamageEvent}). Wrapping {@code Entity.random} for that single
-     * {@code nextInt(3)} call guarantees it returns {@code 1} so {@code standIfPossible()} is never invoked on a
-     * Fearless horse.
-     */
-    private static void suppressNextRearRoll(AbstractHorse horse) {
-        try {
-            RandomSource current = (RandomSource) ENTITY_RANDOM_FIELD.get(horse);
-            if (current instanceof SuppressNextRearRandom) {
-                return;
+        List<AbstractHorse> horses = pendingClear;
+        pendingClear = new ArrayList<>();
+        for (AbstractHorse horse : horses) {
+            if (!horse.isRemoved() && horse.isStanding()) {
+                horse.clearStanding();
             }
-            ENTITY_RANDOM_FIELD.set(horse, new SuppressNextRearRandom(horse, current));
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access Entity.random", e);
-        }
-    }
-
-    private static Field entityRandomField() {
-        try {
-            Field field = Entity.class.getDeclaredField("random");
-            field.setAccessible(true);
-            return field;
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Cannot access Entity.random", e);
-        }
-    }
-
-    private static final class SuppressNextRearRandom implements RandomSource {
-        private final AbstractHorse horse;
-        private final RandomSource delegate;
-        private boolean suppressed;
-
-        private SuppressNextRearRandom(AbstractHorse horse, RandomSource delegate) {
-            this.horse = horse;
-            this.delegate = delegate;
-        }
-
-        private void restore() {
-            try {
-                if (ENTITY_RANDOM_FIELD.get(horse) == this) {
-                    ENTITY_RANDOM_FIELD.set(horse, delegate);
-                }
-            } catch (IllegalAccessException ignored) {
-            }
-        }
-
-        @Override
-        public int nextInt(int bound) {
-            if (!suppressed && bound == 3) {
-                suppressed = true;
-                restore();
-                return 1;
-            }
-            return delegate.nextInt(bound);
-        }
-
-        @Override
-        public RandomSource fork() {
-            return delegate.fork();
-        }
-
-        @Override
-        public PositionalRandomFactory forkPositional() {
-            return delegate.forkPositional();
-        }
-
-        @Override
-        public void setSeed(long seed) {
-            delegate.setSeed(seed);
-        }
-
-        @Override
-        public int nextInt() {
-            return delegate.nextInt();
-        }
-
-        @Override
-        public long nextLong() {
-            return delegate.nextLong();
-        }
-
-        @Override
-        public boolean nextBoolean() {
-            return delegate.nextBoolean();
-        }
-
-        @Override
-        public float nextFloat() {
-            return delegate.nextFloat();
-        }
-
-        @Override
-        public double nextDouble() {
-            return delegate.nextDouble();
-        }
-
-        @Override
-        public double nextGaussian() {
-            return delegate.nextGaussian();
         }
     }
 }

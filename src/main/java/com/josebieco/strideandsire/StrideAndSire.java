@@ -28,7 +28,6 @@ public final class StrideAndSire {
         com.josebieco.strideandsire.event.SaddlebagSaddleDependencyHandler.register();
         HorseshoeEnchantmentEffectHandler.register();
         HorseshoeDurabilityHandler.register();
-        com.josebieco.strideandsire.event.AttributeRangeExpansionHandler.register();
         com.josebieco.strideandsire.event.HorseBreedingFoodHandler.register();
         com.josebieco.strideandsire.event.HorseBreedingGeneticsHandler.register();
         com.josebieco.strideandsire.event.BreederSpyglassInteractionHandler.register();

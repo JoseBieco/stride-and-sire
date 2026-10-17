@@ -2,8 +2,7 @@ package com.josebieco.strideandsire.genetics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import java.util.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 class TraitInheritanceTest {
@@ -65,12 +64,7 @@ class TraitInheritanceTest {
             TraitInheritance.rollChildState(TraitState.MANIFEST, TraitState.MANIFEST, fixedDouble(0.50)));
     }
 
-    private static RandomSource fixedDouble(double value) {
-        return new LegacyRandomSource(0L) {
-            @Override
-            public double nextDouble() {
-                return value;
-            }
-        };
+    private static RandomGenerator fixedDouble(double value) {
+        return AttributeInheritanceTest.fixed(value);
     }
 }

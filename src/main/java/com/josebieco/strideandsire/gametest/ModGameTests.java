@@ -190,8 +190,8 @@ public final class ModGameTests {
             () -> SaddlebagFinalFixGameTest::destroyedBagSpillsContents);
         TEST_FUNCTIONS.register("saddlebag_fix_join_with_bag_no_saddle_drops_next_tick",
             () -> SaddlebagFinalFixGameTest::joinWithBagButNoSaddleDropsNextTick);
-        TEST_FUNCTIONS.register("genetics_attribute_range_movement_speed_accepts_fifteen_percent_above_vanilla_max",
-            () -> AttributeRangeExpansionGameTest::movementSpeedAcceptsFifteenPercentAboveVanillaMax);
+        TEST_FUNCTIONS.register("genetics_attribute_range_holds_ceiling_values",
+            () -> AttributeRangeExpansionGameTest::horsesHoldCeilingValuesGradeSAndPersist);
         TEST_FUNCTIONS.register("genetics_attribute_range_wild_spawn_never_exceeds_vanilla_max",
             () -> AttributeRangeExpansionGameTest::wildSpawnNeverExceedsVanillaMax);
         TEST_FUNCTIONS.register("genetics_attachment_set_then_get_on_horse",
@@ -209,11 +209,13 @@ public final class ModGameTests {
         TEST_FUNCTIONS.register("genetics_sure_footed_step_manifest_vs_latent",
             () -> SureFootedStepGameTest::manifestClimbsOnePointFiveBlockLedgeWhileLatentDoesNot);
         TEST_FUNCTIONS.register("genetics_fearless_panic_suppression",
-            () -> FearlessPanicSuppressionGameTest::fearlessKeepsRiderAndTakesDamageWhileNonFearlessDismounts);
+            () -> FearlessPanicSuppressionGameTest::fearlessSuppressesRearingWhileLatentKeepsVanillaRearing);
         TEST_FUNCTIONS.register("genetics_draft_saddlebag_capacity",
             () -> DraftSaddlebagCapacityGameTest::draftTraitUnlocksEighteenSlotsAndPreservesItems);
         TEST_FUNCTIONS.register("genetics_review_focus_edge_cases",
             () -> GeneticsReviewFocusGameTest::dualCarrierInheritanceFearlessDamageAndDraftLiveRecompute);
+        TEST_FUNCTIONS.register("genetics_breeding_diet_record_lifecycle",
+            () -> HorseBreedingDietRecordGameTest::dietRecordUnionEnchantedAppleStaleAndPersistence);
     }
 
     private ModGameTests() {}

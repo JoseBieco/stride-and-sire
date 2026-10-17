@@ -25,7 +25,7 @@ public final class BreederSpyglassScreen {
     private BreederSpyglassScreen() {}
 
     /**
-     * Snapshot of a horse's qualitative attribute grades (D–S, never raw numbers) and lineage trait states
+     * Snapshot of a horse's qualitative attribute grades (E–S, never raw numbers) and lineage trait states
      * ({@link TraitState#ABSENT}, {@link TraitState#LATENT}, {@link TraitState#MANIFEST}).
      */
     public record SpyglassReport(

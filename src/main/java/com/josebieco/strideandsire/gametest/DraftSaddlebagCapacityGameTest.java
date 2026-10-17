@@ -4,6 +4,7 @@ import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.SaddlebagAccess;
 import com.josebieco.strideandsire.genetics.LineageTrait;
 import com.josebieco.strideandsire.genetics.TraitState;
+import com.josebieco.strideandsire.item.saddlebag.SaddlebagItem;
 import com.josebieco.strideandsire.menu.StrideAndSireHorseMenu;
 import com.josebieco.strideandsire.registry.ModItems;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,6 +29,9 @@ public final class DraftSaddlebagCapacityGameTest {
      * (a) a saddlebag on a horse without Draft exposes exactly 9 addressable container slots in the menu;
      * (b) the same saddlebag, once the horse's Draft trait becomes MANIFEST, exposes all 18 on the next menu open;
      * (c) items already placed in slots 1–9 survive the trait being gained or lost.
+     * Controller ruling (I3/I5): every menu always has all 18 bag sub-slots (constant slot count and indices, so server
+     * and client never disagree); slots 10–18 are gated live through {@code isActive}/{@code mayPlace}/{@code mayPickup};
+     * items hidden in them are preserved and reappear; the second row never overlaps the player inventory or its label.
      */
     public static void draftTraitUnlocksEighteenSlotsAndPreservesItems(GameTestHelper helper) {
         helper.makeFloor();
@@ -100,6 +105,41 @@ public final class DraftSaddlebagCapacityGameTest {
                 "slot " + i + " should preserve its diamonds after losing Draft, got " + stack
             );
         }
+
+        // Constant slot list: every menu, Draft or not, has the same slots and all 18 bag sub-slots.
+        int slotCount = menuWithoutDraft.slots.size();
+        for (StrideAndSireHorseMenu menu : new StrideAndSireHorseMenu[] {menuLatentDraft, menuWithDraft, menuAfterLosingDraft}) {
+            helper.assertValueEqual(menu.slots.size(), slotCount, "menu slot count must not depend on the Draft trait");
+            helper.assertValueEqual(menu.getSaddlebagContentSlotCount(), 18, "bag sub-slots are always appended");
+            helper.assertValueEqual(menu.getSaddlebagContentStart(), startWithoutDraft, "bag sub-slot indices are stable");
+        }
+
+        // Live gating on an already-open menu: the 18th slot locks while Draft is absent, keeps its item, and unlocks again.
+        Slot eighteenth = menuWithDraft.getSlot(startWithDraft + 17);
+        helper.assertTrue(!menuWithDraft.isDraftManifest(), "data slot must report the live (absent) Draft state");
+        helper.assertTrue(!eighteenth.isActive() && !eighteenth.mayPlace(new ItemStack(Items.EMERALD))
+                && !eighteenth.mayPickup(player),
+            "18th slot must be inactive, reject placement and pickup while Draft is not MANIFEST");
+        ItemStack hidden = SaddlebagItem.getContents(SaddlebagAccess.get(horse), SaddlebagItem.DRAFT_CONTAINER_SIZE).get(17);
+        helper.assertTrue(hidden.is(Items.EMERALD) && hidden.getCount() == 5,
+            "item in the hidden 18th slot must be preserved in the bag, got " + hidden);
+        HorseGeneticsAccess.set(horse, LineageTrait.DRAFT, TraitState.MANIFEST);
+        helper.assertTrue(menuWithDraft.isDraftManifest() && eighteenth.isActive() && eighteenth.mayPickup(player),
+            "18th slot must unlock again when Draft is regained");
+        helper.assertTrue(eighteenth.getItem().is(Items.EMERALD) && eighteenth.getItem().getCount() == 5,
+            "hidden item must reappear in the 18th slot, got " + eighteenth.getItem());
+
+        // Layout: the second bag row (frames 1px around each 16px item) ends above the "Inventory" label (y = first
+        // player slot - 12) and the player inventory.
+        int playerTop = Integer.MAX_VALUE;
+        for (Slot slot : menuWithDraft.slots) {
+            if (slot.container instanceof Inventory) {
+                playerTop = Math.min(playerTop, slot.y);
+            }
+        }
+        int secondRowFrameBottom = eighteenth.y + 17;
+        helper.assertTrue(secondRowFrameBottom < playerTop - 12,
+            "second bag row (frame bottom y=" + secondRowFrameBottom + ") overlaps the inventory label/slots (top y=" + playerTop + ")");
         helper.succeed();
     }
 

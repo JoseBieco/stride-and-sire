@@ -34,7 +34,9 @@ public final class HorseBreedingTraitGameTest {
         absentA.setTamed(true);
         absentB.setTamed(true);
 
-        int trials = 40;
+        // Carrier ~ Bin(80, 0.50), absent ~ Bin(80, 0.03): difference mean 37.6, sd 4.72. Requiring it to exceed 10
+        // fails a correct implementation with probability P(Z > (37.6 - 10.5) / 4.72) = P(Z > 5.74) = 4.7e-9.
+        int trials = 80;
         int carrierInheritedCount = 0;
         int absentInheritedCount = 0;
 
@@ -64,7 +66,7 @@ public final class HorseBreedingTraitGameTest {
             absentFoal.discard();
         }
 
-        helper.assertTrue(carrierInheritedCount > absentInheritedCount + 5,
+        helper.assertTrue(carrierInheritedCount > absentInheritedCount + 10,
             "expected carrier breeding to pass FEARLESS noticeably more often than absent breeding: carrier="
                 + carrierInheritedCount + ", absent=" + absentInheritedCount);
         helper.succeed();

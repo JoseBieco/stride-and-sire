@@ -1,95 +1,106 @@
 package com.josebieco.strideandsire.event;
 
+import com.josebieco.strideandsire.StrideAndSire;
 import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.HorseGeneticsAttachment;
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.genetics.AttributeInheritance;
 import com.josebieco.strideandsire.genetics.GeneticAttribute;
-import com.josebieco.strideandsire.genetics.HorseAttributeRanges;
 import com.josebieco.strideandsire.genetics.HorseAttributes;
 import com.josebieco.strideandsire.genetics.LineageTrait;
 import com.josebieco.strideandsire.genetics.TraitInheritance;
 import com.josebieco.strideandsire.genetics.TraitState;
 import com.josebieco.strideandsire.item.genetics.BreedingDietItem;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import net.minecraft.server.level.ServerPlayer;
+import java.util.random.RandomGenerator;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * Hooks horse feeding and foal creation ({@link BabyEntitySpawnEvent}) to apply diet-guided or unguided attribute
  * inheritance (Task 4) and lineage trait inheritance (Task 5).
+ *
+ * <p>Each horse records the diet item that put <i>it</i> in love in its Forge persistent data (saved with the entity,
+ * like vanilla's {@code InLove} counter). The record is consumed by the breeding and cleared as soon as the horse is no
+ * longer in love (love timed out, {@code resetLove}, age change), so a later love mode started by code or another mod is
+ * never mistaken for a diet-guided one.
  */
 public final class HorseBreedingGeneticsHandler {
-    private static final Map<UUID, BreedingDietItem> ACTIVE_DIET_BY_HORSE = new ConcurrentHashMap<>();
+    static final String DIET_KEY = StrideAndSire.MODID + ":breeding_diet";
 
     private HorseBreedingGeneticsHandler() {}
 
     public static void register() {
         PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(HorseBreedingGeneticsHandler::onEntityInteractSpecific);
-        VanillaGameEvent.BUS.addListener(HorseBreedingGeneticsHandler::onVanillaGameEvent);
+        LivingEvent.LivingTickEvent.BUS.addListener(HorseBreedingGeneticsHandler::onLivingTick);
         BabyEntitySpawnEvent.BUS.addListener(HorseBreedingGeneticsHandler::onBabyEntitySpawn);
     }
 
-    /** Records the diet item that put {@code horse} into love mode for its upcoming breeding. */
+    /** Records the diet item that put {@code horse} into love mode for its upcoming breeding (server side). */
     public static void recordDietItem(AbstractHorse horse, BreedingDietItem item) {
-        if (!HorseshoeAccess.isEligible(horse)) {
+        if (!HorseshoeAccess.isEligible(horse) || horse.level().isClientSide()) {
             return;
         }
         if (item == null || item == BreedingDietItem.NONE) {
-            ACTIVE_DIET_BY_HORSE.remove(horse.getUUID());
+            horse.getPersistentData().remove(DIET_KEY);
         } else {
-            ACTIVE_DIET_BY_HORSE.put(horse.getUUID(), item);
+            horse.getPersistentData().putString(DIET_KEY, item.name());
         }
     }
 
     /** Returns the currently recorded diet item for {@code horse}, or {@link BreedingDietItem#NONE}. */
     public static BreedingDietItem getRecordedDietItem(AbstractHorse horse) {
+        CompoundTag data = horse.getPersistentData();
         if (!horse.isInLove()) {
-            ACTIVE_DIET_BY_HORSE.remove(horse.getUUID());
+            data.remove(DIET_KEY);
             return BreedingDietItem.NONE;
         }
-        return ACTIVE_DIET_BY_HORSE.getOrDefault(horse.getUUID(), BreedingDietItem.NONE);
-    }
-
-    /** Resolves and consumes the diet item active for a breeding pair. */
-    public static BreedingDietItem consumeBreedingDiet(AbstractHorse parentA, AbstractHorse parentB) {
-        BreedingDietItem dietA = ACTIVE_DIET_BY_HORSE.remove(parentA.getUUID());
-        BreedingDietItem dietB = ACTIVE_DIET_BY_HORSE.remove(parentB.getUUID());
-        if (dietA != null && dietA != BreedingDietItem.NONE) {
-            return dietA;
-        }
-        if (dietB != null && dietB != BreedingDietItem.NONE) {
-            return dietB;
+        String name = data.getStringOr(DIET_KEY, "");
+        for (BreedingDietItem item : BreedingDietItem.values()) {
+            if (item.name().equals(name)) {
+                return item;
+            }
         }
         return BreedingDietItem.NONE;
     }
 
-    /** Applies the Fase C attribute inheritance rules to {@code child} from {@code parentA} and {@code parentB}. */
+    /**
+     * Resolves and consumes both parents' diet records. Returns the favored set: the union of the attributes favored by
+     * each parent's diet item (empty = unguided breeding).
+     */
+    public static EnumSet<GeneticAttribute> consumeBreedingDiet(AbstractHorse parentA, AbstractHorse parentB) {
+        EnumSet<GeneticAttribute> favored = EnumSet.noneOf(GeneticAttribute.class);
+        for (AbstractHorse parent : new AbstractHorse[] {parentA, parentB}) {
+            GeneticAttribute attribute = getRecordedDietItem(parent).favoredGeneticAttribute();
+            if (attribute != null) {
+                favored.add(attribute);
+            }
+            parent.getPersistentData().remove(DIET_KEY);
+        }
+        return favored;
+    }
+
+    /**
+     * Applies the Fase C attribute inheritance rules to {@code child}: diet-guided iff {@code favored} is non-empty,
+     * each attribute in {@code favored} getting the best-parent chance.
+     */
     public static void applyOffspringAttributes(
             AbstractHorse parentA,
             AbstractHorse parentB,
             AbstractHorse child,
-            BreedingDietItem dietItem,
+            EnumSet<GeneticAttribute> favored,
             RandomSource random) {
-        boolean dietGuided = dietItem != null && dietItem.isDietGuided();
-        for (GeneticAttribute attr : GeneticAttribute.values()) {
-            HorseAttributeRanges range = HorseAttributeRanges.of(attr);
-            double p1 = HorseAttributes.get(parentA, attr);
-            double p2 = HorseAttributes.get(parentB, attr);
-            boolean favored = dietGuided && dietItem.favors(attr);
-            double childVal = AttributeInheritance.rollChildValue(p1, p2, range, favored, dietGuided, random);
-            HorseAttributes.setBase(child, attr, childVal);
+        Map<GeneticAttribute, Double> rolled = AttributeInheritance.rollChildValues(
+            attributesOf(parentA), attributesOf(parentB), favored, adapt(random));
+        for (Map.Entry<GeneticAttribute, Double> entry : rolled.entrySet()) {
+            HorseAttributes.setBase(child, entry.getKey(), entry.getValue());
         }
         child.setHealth(child.getMaxHealth());
     }
@@ -102,14 +113,43 @@ public final class HorseBreedingGeneticsHandler {
             RandomSource random) {
         HorseGeneticsAttachment genA = HorseGeneticsAccess.get(parentA);
         HorseGeneticsAttachment genB = HorseGeneticsAccess.get(parentB);
+        RandomGenerator generator = adapt(random);
         EnumMap<LineageTrait, TraitState> childTraits = new EnumMap<>(LineageTrait.class);
         for (LineageTrait trait : LineageTrait.values()) {
-            TraitState rolled = TraitInheritance.rollChildState(genA.state(trait), genB.state(trait), random);
-            childTraits.put(trait, rolled);
+            childTraits.put(trait, TraitInheritance.rollChildState(genA.state(trait), genB.state(trait), generator));
         }
         HorseGeneticsAccess.set(child, HorseGeneticsAttachment.of(childTraits));
     }
 
+    /** Adapts Minecraft's {@link RandomSource} to the JDK abstraction the pure genetics classes take. */
+    public static RandomGenerator adapt(RandomSource random) {
+        return new RandomGenerator() {
+            @Override
+            public long nextLong() {
+                return random.nextLong();
+            }
+
+            @Override
+            public double nextDouble() {
+                return random.nextDouble();
+            }
+        };
+    }
+
+    private static Map<GeneticAttribute, Double> attributesOf(AbstractHorse horse) {
+        EnumMap<GeneticAttribute, Double> values = new EnumMap<>(GeneticAttribute.class);
+        for (GeneticAttribute attr : GeneticAttribute.values()) {
+            values.put(attr, HorseAttributes.get(horse, attr));
+        }
+        return values;
+    }
+
+    /**
+     * Runs before vanilla's feeding ({@code Player.interactOn} posts this event before {@code Entity.interact}). Records
+     * a golden carrot / golden apple exactly when vanilla's {@code handleEating} is about to call {@code setInLove}
+     * (tamed adult, age 0, not in love, not ridden, not opening the inventory). If the feeding ends up not starting love
+     * the record is dropped on the next tick.
+     */
     private static boolean onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getLevel().isClientSide()
                 || !(event.getTarget() instanceof AbstractHorse horse)
@@ -120,36 +160,21 @@ public final class HorseBreedingGeneticsHandler {
         if (player.isSecondaryUseActive() || horse.isVehicle() || horse.isBaby() || !horse.isTamed() || horse.isInLove() || horse.getAge() != 0) {
             return false;
         }
-        ItemStack stack = player.getItemInHand(event.getHand());
-        BreedingDietItem diet = BreedingDietItem.fromStack(stack);
-        if (diet.isDietGuided()) {
+        BreedingDietItem diet = BreedingDietItem.fromStack(player.getItemInHand(event.getHand()));
+        if (diet == BreedingDietItem.GOLDEN_CARROT || diet == BreedingDietItem.GOLDEN_APPLE) {
             recordDietItem(horse, diet);
         }
         return false;
     }
 
-    private static boolean onVanillaGameEvent(VanillaGameEvent event) {
-        if (event.getLevel().isClientSide()
-                || event.getVanillaEvent() != GameEvent.EAT.value()
-                || !(event.getCause() instanceof AbstractHorse horse)
-                || !HorseshoeAccess.isEligible(horse)
-                || !horse.isInLove()) {
-            return false;
+    /** Drops a diet record once its love mode is over, so it can never guide a later, unrelated breeding. */
+    private static void onLivingTick(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() instanceof AbstractHorse horse
+                && !horse.level().isClientSide()
+                && !horse.isInLove()
+                && horse.getPersistentData().contains(DIET_KEY)) {
+            horse.getPersistentData().remove(DIET_KEY);
         }
-        if (ACTIVE_DIET_BY_HORSE.containsKey(horse.getUUID())) {
-            return false;
-        }
-        ServerPlayer loveCause = horse.getLoveCause();
-        if (loveCause != null) {
-            for (InteractionHand hand : InteractionHand.values()) {
-                BreedingDietItem diet = BreedingDietItem.fromStack(loveCause.getItemInHand(hand));
-                if (diet.isDietGuided()) {
-                    recordDietItem(horse, diet);
-                    break;
-                }
-            }
-        }
-        return false;
     }
 
     private static boolean onBabyEntitySpawn(BabyEntitySpawnEvent event) {
@@ -159,9 +184,9 @@ public final class HorseBreedingGeneticsHandler {
                 || !HorseshoeAccess.isEligible(child)) {
             return false;
         }
-        BreedingDietItem diet = consumeBreedingDiet(parentA, parentB);
+        EnumSet<GeneticAttribute> favored = consumeBreedingDiet(parentA, parentB);
         RandomSource random = parentA.getRandom();
-        applyOffspringAttributes(parentA, parentB, child, diet, random);
+        applyOffspringAttributes(parentA, parentB, child, favored, random);
         applyOffspringTraits(parentA, parentB, child, random);
         return false;
     }

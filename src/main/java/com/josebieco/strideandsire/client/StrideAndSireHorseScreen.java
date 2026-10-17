@@ -15,7 +15,8 @@ import net.minecraft.world.entity.player.Inventory;
 /**
  * Vanilla's horse screen ({@code HorseInventoryScreen}: background, saddle/armor/chest slots, horse preview) made
  * {@link StrideAndSireHorseMenu#PLAYER_INVENTORY_Y_OFFSET} taller, plus the horseshoe and saddlebag slot frames and,
- * while a saddlebag is equipped, the frames of its 9-slot row between the horse area and the player inventory.
+ * while a saddlebag is equipped, the frames of its active rows (one row of 9, two with Draft) between the horse area and
+ * the player inventory. The space for the second row is always reserved, and the "Inventory" label sits below it.
  *
  * <p>Placeholder art: the extra height is filled by repeating a blank strip of vanilla's {@code horse.png}.
  */
@@ -38,6 +39,9 @@ public class StrideAndSireHorseScreen extends AbstractContainerScreen<StrideAndS
         super(menu, inventory, menu.getHorse().getDisplayName(), 176, VANILLA_HEIGHT + StrideAndSireHorseMenu.PLAYER_INVENTORY_Y_OFFSET);
         this.horse = menu.getHorse();
         this.inventoryColumns = menu.getInventoryColumns();
+        // Vanilla puts the label 12px above the player inventory (y 84 - 12); keep that relation after the shift
+        // (y 134: below the second bag row, whose frames end at y 130).
+        this.inventoryLabelY = 84 + StrideAndSireHorseMenu.PLAYER_INVENTORY_Y_OFFSET - 12;
     }
 
     @Override

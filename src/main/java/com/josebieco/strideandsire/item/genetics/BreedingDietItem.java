@@ -14,7 +14,8 @@ import org.jspecify.annotations.Nullable;
  *   <li>{@link #GOLDEN_CARROT} &rarr; {@link Attributes#MOVEMENT_SPEED}</li>
  *   <li>{@link #GOLDEN_APPLE} &rarr; {@link Attributes#MAX_HEALTH}</li>
  *   <li>{@link #GLISTERING_MELON} &rarr; {@link Attributes#JUMP_STRENGTH}</li>
- *   <li>{@link #NONE} &rarr; unguided breeding</li>
+ *   <li>{@link #NONE} &rarr; unguided breeding (any other love trigger, including the Enchanted Golden Apple and
+ *       {@code setInLove} from code or other mods)</li>
  * </ul>
  */
 public enum BreedingDietItem {
@@ -64,7 +65,7 @@ public enum BreedingDietItem {
         if (stack.is(Items.GOLDEN_CARROT)) {
             return GOLDEN_CARROT;
         }
-        if (stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+        if (stack.is(Items.GOLDEN_APPLE)) {
             return GOLDEN_APPLE;
         }
         if (stack.is(Items.GLISTERING_MELON_SLICE)) {

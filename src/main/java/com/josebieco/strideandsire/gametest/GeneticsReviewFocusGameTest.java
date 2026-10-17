@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.entity.monster.zombie.Zombie;
@@ -24,14 +25,18 @@ import net.minecraft.world.level.GameType;
  * Test instance: data/strideandsire/test_instance/genetics_review_focus_edge_cases.json
  */
 public final class GeneticsReviewFocusGameTest {
+    static final int DUAL_CARRIER_TRIALS = 6000;
+
     private GeneticsReviewFocusGameTest() {}
 
     /**
      * Task 11 Step 1 (Review Focus items 3, 4, and 5):
      * <ul>
-     *   <li>Item 3: breeds two horses that both carry Sure-footed MANIFEST and asserts the inheritance chance matches
-     *       the "at least one parent" table (25% MANIFEST + 15% LATENT = 40% carrier, 60% ABSENT) rather than a higher
-     *       additive/guaranteed rate;</li>
+     *   <li>Item 3: breeds two horses that both carry Sure-footed MANIFEST {@value #DUAL_CARRIER_TRIALS} times and asserts
+     *       the carrier rate matches the "at least one parent" table (35% LATENT + 15% MANIFEST = 50% carrier, 50%
+     *       ABSENT) rather than an invented higher two-carrier tier. Bounds [0.465, 0.535]: with p = 0.5 the standard
+     *       error is 0.00645, so a correct implementation fails with probability 2 * P(Z > 5.42) = 6e-8, while a 55%
+     *       tier lands 2.3 standard errors above the upper bound and is rejected ~99% of the time (60%+ always);</li>
      *   <li>Item 4: damages a MANIFEST Fearless horse and asserts its health dropped by the expected amount (not zero);</li>
      *   <li>Item 5: equips a saddlebag on a Draft horse, removes the Draft trait via {@link HorseGeneticsAccess}, and
      *       asserts the menu now exposes only 9 slots with the first 9 items still intact.</li>
@@ -42,7 +47,7 @@ public final class GeneticsReviewFocusGameTest {
         ServerLevel level = helper.getLevel();
         ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
 
-        // 1. Review Focus item 3: two MANIFEST Sure-footed parents use the "at least one parent" table (~40% carrier).
+        // 1. Review Focus item 3: two MANIFEST Sure-footed parents use the "at least one parent" table (50% carrier).
         Horse parentA = helper.spawn(EntityTypes.HORSE, 1, 1, 1);
         Horse parentB = helper.spawn(EntityTypes.HORSE, 2, 1, 1);
         parentA.setTamed(true);
@@ -50,7 +55,7 @@ public final class GeneticsReviewFocusGameTest {
         HorseGeneticsAccess.set(parentA, LineageTrait.SURE_FOOTED, TraitState.MANIFEST);
         HorseGeneticsAccess.set(parentB, LineageTrait.SURE_FOOTED, TraitState.MANIFEST);
 
-        int trials = 80;
+        int trials = DUAL_CARRIER_TRIALS;
         int carrierCount = 0;
         int absentCount = 0;
         for (int i = 0; i < trials; i++) {
@@ -68,11 +73,13 @@ public final class GeneticsReviewFocusGameTest {
                 absentCount++;
             }
             foal.discard();
+            // Breeding drops XP orbs; discard them so thousands of trials don't pile entities into the level.
+            level.getEntitiesOfClass(ExperienceOrb.class, helper.getBounds()).forEach(ExperienceOrb::discard);
         }
         double carrierRate = (double) carrierCount / trials;
         helper.assertTrue(
-            absentCount > 0 && carrierRate >= 0.18D && carrierRate <= 0.62D,
-            "dual-MANIFEST parents must use the 40% 'at least one parent' table rather than a higher one; got carrierRate="
+            absentCount > 0 && carrierRate >= 0.465D && carrierRate <= 0.535D,
+            "dual-MANIFEST parents must use the 50% 'at least one parent' table rather than a higher one; got carrierRate="
                 + carrierRate + " (carriers=" + carrierCount + "/" + trials + ")"
         );
 

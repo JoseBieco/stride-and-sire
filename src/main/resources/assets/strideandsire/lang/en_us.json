@@ -20,9 +20,9 @@
   "gui.strideandsire.spyglass.attr.jump": "Jump Strength",
   "gui.strideandsire.spyglass.attr.health": "Max Health",
   "gui.strideandsire.spyglass.section.traits": "Lineage Traits",
-  "gui.strideandsire.spyglass.trait.sure_footed": "Sure-footed",
-  "gui.strideandsire.spyglass.trait.fearless": "Fearless",
-  "gui.strideandsire.spyglass.trait.draft": "Draft",
+  "trait.strideandsire.draft": "Draft",
+  "trait.strideandsire.sure_footed": "Sure-footed",
+  "trait.strideandsire.fearless": "Fearless",
   "gui.strideandsire.spyglass.state.manifest": "Manifest",
   "gui.strideandsire.spyglass.state.latent": "Latent (Carrier)",
   "gui.strideandsire.spyglass.state.absent": "Absent"

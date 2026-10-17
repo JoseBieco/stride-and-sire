@@ -1,7 +1,7 @@
 package com.josebieco.strideandsire.genetics;
 
 import java.util.Objects;
-import net.minecraft.util.RandomSource;
+import java.util.random.RandomGenerator;
 
 /**
  * Pure inheritance math for horse {@link LineageTrait}s (spec section 5):
@@ -21,7 +21,7 @@ public final class TraitInheritance {
 
     private TraitInheritance() {}
 
-    public static TraitState rollChildState(TraitState parent1, TraitState parent2, RandomSource random) {
+    public static TraitState rollChildState(TraitState parent1, TraitState parent2, RandomGenerator random) {
         Objects.requireNonNull(parent1, "parent1");
         Objects.requireNonNull(parent2, "parent2");
         Objects.requireNonNull(random, "random");

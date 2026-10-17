@@ -15,7 +15,7 @@ import net.minecraft.world.entity.animal.equine.AbstractHorse;
 
 /**
  * Client-only read-only screen opener and implementation for the Breeder's Spyglass.
- * Displays qualitative attribute grades (D–S, never raw numeric values) and lineage traits (Manifest vs. Latent).
+ * Displays qualitative attribute grades (E–S, never raw numeric values) and lineage traits (Manifest vs. Latent).
  */
 public final class BreederSpyglassClientScreen {
     private static final int PANEL_WIDTH = 210;
@@ -70,7 +70,7 @@ public final class BreederSpyglassClientScreen {
             y += 12;
             for (LineageTrait trait : LineageTrait.values()) {
                 TraitState state = report.traitState(trait);
-                Component traitLabel = Component.translatable("gui.strideandsire.spyglass.trait." + trait.getSerializedName());
+                Component traitLabel = Component.translatable(trait.translationKey());
                 Component stateLabel = Component.translatable("gui.strideandsire.spyglass.state." + state.getSerializedName())
                     .withStyle(styleForState(state));
                 graphics.text(this.font, traitLabel, x0 + 16, y, 0xFFE0E0E0);

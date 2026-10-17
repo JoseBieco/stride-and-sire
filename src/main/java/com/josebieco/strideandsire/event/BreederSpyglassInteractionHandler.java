@@ -19,7 +19,8 @@ import org.jspecify.annotations.Nullable;
  * {@link BreederSpyglassScreen} without consuming the item or applying any durability/cooldown.
  */
 public final class BreederSpyglassInteractionHandler {
-    private static volatile @Nullable SpyglassReport lastInspectedReport;
+    /** Written and read on the logical server thread only (never from the client handler path). */
+    private static @Nullable SpyglassReport lastServerInspectedReport;
 
     private BreederSpyglassInteractionHandler() {}
 
@@ -27,14 +28,17 @@ public final class BreederSpyglassInteractionHandler {
         PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(BreederSpyglassInteractionHandler::onEntityInteractSpecific);
     }
 
-    /** Test seam: returns the most recent report produced by a shift+right-click Spyglass inspection. */
+    /**
+     * Test seam (server thread): the most recent report built by a server-side shift+right-click Spyglass inspection.
+     * The client builds its own report from synced data when it opens the screen and never touches this field.
+     */
     public static @Nullable SpyglassReport getLastInspectedReport() {
-        return lastInspectedReport;
+        return lastServerInspectedReport;
     }
 
-    /** Clears the recorded inspection report (used by GameTests). */
+    /** Clears the recorded server-side inspection report (used by GameTests). */
     public static void clearLastInspectedReport() {
-        lastInspectedReport = null;
+        lastServerInspectedReport = null;
     }
 
     private static boolean onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
@@ -51,8 +55,9 @@ public final class BreederSpyglassInteractionHandler {
         if (!held.is(Items.SPYGLASS)) {
             return false;
         }
-        lastInspectedReport = BreederSpyglassScreen.buildReport(horse);
-        if (event.getLevel().isClientSide() && FMLEnvironment.dist == Dist.CLIENT) {
+        if (!event.getLevel().isClientSide()) {
+            lastServerInspectedReport = BreederSpyglassScreen.buildReport(horse);
+        } else if (FMLEnvironment.dist == Dist.CLIENT) {
             BreederSpyglassClientScreen.open(horse);
         }
         event.setCancellationResult(InteractionResult.SUCCESS);

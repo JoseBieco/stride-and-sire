@@ -11,8 +11,9 @@ import net.minecraft.util.StringRepresentable;
  * The three heritable lineage traits in Fase C:
  * <ul>
  *   <li>{@link #DRAFT} (Dorso Largo): unlocks 18-slot saddlebag capacity when manifest.</li>
- *   <li>{@link #SURE_FOOTED} (Casco Firme): raises auto-step height to 1.5–2 blocks when manifest.</li>
- *   <li>{@link #FEARLESS} (Sangue Frio): suppresses panic rearing/dismount on zombie/creeper damage when manifest.</li>
+ *   <li>{@link #SURE_FOOTED} (Casco Firme): total auto-step height 1.5 blocks while manifest and ridden by a player.</li>
+ *   <li>{@link #FEARLESS} (Sangue Frio): no rearing from zombie / creeper / explosion damage when manifest (vanilla
+ *       never ejects the rider on damage; the damage itself still applies).</li>
  * </ul>
  */
 public enum LineageTrait implements StringRepresentable {
@@ -24,6 +25,7 @@ public enum LineageTrait implements StringRepresentable {
     public static final StreamCodec<ByteBuf, LineageTrait> STREAM_CODEC =
         ByteBufCodecs.idMapper(i -> values()[i], Enum::ordinal);
 
+    /** Lang key of the trait's display name ({@code trait.strideandsire.<name>}), used by the spyglass screen. */
     public String translationKey() {
         return "trait.strideandsire." + getSerializedName();
     }
