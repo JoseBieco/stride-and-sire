@@ -6,6 +6,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -27,11 +28,33 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Set Mod Version from Tag
+        run: |
+          RAW_TAG="${{ github.event.release.tag_name }}"
+          if [ -z "$RAW_TAG" ]; then
+            RAW_TAG="${{ github.ref_name }}"
+          fi
+          # Remove o prefixo 'v' inicial se presente (ex: v2.0.0 -> 2.0.0)
+          VERSION="${RAW_TAG#v}"
+          echo "Detected tag: $RAW_TAG -> Version: $VERSION"
+
+          # Se a versao comecar com digito, atualiza build.gradle e mods.toml
+          if [[ "$VERSION" =~ ^[0-9]+ ]]; then
+            echo "Applying version $VERSION to build.gradle and mods.toml"
+            sed -i -E "s/^version = ['\"].*['\"]/version = '${VERSION}'/" build.gradle
+            sed -i -E "s/^version\s*=\s*\"[^\"]*\"/version=\"${VERSION}\"/" src/main/resources/META-INF/mods.toml
+          else
+            echo "Not a version tag ($RAW_TAG), keeping repository version"
+          fi
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
+
+      - name: List Generated Artifacts
+        run: ls -la build/libs/
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
