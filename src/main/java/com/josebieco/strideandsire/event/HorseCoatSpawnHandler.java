@@ -14,7 +14,7 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
 
 /**
  * Rolls rare recessive {@link CoatGene} carriers on naturally spawned wild {@code Horse} entities (Fase D):
- * each {@link CoatGene} independently has a {@value #WILD_CARRIER_CHANCE} (3%) chance of rolling
+ * each {@link CoatGene} independently has a {@value #WILD_CARRIER_CHANCE} (15%) chance of rolling
  * {@link Zygosity#HETEROZYGOUS} and 97% {@link Zygosity#HOMOZYGOUS_DOMINANT}. Wild horses never spawn
  * {@link Zygosity#HOMOZYGOUS_RECESSIVE}, so recessive coats can only be manifested through selective breeding.
  *
@@ -33,7 +33,7 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
  * {@code StartTracking} syncs it once it is.
  */
 public final class HorseCoatSpawnHandler {
-    public static final double WILD_CARRIER_CHANCE = 0.03D;
+    public static final double WILD_CARRIER_CHANCE = 0.15D;
     public static final String ROLLED_KEY = StrideAndSire.MODID + ":coat_genetics_rolled";
 
     private HorseCoatSpawnHandler() {}

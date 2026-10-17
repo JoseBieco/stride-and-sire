@@ -18,7 +18,7 @@ import net.minecraftforge.event.ForgeEventFactory;
  * Test instances: data/strideandsire/test_instance/coat_genetics_wild_spawn_*.json
  */
 public final class HorseCoatSpawnGameTest {
-    /** 200 horses x 3 genes = 600 rolls at 3%: P(no carrier) = 0.97^600 ~= 1.1e-8 (< 1e-6 budget). */
+    /** 200 horses x 3 genes = 600 rolls at 15%: P(no carrier) = 0.85^600 ~= 6e-43 (< 1e-6 budget). */
     private static final int WILD_SAMPLE = 200;
 
     private HorseCoatSpawnGameTest() {}
@@ -29,8 +29,8 @@ public final class HorseCoatSpawnGameTest {
      * <ul>
      *   <li>No gene ever rolls {@link Zygosity#HOMOZYGOUS_RECESSIVE} on a wild horse.</li>
      *   <li>{@link HorseCoatGeneticsAttachment#manifestGeneToRender()} is always {@code null}.</li>
-     *   <li>At least one {@link Zygosity#HETEROZYGOUS} carrier occurs across the sample (600 gene rolls at 3% each; false failure
-     *       0.97^600 ~= 1.1e-8).</li>
+     *   <li>At least one {@link Zygosity#HETEROZYGOUS} carrier occurs across the sample (600 gene rolls at 15% each; false failure
+     *       0.85^600 ~= 6e-43).</li>
      * </ul>
      */
     public static void wildSpawnNeverManifests(GameTestHelper helper) {
@@ -65,7 +65,7 @@ public final class HorseCoatSpawnGameTest {
 
         helper.assertTrue(
             carrierCount > 0,
-            "Expected at least one HETEROZYGOUS carrier across " + WILD_SAMPLE + " wild horses (3% per gene roll), got 0");
+            "Expected at least one HETEROZYGOUS carrier across " + WILD_SAMPLE + " wild horses (15% per gene roll), got 0");
         helper.succeed();
     }
 
@@ -73,7 +73,7 @@ public final class HorseCoatSpawnGameTest {
      * World-generation wild horses: {@code NaturalSpawner.spawnMobsForChunkGeneration} creates the horse with
      * {@link EntitySpawnReason#NATURAL}, posts {@code FinalizeSpawn} with {@link EntitySpawnReason#CHUNK_GENERATION}
      * before the entity is in any level (possibly off the main thread), and the horse later joins with
-     * {@code loadedFromDisk=true}. Verifies that path rolls carriers (statistically, 200 horses: 0.97^600 ~= 1.1e-8),
+     * {@code loadedFromDisk=true}. Verifies that path rolls carriers (statistically, 200 horses: 0.85^600 ~= 6e-43),
      * sets the persistent roll guard, never syncs/throws for the not-yet-added entity, never manifests, and is never
      * re-rolled when the horse is then added to the level. Also verifies excluded reasons (structure, spawner,
      * breeding, spawn egg, command) do not roll.

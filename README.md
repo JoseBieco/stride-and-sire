@@ -274,7 +274,7 @@ learn. Breeding is pure Mendel, with zero influence from diet items:
 | `Aa` × `aa` | 50% `Aa`, 50% `aa` |
 | `aa` × `aa` | 100% `aa` |
 
-Wild Horses can spawn as a silent carrier (`Aa`, a rare 3% chance per gene) but
+Wild Horses can spawn as a silent carrier (`Aa`, a 15% chance per gene) but
 never already showing the coat (`aa`) — inspect wild horses with the Breeder's
 Spyglass to find carriers worth building a line around. If a horse ends up
 `aa` pure in more than one gene at once, which coat is actually displayed is

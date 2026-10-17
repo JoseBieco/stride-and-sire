@@ -279,7 +279,7 @@ nenhuma influência de itens de dieta:
 | `aa` × `aa` | 100% `aa` |
 
 Cavalos selvagens podem nascer como portadores silenciosos (`Aa`, uma chance
-rara de 3% por gene), mas nunca já exibindo a pelagem (`aa`) — inspecione
+de 15% por gene), mas nunca já exibindo a pelagem (`aa`) — inspecione
 cavalos selvagens com a Lente do Criador pra achar portadores que valham a
 pena usar numa linhagem. Se um cavalo acabar `aa` puro em mais de um gene ao
 mesmo tempo, qual pelagem é exibida é sorteado aleatoriamente no momento do

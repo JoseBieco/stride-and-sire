@@ -30,7 +30,7 @@ Cada pelagem é controlada por **um gene independente de locus único**: `AA` (h
 Cavalos selvagens sorteiam a zigosidade de cada um dos 3 genes de forma independente, no momento do spawn, com baixa probabilidade de `Aa` (portador) e **nunca** `aa` puro:
 
 - `AA` (nenhum traço): probabilidade alta (maioria dos spawns).
-- `Aa` (portador, sem efeito visual): probabilidade baixa (ex: 2–5%, valor exato a ser calibrado na implementação).
+- `Aa` (portador, sem efeito visual): probabilidade baixa: 15% por gene (calibrado após playtest; era 3%).
 - `aa` (pelagem manifesta): 0% em spawn selvagem. Só surge através de reprodução guiada.
 
 Isso cria um motivo orgânico para o jogador explorar o mundo caçando cavalos selvagens e testando-os com a Lente do Criador até encontrar portadores, antes de iniciar um programa de cruzamento para estabilizar o alelo recessivo na linhagem.
