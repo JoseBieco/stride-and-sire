@@ -251,6 +251,10 @@ public final class ModGameTests {
             () -> BredPureCoatAdvancementGameTest::advancementSkippedWhenBirthCancelledOrReplaced);
         TEST_FUNCTIONS.register("coat_genetics_review_focus_cross_phase_and_edge_cases",
             () -> CoatGeneticsReviewFocusGameTest::crossPhaseAndEdgeCases);
+        TEST_FUNCTIONS.register("setcoat_command_applies_genotype_to_eligible_horse",
+            () -> SetCoatCommandGameTest::appliesGenotypeToEligibleHorse);
+        TEST_FUNCTIONS.register("setcoat_command_ignores_ineligible_mule",
+            () -> SetCoatCommandGameTest::ignoresIneligibleMule);
     }
 
     private ModGameTests() {}

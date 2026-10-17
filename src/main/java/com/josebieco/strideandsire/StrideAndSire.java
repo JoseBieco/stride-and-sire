@@ -36,6 +36,8 @@ public final class StrideAndSire {
         com.josebieco.strideandsire.event.FearlessPanicSuppressionHandler.register();
         com.josebieco.strideandsire.event.HorseCoatSpawnHandler.register();
         com.josebieco.strideandsire.event.HorseCoatBreedingHandler.register();
+        net.minecraftforge.event.RegisterCommandsEvent.BUS.addListener(
+            com.josebieco.strideandsire.command.SetCoatCommand::register);
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             StrideAndSireClient.init(modBusGroup);
