@@ -235,6 +235,8 @@ public final class ModGameTests {
             () -> HorseCoatGeneticsAttachmentGameTest::setThenGetOnHorse);
         TEST_FUNCTIONS.register("coat_genetics_attachment_ineligible_mule_has_no_coat_genetics",
             () -> HorseCoatGeneticsAttachmentGameTest::ineligibleMuleHasNoCoatGenetics);
+        TEST_FUNCTIONS.register("coat_genetics_wild_spawn_never_manifests",
+            () -> HorseCoatSpawnGameTest::wildSpawnNeverManifests);
     }
 
     private ModGameTests() {}
