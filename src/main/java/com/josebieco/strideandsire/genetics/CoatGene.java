@@ -8,13 +8,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * The three recessive coat genes in Fase D, ordered by epistatic dominance when multiple genes are
- * {@link Zygosity#HOMOZYGOUS_RECESSIVE}:
+ * The three independent recessive coat genes of Fase D (spec names in parentheses):
  * <ul>
- *   <li>{@link #OBSIDIAN} (Obsidiana)</li>
+ *   <li>{@link #OBSIDIAN} (Preto Absoluto)</li>
  *   <li>{@link #ALBINO} (Albino)</li>
- *   <li>{@link #SILVER_DAPPLE} (Prata Dappled)</li>
+ *   <li>{@link #SILVER_DAPPLE} (Pangaré Prateado)</li>
  * </ul>
+ * The declaration order carries no dominance or priority: when a horse is {@link Zygosity#HOMOZYGOUS_RECESSIVE} on
+ * more than one gene, the displayed coat is drawn at random at birth
+ * ({@link HorseCoatInheritance#pickManifestGene}) and then fixed permanently.
  */
 public enum CoatGene implements StringRepresentable {
     OBSIDIAN,
