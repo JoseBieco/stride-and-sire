@@ -116,8 +116,10 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::smithingMenuProducesNetheriteHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_frost_step_blocks_netherite_upgrade",
             () -> HorseshoeRecipeGameTest::frostStepBlocksNetheriteUpgrade);
-        TEST_FUNCTIONS.register("horseshoe_review_focus_iron_to_netherite_flow",
-            () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
+        TEST_FUNCTIONS.register("horseshoe_recipe_iron_does_not_upgrade",
+            () -> HorseshoeRecipeGameTest::ironHorseshoeDoesNotUpgrade);
+        TEST_FUNCTIONS.register("horseshoe_review_focus_diamond_to_netherite_flow",
+            () -> HorseshoeReviewFocusGameTest::diamondToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
         TEST_FUNCTIONS.register("saddlebag_items_are_registered_with_container",
