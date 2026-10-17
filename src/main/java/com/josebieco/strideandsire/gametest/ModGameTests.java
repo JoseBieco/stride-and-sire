@@ -208,6 +208,8 @@ public final class ModGameTests {
             () -> BreederSpyglassGameTest::buildReportAndInteraction);
         TEST_FUNCTIONS.register("genetics_sure_footed_step_manifest_vs_latent",
             () -> SureFootedStepGameTest::manifestClimbsOnePointFiveBlockLedgeWhileLatentDoesNot);
+        TEST_FUNCTIONS.register("genetics_fearless_panic_suppression",
+            () -> FearlessPanicSuppressionGameTest::fearlessKeepsRiderAndTakesDamageWhileNonFearlessDismounts);
     }
 
     private ModGameTests() {}
