@@ -92,19 +92,20 @@ class HorseCoatRenderingTest {
 
     @Test
     void albinoEyesStayInsideTheHeadSideFaces() throws IOException {
-        // Adult horse head: texOffs(0, 13), box 6x5x7 -> side row y 20..24: right side x 0..6, front x 7..12,
-        // left side x 13..19, back x 20..25. Eyes must sit on the side faces, next to the front (mouth) edge.
+        // Adult horse head: texOffs(0, 13), box 6x5x7 -> side row y 20..24: west side x 0..6, front x 7..12,
+        // east side x 13..19, back x 20..25. The red-pink eye pixels (red far above green; the pink muzzle, nostrils
+        // and inner ears stay below the cut) must all sit on the two side faces. HorseCoatArtTest pins the details.
         BufferedImage img;
         try (InputStream stream = HorseCoatRenderingTest.class.getResourceAsStream(
                 "/assets/strideandsire/textures/entity/horse/albino.png")) {
             assertNotNull(stream);
             img = ImageIO.read(stream);
         }
-        int base = img.getRGB(30, 40);
         int eyeCount = 0;
         for (int y = 0; y < 64; y++) {
             for (int x = 0; x < 64; x++) {
-                if (img.getRGB(x, y) == base || (y >= 36 && y < 54 && x >= 42)) {
+                int argb = img.getRGB(x, y);
+                if (((argb >> 16) & 0xFF) - ((argb >> 8) & 0xFF) <= 80) {
                     continue;
                 }
                 eyeCount++;
