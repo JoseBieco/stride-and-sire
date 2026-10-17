@@ -40,6 +40,7 @@ public final class ModGameTests {
             () -> HorseshoeAttachmentGameTest::ineligibleEntitiesHaveNoHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_attachment_drops_horseshoe_on_death",
             () -> HorseshoeAttachmentGameTest::dropsHorseshoeOnDeath);
+        TEST_FUNCTIONS.register("equipment_slot_icons", () -> EquipmentSlotIconGameTest::equipmentSlotsReportEmptyIcons);
         TEST_FUNCTIONS.register("horseshoe_menu_slot_accepts_only_horseshoes",
             () -> HorseshoeMenuGameTest::slotAcceptsOnlyHorseshoes);
         TEST_FUNCTIONS.register("horseshoe_menu_keeps_vanilla_slot_layout",
