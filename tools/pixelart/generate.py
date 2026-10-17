@@ -249,6 +249,52 @@ def draw_saddlebag_model_preview(tier: str) -> Image.Image:
 
 
 # ---------------------------------------------------------------------------
+# 64x64 horse coat textures (Fase D recessive coats)
+# ---------------------------------------------------------------------------
+
+HORSE_COAT_TEXTURE_SIZE = (64, 64)
+
+
+def draw_horse_coat_obsidian() -> Image.Image:
+    """Obsidian coat: opaque #15141a body/legs/head with #0c0b10 mane (x 56..63, y 36..53) and tail (x 42..55, y 36..53)."""
+    base = hex_rgba("#15141a")
+    mane_tail = hex_rgba("#0c0b10")
+    image = Image.new("RGBA", HORSE_COAT_TEXTURE_SIZE, base)
+    for y in range(36, 54):
+        for x in range(42, 64):
+            image.putpixel((x, y), mane_tail)
+    return image
+
+
+def draw_horse_coat_albino() -> Image.Image:
+    """Albino coat: opaque #f5f2ea body/mane/tail (no contrast) with #d98a93 pink eyes on the head UV."""
+    base = hex_rgba("#f5f2ea")
+    eye = hex_rgba("#d98a93")
+    image = Image.new("RGBA", HORSE_COAT_TEXTURE_SIZE, base)
+    for y in (20, 21):
+        for x in (6, 7, 19, 20):
+            image.putpixel((x, y), eye)
+    return image
+
+
+def draw_horse_coat_silver_dapple() -> Image.Image:
+    """Silver Dapple coat: opaque #a7a7b0 base with a deterministic modulo grid of #6f6f7a dapple spots."""
+    base = hex_rgba("#a7a7b0")
+    dapple = hex_rgba("#6f6f7a")
+    image = Image.new("RGBA", HORSE_COAT_TEXTURE_SIZE, base)
+    for y in range(64):
+        for x in range(64):
+            # Skip mane and tail UV boxes so dapples sit across body, flank, neck, and legs.
+            if 36 <= y < 54 and 42 <= x < 64:
+                continue
+            gx = (x + 2 * (y // 4)) % 6
+            gy = y % 4
+            if (gx in (1, 2) and gy == 1) or (gx == 1 and gy == 2):
+                image.putpixel((x, y), dapple)
+    return image
+
+
+# ---------------------------------------------------------------------------
 # Manifest of owned outputs
 # ---------------------------------------------------------------------------
 
@@ -273,6 +319,9 @@ MANIFEST: list[Output] = [
     Output("gui/sprites/container/slot/saddlebag.png", (16, 16), draw_slot_saddlebag),
     *[Output(f"entity/saddlebag/{tier}.png", BAG_MODEL_TEXTURE_SIZE, (lambda t=tier: draw_saddlebag_model(t)))
       for tier in ("leather", "iron", "gold", "diamond", "netherite")],
+    Output("entity/horse/obsidian.png", HORSE_COAT_TEXTURE_SIZE, draw_horse_coat_obsidian),
+    Output("entity/horse/albino.png", HORSE_COAT_TEXTURE_SIZE, draw_horse_coat_albino),
+    Output("entity/horse/silver_dapple.png", HORSE_COAT_TEXTURE_SIZE, draw_horse_coat_silver_dapple),
 ]
 
 
