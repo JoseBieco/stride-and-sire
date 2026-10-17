@@ -1,11 +1,17 @@
 package com.josebieco.strideandsire.event;
 
+import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
+import com.josebieco.strideandsire.attachment.HorseGeneticsAttachment;
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.genetics.AttributeInheritance;
 import com.josebieco.strideandsire.genetics.GeneticAttribute;
 import com.josebieco.strideandsire.genetics.HorseAttributeRanges;
 import com.josebieco.strideandsire.genetics.HorseAttributes;
+import com.josebieco.strideandsire.genetics.LineageTrait;
+import com.josebieco.strideandsire.genetics.TraitInheritance;
+import com.josebieco.strideandsire.genetics.TraitState;
 import com.josebieco.strideandsire.item.genetics.BreedingDietItem;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,6 +94,22 @@ public final class HorseBreedingGeneticsHandler {
         child.setHealth(child.getMaxHealth());
     }
 
+    /** Applies the Fase C lineage trait inheritance rules to {@code child} from {@code parentA} and {@code parentB}. */
+    public static void applyOffspringTraits(
+            AbstractHorse parentA,
+            AbstractHorse parentB,
+            AbstractHorse child,
+            RandomSource random) {
+        HorseGeneticsAttachment genA = HorseGeneticsAccess.get(parentA);
+        HorseGeneticsAttachment genB = HorseGeneticsAccess.get(parentB);
+        EnumMap<LineageTrait, TraitState> childTraits = new EnumMap<>(LineageTrait.class);
+        for (LineageTrait trait : LineageTrait.values()) {
+            TraitState rolled = TraitInheritance.rollChildState(genA.state(trait), genB.state(trait), random);
+            childTraits.put(trait, rolled);
+        }
+        HorseGeneticsAccess.set(child, HorseGeneticsAttachment.of(childTraits));
+    }
+
     private static boolean onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getLevel().isClientSide()
                 || !(event.getTarget() instanceof AbstractHorse horse)
@@ -140,6 +162,7 @@ public final class HorseBreedingGeneticsHandler {
         BreedingDietItem diet = consumeBreedingDiet(parentA, parentB);
         RandomSource random = parentA.getRandom();
         applyOffspringAttributes(parentA, parentB, child, diet, random);
+        applyOffspringTraits(parentA, parentB, child, random);
         return false;
     }
 }
