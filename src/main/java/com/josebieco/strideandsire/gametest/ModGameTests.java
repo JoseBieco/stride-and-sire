@@ -194,6 +194,10 @@ public final class ModGameTests {
             () -> AttributeRangeExpansionGameTest::movementSpeedAcceptsFifteenPercentAboveVanillaMax);
         TEST_FUNCTIONS.register("genetics_attribute_range_wild_spawn_never_exceeds_vanilla_max",
             () -> AttributeRangeExpansionGameTest::wildSpawnNeverExceedsVanillaMax);
+        TEST_FUNCTIONS.register("genetics_attachment_set_then_get_on_horse",
+            () -> HorseGeneticsAttachmentGameTest::setThenGetOnHorse);
+        TEST_FUNCTIONS.register("genetics_attachment_persists_across_save_and_load",
+            () -> HorseGeneticsAttachmentGameTest::persistsAcrossSaveAndLoadAndChecksEligibility);
     }
 
     private ModGameTests() {}

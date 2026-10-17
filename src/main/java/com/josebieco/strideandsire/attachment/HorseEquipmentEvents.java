@@ -2,6 +2,7 @@ package com.josebieco.strideandsire.attachment;
 
 import com.josebieco.strideandsire.event.SaddlebagBonusEffectHandler;
 import com.josebieco.strideandsire.network.HorseEquipmentSyncPacket;
+import com.josebieco.strideandsire.network.HorseGeneticsSyncPacket;
 import com.josebieco.strideandsire.registry.ModAttachments;
 import java.util.Collection;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,8 +17,8 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 /**
- * Game-bus listeners for all per-horse equipment (horseshoe, saddlebag): attach the storages, sync on start-tracking,
- * drop the equipment on death.
+ * Game-bus listeners for all per-horse equipment (horseshoe, saddlebag) and genetics: attach the storages, sync on
+ * start-tracking, drop the equipment on death.
  */
 public final class HorseEquipmentEvents {
     private HorseEquipmentEvents() {}
@@ -36,6 +37,9 @@ public final class HorseEquipmentEvents {
             SaddlebagStorage saddlebag = new SaddlebagStorage();
             event.addCapability(ModAttachments.SADDLEBAG_ID, saddlebag);
             event.addListener(saddlebag::invalidate);
+            HorseGeneticsStorage genetics = new HorseGeneticsStorage();
+            event.addCapability(ModAttachments.GENETICS_ID, genetics);
+            event.addListener(genetics::invalidate);
         }
     }
 
@@ -45,6 +49,9 @@ public final class HorseEquipmentEvents {
                 if (!slot.get(horse).isEmpty()) {
                     HorseEquipmentSyncPacket.sendTo(horse, slot, player);
                 }
+            }
+            if (!HorseGeneticsAccess.get(horse).isEmpty()) {
+                HorseGeneticsSyncPacket.sendTo(horse, player);
             }
         }
     }

@@ -7,7 +7,7 @@ import net.minecraftforge.network.SimpleChannel;
 
 /** The mod's play-phase channel. Required on both sides (the mod adds items, so it must be on both anyway). */
 public final class ModNetwork {
-    public static final int PROTOCOL_VERSION = 2; // 2: HorseshoeSyncPacket generalised into HorseEquipmentSyncPacket (slot discriminator)
+    public static final int PROTOCOL_VERSION = 3; // 3: HorseGeneticsSyncPacket
 
     public static final SimpleChannel CHANNEL = ChannelBuilder
         .named(Identifier.fromNamespaceAndPath(StrideAndSire.MODID, "main"))
@@ -16,6 +16,7 @@ public final class ModNetwork {
             .play()
                 .clientbound()
                     .addMain(HorseEquipmentSyncPacket.class, HorseEquipmentSyncPacket.STREAM_CODEC, HorseEquipmentSyncPacket::handle)
+                    .addMain(HorseGeneticsSyncPacket.class, HorseGeneticsSyncPacket.STREAM_CODEC, HorseGeneticsSyncPacket::handle)
                 .serverbound()
                     .addMain(OpenHorseshoeMenuPacket.class, OpenHorseshoeMenuPacket.STREAM_CODEC, OpenHorseshoeMenuPacket::handle)
         .build();
