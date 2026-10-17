@@ -47,7 +47,7 @@ public final class SetCoatCommand {
         event.getDispatcher().register(
             Commands.literal("strideandsire")
                 .then(Commands.literal("setcoat")
-                    .requires(source -> source.hasPermission(2))
+                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .then(targetsArgument())));
     }
 
@@ -113,10 +113,12 @@ public final class SetCoatCommand {
         }
 
         CommandSourceStack source = context.getSource();
-        if (applied > 0) {
+        final int appliedCount = applied;
+        final int skippedCount = skipped;
+        if (appliedCount > 0) {
             source.sendSuccess(() -> Component.literal(
-                "Set coat genotype on " + applied + " horse(s)"
-                    + (skipped > 0 ? " (" + skipped + " non-Horse target(s) skipped)" : "")), true);
+                "Set coat genotype on " + appliedCount + " horse(s)"
+                    + (skippedCount > 0 ? " (" + skippedCount + " non-Horse target(s) skipped)" : "")), true);
         } else {
             source.sendFailure(Component.literal("No eligible Horse found among the given targets"));
         }

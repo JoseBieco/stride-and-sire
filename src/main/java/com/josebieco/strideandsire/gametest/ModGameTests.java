@@ -255,6 +255,8 @@ public final class ModGameTests {
             () -> SetCoatCommandGameTest::appliesGenotypeToEligibleHorse);
         TEST_FUNCTIONS.register("setcoat_command_ignores_ineligible_mule",
             () -> SetCoatCommandGameTest::ignoresIneligibleMule);
+        TEST_FUNCTIONS.register("setcoat_command_dispatch_applies_and_guards",
+            () -> SetCoatCommandGameTest::commandDispatchAppliesAndGuards);
     }
 
     private ModGameTests() {}
