@@ -206,6 +206,8 @@ public final class ModGameTests {
             () -> HorseBreedingFoodGameTest::glisteringMelonTriggersLoveMode);
         TEST_FUNCTIONS.register("genetics_spyglass_report_and_interaction",
             () -> BreederSpyglassGameTest::buildReportAndInteraction);
+        TEST_FUNCTIONS.register("genetics_sure_footed_step_manifest_vs_latent",
+            () -> SureFootedStepGameTest::manifestClimbsOnePointFiveBlockLedgeWhileLatentDoesNot);
     }
 
     private ModGameTests() {}

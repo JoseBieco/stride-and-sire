@@ -42,6 +42,7 @@ public final class HorseGeneticsAccess {
             return;
         }
         storage.setValue(attachment == null ? HorseGeneticsAttachment.EMPTY : attachment);
+        com.josebieco.strideandsire.event.SureFootedStepHandler.refreshStepHeight(horse);
         if (!horse.level().isClientSide()) {
             HorseGeneticsSyncPacket.sendToTracking(horse);
         }
