@@ -312,15 +312,6 @@ Criar o primeiro espécime `aa` puro de cada pelagem concede uma conquista
 2. Baixe o `stride-and-sire-*.jar` mais recente em [Releases](../../releases) (ou no CurseForge, quando publicado).
 3. Coloque o jar na sua pasta `mods`.
 
-## Galeria
-
-<!-- TODO: adicionar mais screenshots/GIFs conforme as funcionalidades forem saindo -->
-<p align="center">
-  <img src="docs/images/gallery-1.png" alt="Imagem de galeria placeholder 1" width="280">
-  <img src="docs/images/gallery-2.png" alt="Imagem de galeria placeholder 2" width="280">
-  <img src="docs/images/gallery-3.png" alt="Imagem de galeria placeholder 3" width="280">
-</p>
-
 ## Licença
 
 [MIT](LICENSE.txt)

@@ -306,14 +306,6 @@ advancement — three to chase for a completionist breeding program:
 2. Download the latest `stride-and-sire-*.jar` from [Releases](../../releases) (or CurseForge, once published).
 3. Drop the jar into your `mods` folder.
 
-## Gallery
-
-<p align="center">
-  <img src="docs/images/gallery-1.png" alt="Placeholder gallery image 1" width="280">
-  <img src="docs/images/gallery-2.png" alt="Placeholder gallery image 2" width="280">
-  <img src="docs/images/gallery-3.png" alt="Placeholder gallery image 3" width="280">
-</p>
-
 ## License
 
 [MIT](LICENSE.txt)
