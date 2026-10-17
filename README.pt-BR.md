@@ -34,8 +34,7 @@ do espírito do jogo base. Camelo e Lhama ficam deliberadamente fora de escopo �
 este mod é sobre a família dos cavalos.
 
 <p align="center">
-  <!-- TODO: screenshot in-game de um cavalo equipado (ferradura + alforje visíveis) -->
-  <img src="docs/images/showcase-overview.png" alt="Cavalo usando ferradura de Netherite e alforje de Ouro" width="700">
+  <img src="docs/images/showcase-overview.png" alt="Cavalo usando ferradura de ouro e alforje de prata." width="700">
 </p>
 
 ## Visão geral
@@ -79,6 +78,7 @@ inventário e encaixar uma ferradura junto da sela e da armadura.
 |---|---|---|---|
 | Cobre | 100 | — | Passos de Pena, Passos Congelantes |
 | Ferro | 200 | — | Passos de Pena, Passos Congelantes |
+| Diamante | 300 | — | Passos de Pena, Passos Congelantes |
 | Ouro | 80 | +velocidade de movimento; Piglins ficam neutros enquanto o cavalo está montado (mesma regra da armadura de ouro) | nenhum |
 | Netherite | 400 | Imunidade total a dano de fogo/lava | Caminhante de Lava, Passos de Pena |
 
@@ -89,10 +89,10 @@ reparo via bigorna com material bruto — só **Mending** evita isso).
 ### Encantamentos customizados
 
 - **Passos de Pena** — anula o dano de queda do cavalo (e do montador). Disponível
-  em Cobre, Ferro e Netherite — não em Ouro.
+  em Cobre, Ferro, Diamante e Netherite — não em Ouro.
 - **Passos Congelantes** — o cavalo congela a água sob os cascos enquanto se move,
   exatamente como o Frost Walker II vanilla; o gelo derrete após alguns segundos.
-  Disponível só em Cobre e Ferro.
+  Disponível só em Cobre, Ferro e Diamante.
 - **Caminhante de Lava** — o cavalo caminha sobre lava sem afundar, como um
   Strider. Exclusivo de Netherite.
 
@@ -102,8 +102,8 @@ qualquer encantamento vanilla.
 <details>
 <summary><strong>Receitas de craft</strong></summary>
 
-Ferraduras de Cobre, Ferro e Ouro compartilham uma receita em formato "U" (5
-lingotes do material do tier):
+Ferraduras de Cobre, Ferro, Diamante e Ouro compartilham uma receita em formato
+"U" (5 lingotes do material do tier):
 
 ```
 I . I
@@ -115,10 +115,13 @@ Netherite **não tem receita própria**. É um upgrade na Mesa de Ferraria, igua
 ferramentas e armaduras de Netherite vanilla:
 
 ```
-Ferradura de Ferro + Lingote de Netherite + Molde de Upgrade de Netherite
+Ferradura de Diamante + Lingote de Netherite + Molde de Upgrade de Netherite
 ```
 
 O upgrade preserva encantamentos existentes e a proporção de dano do item.
+Ferraduras de Ferro não servem mais de base para esse upgrade, e uma ferradura
+com Passos Congelantes não pode ser upada (a Netherite não aceita esse
+encantamento).
 
 </details>
 
@@ -138,6 +141,7 @@ inventário pequeno — sem substituir o baú que Burro e Mula já carregam.
 |---|---|---|
 | Couro | 9 | — |
 | Ferro | 9 | O conteúdo sobrevive se o cavalo morrer por dano de explosão |
+| Diamante | 9 | Mesma proteção contra explosão do Ferro; não protegido contra fogo/lava |
 | Ouro | 9 | Piglins ficam neutros enquanto o cavalo está montado (mesmo mecanismo da Ferradura de Ouro) |
 | Netherite | 9 | O conteúdo é imune a fogo/lava se o cavalo morrer em chamas |
 
@@ -161,17 +165,17 @@ intacto junto com ele. A remoção da sela nunca é bloqueada.
 <details>
 <summary><strong>Receitas de craft</strong></summary>
 
-Mesmo padrão das ferraduras: Couro, Ferro e Ouro têm receita própria; Netherite é
-um upgrade na Mesa de Ferraria a partir de um Alforje de Ferro (+ Lingote de
-Netherite + Molde de Upgrade de Netherite), preservando os itens guardados sem
-alteração.
+Mesmo padrão das ferraduras: Couro, Ferro, Diamante e Ouro têm receita própria
+(Diamante: 2 diamantes + 5 couros); Netherite é um upgrade na Mesa de Ferraria a
+partir de um Alforje de Diamante (+ Lingote de Netherite + Molde de Upgrade de
+Netherite), preservando os itens guardados sem alteração. Alforjes de Ferro não
+servem mais de base para esse upgrade.
 
 </details>
 
 ## Fase C — Genética Transparente
 
 <p align="center">
-  <!-- TODO: screenshot da tela da Lente do Criador -->
   <img src="docs/images/breeder-spyglass.png" alt="Tela da Lente do Criador mostrando notas de atributo e traços de um cavalo" width="600">
 </p>
 
