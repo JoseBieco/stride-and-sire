@@ -1,6 +1,6 @@
 {
   "type": "minecraft:function",
-  "environment": "strideandsire:default",
+  "environment": "minecraft:default",
   "function": "strideandsire:genetics_spyglass_report_and_interaction",
   "max_ticks": 100,
   "setup_ticks": 0,

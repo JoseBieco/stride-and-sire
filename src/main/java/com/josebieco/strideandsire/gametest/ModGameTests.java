@@ -212,6 +212,8 @@ public final class ModGameTests {
             () -> FearlessPanicSuppressionGameTest::fearlessKeepsRiderAndTakesDamageWhileNonFearlessDismounts);
         TEST_FUNCTIONS.register("genetics_draft_saddlebag_capacity",
             () -> DraftSaddlebagCapacityGameTest::draftTraitUnlocksEighteenSlotsAndPreservesItems);
+        TEST_FUNCTIONS.register("genetics_review_focus_edge_cases",
+            () -> GeneticsReviewFocusGameTest::dualCarrierInheritanceFearlessDamageAndDraftLiveRecompute);
     }
 
     private ModGameTests() {}

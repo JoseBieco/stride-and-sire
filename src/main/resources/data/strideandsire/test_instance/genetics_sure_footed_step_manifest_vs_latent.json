@@ -1,6 +1,6 @@
 {
   "type": "minecraft:function",
-  "environment": "strideandsire:default",
+  "environment": "minecraft:default",
   "function": "strideandsire:genetics_sure_footed_step_manifest_vs_latent",
   "max_ticks": 100,
   "setup_ticks": 0,

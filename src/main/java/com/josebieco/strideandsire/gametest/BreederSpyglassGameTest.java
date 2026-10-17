@@ -41,7 +41,7 @@ public final class BreederSpyglassGameTest {
         horse.setTamed(true);
         horse.setAge(0);
 
-        // Speed in Grade S (> 110% of vanillaMax), Jump in Grade B (upper third of vanilla range), Health in Grade D (vanillaMin).
+        // Speed in Grade S (> 110% of vanillaMax), Jump in Grade B (upper quarter of vanilla range), Health in Grade E (vanillaMin).
         HorseAttributes.setBase(horse, GeneticAttribute.SPEED, HorseAttributeRanges.SPEED.vanillaMax() * 1.15D);
         HorseAttributes.setBase(horse, GeneticAttribute.JUMP, 0.90D);
         HorseAttributes.setBase(horse, GeneticAttribute.HEALTH, HorseAttributeRanges.HEALTH.vanillaMin());
@@ -55,7 +55,7 @@ public final class BreederSpyglassGameTest {
         SpyglassReport report = BreederSpyglassScreen.buildReport(horse);
         helper.assertTrue(report.speedGrade() == Grade.S, "expected Speed Grade S, got " + report.speedGrade());
         helper.assertTrue(report.jumpGrade() == Grade.B, "expected Jump Grade B, got " + report.jumpGrade());
-        helper.assertTrue(report.healthGrade() == Grade.D, "expected Health Grade D, got " + report.healthGrade());
+        helper.assertTrue(report.healthGrade() == Grade.E, "expected Health Grade E, got " + report.healthGrade());
         helper.assertTrue(
             report.traitState(LineageTrait.SURE_FOOTED) == TraitState.LATENT
                 && report.traitState(LineageTrait.SURE_FOOTED) != TraitState.MANIFEST,
