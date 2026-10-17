@@ -1,5 +1,4 @@
-<p align="center">
-  <!-- TODO: substitua por um banner real (recomendado 1280x640, PNG ou JPG) -->
+m,                                                                                                                          <p align="center">
   <img src="docs/images/banner.png" alt="Banner do Stride & Sire" width="100%">
 </p>
 
@@ -64,7 +63,7 @@ Plataforma: Minecraft Forge, Minecraft 26.3, Java 25.
 ## Fase A — Ferraduras
 
 <p align="center">
-  <!-- TODO: screenshot da tela de inventário do cavalo com o slot de ferradura preenchido -->
+ 
   <img src="docs/images/horseshoe-inventory.png" alt="Tela de inventário do cavalo mostrando o slot de ferradura" width="600">
 </p>
 
@@ -128,7 +127,6 @@ encantamento).
 ## Fase B — Alforjes Modulares
 
 <p align="center">
-  <!-- TODO: screenshot mostrando as bolsas renderizadas nas laterais da sela -->
   <img src="docs/images/saddlebag-render.png" alt="Cavalo usando um alforje visível nas laterais" width="600">
 </p>
 

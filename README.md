@@ -1,5 +1,4 @@
 <p align="center">
-  <!-- TODO: replace with a real banner (recommended 1280x640, PNG or JPG) -->
   <img src="docs/images/banner.png" alt="Stride & Sire banner" width="100%">
 </p>
 
@@ -34,7 +33,6 @@ game's spirit. Camels and Llamas are intentionally out of scope; this mod is
 about the horse family.
 
 <p align="center">
-  <!-- TODO: in-game screenshot of an equipped horse (horseshoe + saddlebag visible) -->
   <img src="docs/images/showcase-overview.png" alt="A horse wearing a Netherite horseshoe and a Gold saddlebag" width="700">
 </p>
 
@@ -66,7 +64,6 @@ Target platform: Minecraft Forge, Minecraft 26.3, Java 25.
 ## Phase A — Horseshoes
 
 <p align="center">
-  <!-- TODO: close-up screenshot of the horse inventory screen with the horseshoe slot filled -->
   <img src="docs/images/horseshoe-inventory.png" alt="Horse inventory screen showing the horseshoe slot" width="600">
 </p>
 
@@ -129,7 +126,6 @@ upgraded (Netherite can't hold it).
 ## Phase B — Modular Saddlebags
 
 <p align="center">
-  <!-- TODO: screenshot showing the small bags rendered on the saddle's sides -->
   <img src="docs/images/saddlebag-render.png" alt="A horse wearing a visible saddlebag on its flanks" width="600">
 </p>
 
@@ -177,7 +173,6 @@ upgrade.
 ## Phase C — Transparent Genetics
 
 <p align="center">
-  <!-- TODO: screenshot of the Breeder's Spyglass report screen -->
   <img src="docs/images/breeder-spyglass.png" alt="The Breeder's Spyglass screen showing a horse's attribute grades and traits" width="600">
 </p>
 
@@ -252,14 +247,12 @@ latent/manifest (dominant/recessive) vocabulary introduced in Phase C.
 
 ## Installation
 
-<!-- TODO: fill in once a release/CurseForge page exists -->
 1. Install [Minecraft Forge](https://files.minecraftforge.net/) for Minecraft 26.3.
 2. Download the latest `stride-and-sire-*.jar` from [Releases](../../releases) (or CurseForge, once published).
 3. Drop the jar into your `mods` folder.
 
 ## Gallery
 
-<!-- TODO: add more screenshots/GIFs as features land -->
 <p align="center">
   <img src="docs/images/gallery-1.png" alt="Placeholder gallery image 1" width="280">
   <img src="docs/images/gallery-2.png" alt="Placeholder gallery image 2" width="280">
