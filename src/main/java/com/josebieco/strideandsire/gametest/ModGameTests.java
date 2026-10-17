@@ -241,6 +241,8 @@ public final class ModGameTests {
             () -> HorseCoatBreedingGameTest::aaByAaProducesManifestStatistically);
         TEST_FUNCTIONS.register("coat_genetics_tie_break_persists_across_reload",
             () -> HorseCoatBreedingGameTest::tieBreakPersistsAcrossReload);
+        TEST_FUNCTIONS.register("coat_genetics_advancement_granted_on_pure_birth",
+            () -> BredPureCoatAdvancementGameTest::advancementGrantedOnPureBirth);
     }
 
     private ModGameTests() {}

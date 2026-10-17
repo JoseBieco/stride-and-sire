@@ -1,5 +1,6 @@
 package com.josebieco.strideandsire.event;
 
+import com.josebieco.strideandsire.advancement.BredPureCoatTrigger;
 import com.josebieco.strideandsire.attachment.HorseCoatGeneticsAccess;
 import com.josebieco.strideandsire.attachment.HorseCoatGeneticsAttachment;
 import com.josebieco.strideandsire.genetics.CoatGene;
@@ -8,9 +9,11 @@ import com.josebieco.strideandsire.genetics.Zygosity;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.random.RandomGenerator;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Hooks foal creation ({@link BabyEntitySpawnEvent}) to roll Mendelian inheritance for each {@link CoatGene} from
@@ -25,8 +28,9 @@ public final class HorseCoatBreedingHandler {
     }
 
     /**
-     * Applies Mendelian coat inheritance and tie-breaking to {@code child} from {@code parentA} and {@code parentB}.
-     * No-op if {@code child} is not an eligible {@code Horse} (e.g. a Mule or Donkey foal).
+     * Applies Mendelian coat inheritance and tie-breaking to {@code child} from {@code parentA} and {@code parentB},
+     * and fires {@link BredPureCoatTrigger} for the owning {@link ServerPlayer} on any gene that rolls
+     * {@link Zygosity#HOMOZYGOUS_RECESSIVE}. No-op if {@code child} is not an eligible {@code Horse}.
      */
     public static void applyOffspringCoatGenetics(
             AbstractHorse parentA,
@@ -55,6 +59,25 @@ public final class HorseCoatBreedingHandler {
             ? null
             : HorseCoatInheritance.pickManifestGene(manifestSet, generator);
         HorseCoatGeneticsAccess.set(child, HorseCoatGeneticsAttachment.EMPTY.withGenes(childGenes, manifestGeneToRender));
+
+        if (!manifestSet.isEmpty()) {
+            ServerPlayer owner = resolveOwnerPlayer(parentA, parentB);
+            if (owner != null) {
+                for (CoatGene gene : manifestSet) {
+                    BredPureCoatTrigger.trigger(owner, gene);
+                }
+            }
+        }
+    }
+
+    private static @Nullable ServerPlayer resolveOwnerPlayer(AbstractHorse parentA, AbstractHorse parentB) {
+        if (parentA.getOwner() instanceof ServerPlayer sp) {
+            return sp;
+        }
+        if (parentB.getOwner() instanceof ServerPlayer sp) {
+            return sp;
+        }
+        return null;
     }
 
     private static boolean onBabyEntitySpawn(BabyEntitySpawnEvent event) {

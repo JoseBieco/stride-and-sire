@@ -1,0 +1,26 @@
+{
+  "parent": "strideandsire:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:light_gray_dye"
+    },
+    "title": {
+      "translate": "advancement.strideandsire.silver_dapple_coat.title"
+    },
+    "description": {
+      "translate": "advancement.strideandsire.silver_dapple_coat.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bred_silver_dapple": {
+      "trigger": "strideandsire:bred_pure_coat",
+      "conditions": {
+        "gene": "silver_dapple"
+      }
+    }
+  }
+}

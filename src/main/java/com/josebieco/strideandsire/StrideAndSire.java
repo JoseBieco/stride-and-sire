@@ -22,6 +22,7 @@ public final class StrideAndSire {
         BusGroup modBusGroup = context.getModBusGroup();
         ModItems.register(modBusGroup);
         com.josebieco.strideandsire.registry.ModRecipes.register(modBusGroup);
+        com.josebieco.strideandsire.registry.ModCriteriaTriggers.register(modBusGroup);
         ModAttachments.register();
         ModMenus.register(modBusGroup);
         HorseshoePassiveEffectHandler.register();

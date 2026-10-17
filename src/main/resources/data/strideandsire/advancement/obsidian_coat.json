@@ -1,0 +1,26 @@
+{
+  "parent": "strideandsire:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:black_dye"
+    },
+    "title": {
+      "translate": "advancement.strideandsire.obsidian_coat.title"
+    },
+    "description": {
+      "translate": "advancement.strideandsire.obsidian_coat.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bred_obsidian": {
+      "trigger": "strideandsire:bred_pure_coat",
+      "conditions": {
+        "gene": "obsidian"
+      }
+    }
+  }
+}
