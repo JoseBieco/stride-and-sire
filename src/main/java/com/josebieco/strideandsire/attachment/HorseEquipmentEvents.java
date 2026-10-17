@@ -1,6 +1,7 @@
 package com.josebieco.strideandsire.attachment;
 
 import com.josebieco.strideandsire.event.SaddlebagBonusEffectHandler;
+import com.josebieco.strideandsire.network.HorseCoatGeneticsSyncPacket;
 import com.josebieco.strideandsire.network.HorseEquipmentSyncPacket;
 import com.josebieco.strideandsire.network.HorseGeneticsSyncPacket;
 import com.josebieco.strideandsire.registry.ModAttachments;
@@ -41,6 +42,11 @@ public final class HorseEquipmentEvents {
             event.addCapability(ModAttachments.GENETICS_ID, genetics);
             event.addListener(genetics::invalidate);
         }
+        if (HorseCoatGeneticsAccess.isEligible(event.getObject())) {
+            HorseCoatGeneticsStorage coatGenetics = new HorseCoatGeneticsStorage();
+            event.addCapability(ModAttachments.COAT_GENETICS_ID, coatGenetics);
+            event.addListener(coatGenetics::invalidate);
+        }
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -52,6 +58,9 @@ public final class HorseEquipmentEvents {
             }
             if (!HorseGeneticsAccess.get(horse).isEmpty()) {
                 HorseGeneticsSyncPacket.sendTo(horse, player);
+            }
+            if (!HorseCoatGeneticsAccess.get(horse).isEmpty()) {
+                HorseCoatGeneticsSyncPacket.sendTo(horse, player);
             }
         }
     }

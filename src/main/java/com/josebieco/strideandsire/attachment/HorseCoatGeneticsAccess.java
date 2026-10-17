@@ -1,5 +1,7 @@
 package com.josebieco.strideandsire.attachment;
 
+import com.josebieco.strideandsire.network.HorseCoatGeneticsSyncPacket;
+import com.josebieco.strideandsire.registry.ModAttachments;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
@@ -34,14 +36,15 @@ public final class HorseCoatGeneticsAccess {
             return;
         }
         storage.setValue(attachment == null ? HorseCoatGeneticsAttachment.EMPTY : attachment);
-        // Wired to HorseCoatGeneticsSyncPacket.sendToTracking in Task 4
+        if (!horse.level().isClientSide()) {
+            HorseCoatGeneticsSyncPacket.sendToTracking(horse);
+        }
     }
 
     private static @Nullable HorseCoatGeneticsStorage storage(AbstractHorse horse) {
         if (!isEligible(horse)) {
             return null;
         }
-        // Wired to ModAttachments.COAT_GENETICS in Task 4
-        return null;
+        return horse.getCapability(ModAttachments.COAT_GENETICS).resolve().orElse(null);
     }
 }

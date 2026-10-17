@@ -231,6 +231,10 @@ public final class ModGameTests {
             () -> GeneticsReviewFocusGameTest::dualCarrierInheritanceFearlessDamageAndDraftLiveRecompute);
         TEST_FUNCTIONS.register("genetics_breeding_diet_record_lifecycle",
             () -> HorseBreedingDietRecordGameTest::dietRecordUnionEnchantedAppleStaleAndPersistence);
+        TEST_FUNCTIONS.register("coat_genetics_attachment_set_then_get_on_horse",
+            () -> HorseCoatGeneticsAttachmentGameTest::setThenGetOnHorse);
+        TEST_FUNCTIONS.register("coat_genetics_attachment_ineligible_mule_has_no_coat_genetics",
+            () -> HorseCoatGeneticsAttachmentGameTest::ineligibleMuleHasNoCoatGenetics);
     }
 
     private ModGameTests() {}
