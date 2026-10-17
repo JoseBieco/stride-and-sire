@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "strideandsire:coat_genetics_review_focus_cross_phase_and_edge_cases",
+  "max_ticks": 100,
+  "setup_ticks": 0,
+  "required": true,
+  "structure": "strideandsire:empty"
+}

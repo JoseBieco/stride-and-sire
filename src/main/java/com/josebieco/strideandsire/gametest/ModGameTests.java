@@ -243,6 +243,8 @@ public final class ModGameTests {
             () -> HorseCoatBreedingGameTest::tieBreakPersistsAcrossReload);
         TEST_FUNCTIONS.register("coat_genetics_advancement_granted_on_pure_birth",
             () -> BredPureCoatAdvancementGameTest::advancementGrantedOnPureBirth);
+        TEST_FUNCTIONS.register("coat_genetics_review_focus_cross_phase_and_edge_cases",
+            () -> CoatGeneticsReviewFocusGameTest::crossPhaseAndEdgeCases);
     }
 
     private ModGameTests() {}
