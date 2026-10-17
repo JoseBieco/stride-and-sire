@@ -64,6 +64,11 @@ public final class HorseshoeRecipeGameTest {
         helper.succeed();
     }
 
+    public static void craftsDiamondHorseshoe(GameTestHelper helper) {
+        checkCrafting(helper, Items.DIAMOND, ModItems.DIAMOND_HORSESHOE.get(), "diamond");
+        helper.succeed();
+    }
+
     public static void craftsGoldHorseshoe(GameTestHelper helper) {
         checkCrafting(helper, Items.GOLD_INGOT, ModItems.GOLD_HORSESHOE.get(), "gold");
         helper.succeed();

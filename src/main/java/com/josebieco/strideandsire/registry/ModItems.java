@@ -18,6 +18,7 @@ public final class ModItems {
 
     public static final RegistryObject<HorseshoeItem> COPPER_HORSESHOE = horseshoe("copper_horseshoe", HorseshoeMaterial.COPPER);
     public static final RegistryObject<HorseshoeItem> IRON_HORSESHOE = horseshoe("iron_horseshoe", HorseshoeMaterial.IRON);
+    public static final RegistryObject<HorseshoeItem> DIAMOND_HORSESHOE = horseshoe("diamond_horseshoe", HorseshoeMaterial.DIAMOND);
     public static final RegistryObject<HorseshoeItem> GOLD_HORSESHOE = horseshoe("gold_horseshoe", HorseshoeMaterial.GOLD);
     public static final RegistryObject<HorseshoeItem> NETHERITE_HORSESHOE = horseshoe("netherite_horseshoe", HorseshoeMaterial.NETHERITE);
 
@@ -45,6 +46,7 @@ public final class ModItems {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(COPPER_HORSESHOE);
             event.accept(IRON_HORSESHOE);
+            event.accept(DIAMOND_HORSESHOE);
             event.accept(GOLD_HORSESHOE);
             event.accept(NETHERITE_HORSESHOE);
             event.accept(LEATHER_SADDLEBAG);

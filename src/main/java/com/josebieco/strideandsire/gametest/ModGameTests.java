@@ -104,6 +104,8 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::craftsCopperHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_iron_horseshoe",
             () -> HorseshoeRecipeGameTest::craftsIronHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_diamond_horseshoe",
+            () -> HorseshoeRecipeGameTest::craftsDiamondHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_gold_horseshoe",
             () -> HorseshoeRecipeGameTest::craftsGoldHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_no_netherite_crafting",

@@ -32,9 +32,20 @@ class HorseshoeMaterialTest {
     }
 
     @Test
+    void diamondMatchesSpec() {
+        assertEquals(300, HorseshoeMaterial.DIAMOND.baseDurability());
+        assertTrue(HorseshoeMaterial.DIAMOND.allowsEnchantment(HorseshoeEnchantmentKind.FEATHER_STEP));
+        assertTrue(HorseshoeMaterial.DIAMOND.allowsEnchantment(HorseshoeEnchantmentKind.FROST_STEP));
+        assertFalse(HorseshoeMaterial.DIAMOND.allowsEnchantment(HorseshoeEnchantmentKind.LAVA_WALKER));
+        assertFalse(HorseshoeMaterial.DIAMOND.hasGoldPassive());
+        assertFalse(HorseshoeMaterial.DIAMOND.hasNetheritePassive());
+    }
+
+    @Test
     void baseDurabilityMatchesSpec() {
         assertEquals(100, HorseshoeMaterial.COPPER.baseDurability());
         assertEquals(200, HorseshoeMaterial.IRON.baseDurability());
+        assertEquals(300, HorseshoeMaterial.DIAMOND.baseDurability());
         assertEquals(80, HorseshoeMaterial.GOLD.baseDurability());
         assertEquals(400, HorseshoeMaterial.NETHERITE.baseDurability());
     }

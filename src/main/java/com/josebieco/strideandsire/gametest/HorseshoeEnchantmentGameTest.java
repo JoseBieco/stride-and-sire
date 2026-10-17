@@ -63,6 +63,7 @@ public final class HorseshoeEnchantmentGameTest {
         return switch (material) {
             case COPPER -> ModItems.COPPER_HORSESHOE.get();
             case IRON -> ModItems.IRON_HORSESHOE.get();
+            case DIAMOND -> ModItems.DIAMOND_HORSESHOE.get();
             case GOLD -> ModItems.GOLD_HORSESHOE.get();
             case NETHERITE -> ModItems.NETHERITE_HORSESHOE.get();
         };

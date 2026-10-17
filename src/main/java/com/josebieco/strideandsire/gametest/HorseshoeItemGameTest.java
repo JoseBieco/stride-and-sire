@@ -17,6 +17,7 @@ public final class HorseshoeItemGameTest {
     public static void horseshoeItemsAreRegisteredWithCorrectMaterial(GameTestHelper helper) {
         check(helper, ModItems.COPPER_HORSESHOE, HorseshoeMaterial.COPPER);
         check(helper, ModItems.IRON_HORSESHOE, HorseshoeMaterial.IRON);
+        check(helper, ModItems.DIAMOND_HORSESHOE, HorseshoeMaterial.DIAMOND);
         check(helper, ModItems.GOLD_HORSESHOE, HorseshoeMaterial.GOLD);
         check(helper, ModItems.NETHERITE_HORSESHOE, HorseshoeMaterial.NETHERITE);
         helper.succeed();
@@ -34,6 +35,9 @@ public final class HorseshoeItemGameTest {
         helper.assertValueEqual(stack.getMaxDamage(), expected.baseDurability(), name + " max damage");
         helper.assertValueEqual(stack.getMaxStackSize(), 1, name + " max stack size");
         helper.assertTrue(stack.has(DataComponents.ENCHANTABLE), name + " is not enchantable");
+        if (expected == HorseshoeMaterial.DIAMOND) {
+            helper.assertValueEqual(stack.get(DataComponents.ENCHANTABLE).value(), 10, name + " enchantability");
+        }
         boolean fireResistant = stack.has(DataComponents.DAMAGE_RESISTANT);
         helper.assertValueEqual(fireResistant, expected == HorseshoeMaterial.NETHERITE, name + " fire resistance");
     }
