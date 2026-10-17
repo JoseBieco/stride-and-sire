@@ -11,7 +11,7 @@
   <img alt="Forge" src="https://img.shields.io/badge/Mod%20Loader-Forge-1B1B1B?logo=curseforge&logoColor=white">
   <img alt="Java" src="https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/License-MIT-blue">
-  <img alt="Status" src="https://img.shields.io/badge/Status-In%20Development-yellow">
+  <img alt="Status" src="https://img.shields.io/badge/Status-All%20Phases%20Shipped-brightgreen">
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
   <a href="#phase-a--horseshoes">Horseshoes</a> ·
   <a href="#phase-b--modular-saddlebags">Saddlebags</a> ·
   <a href="#phase-c--transparent-genetics">Genetics</a> ·
-  <a href="#roadmap">Roadmap</a> ·
+  <a href="#phase-d--mendelian-coat-genetics">Coat Genetics</a> ·
   <a href="#installation">Installation</a> ·
   <a href="README.pt-BR.md">Português</a>
 </p>
@@ -47,8 +47,9 @@ about the horse family.
 - **Transparent Genetics** — see a horse's real stats with the Breeder's
   Spyglass, breed deliberately with diet-guided items, and grow passive lineage
   traits across generations.
-- **Mendelian Coat Genetics** *(coming in Phase D)* — rare coat colors become a
-  collector's breeding goal, not a spawn-table roll.
+- **Mendelian Coat Genetics** — three exclusive coat colors that never spawn in
+  the wild, bred into existence through a focused Mendelian cross and locked in
+  for life the moment a foal is born pure.
 
 ## Status
 
@@ -56,8 +57,8 @@ about the horse family.
 |---|---|---|
 | A | Horseshoes | ✅ Implemented |
 | B | Modular Saddlebags | ✅ Implemented |
-| C | Transparent Genetics (Breeder's Spyglass, diet-driven breeding, lineage traits) | 📐 Designed |
-| D | Mendelian Coat Genetics | ⬜ Not started |
+| C | Transparent Genetics (Breeder's Spyglass, diet-driven breeding, lineage traits) | ✅ Implemented |
+| D | Mendelian Coat Genetics | ✅ Implemented |
 
 Target platform: Minecraft Forge, Minecraft 26.3, Java 25.
 
@@ -236,14 +237,68 @@ A foal has a low (1–2%) chance of spontaneously manifesting/carrying a trait
 neither parent has, and a much higher (15–35%) chance if at least one parent
 already carries it — breeding selectively keeps a trait in the line.
 
-## Roadmap
+## Phase D — Mendelian Coat Genetics
 
-### Phase D — Mendelian Coat Genetics (not started)
+<p align="center">
+  <!-- TODO: add a screenshot of the three exclusive coats -->
+  <img src="docs/images/coat-genetics.png" alt="A Horse showing one of the three exclusive Mendelian coats" width="600">
+</p>
 
-Rare coat colors (pure black, albino white) become unobtainable from natural
-spawns — "recessive mutations" only reachable by breeding specific coat/marking
-lines for 3–4 generations, creating an endgame goal for collectors. Reuses the
-latent/manifest (dominant/recessive) vocabulary introduced in Phase C.
+Vanilla's horse color roll isn't the whole story anymore. Three coat colors
+never appear on a wild-spawned Horse — they only exist as the payoff of a
+small, deliberate breeding program. This phase is scoped to the Horse only:
+Donkeys, Mules, Skeleton Horses, and Zombie Horses have no color variation in
+vanilla and are unaffected.
+
+### Exclusive coats
+
+| Coat | Look |
+|---|---|
+| Obsidian | Solid, deep black — darker and glossier than vanilla Black, with no markings |
+| Albino | Solid white with a matching white mane/tail and pink/red eyes (vanilla White keeps a contrasting mane) |
+| Silver Dapple | A metallic silver dapple pattern with no vanilla equivalent |
+
+### Single-gene Mendelian inheritance
+
+Each coat is controlled by one independent dominant/recessive gene pair
+(`AA`/`Aa`/`aa`) — simpler by design than Phase C's attributes and traits, so
+this stays a short breeding puzzle rather than a second genetics system to
+learn. Breeding is pure Mendel, with zero influence from diet items:
+
+| Cross | Offspring odds |
+|---|---|
+| `AA` × `AA` | 100% `AA` |
+| `AA` × `Aa` | 50% `AA`, 50% `Aa` |
+| `AA` × `aa` | 100% `Aa` |
+| `Aa` × `Aa` | 25% `AA`, 50% `Aa`, 25% `aa` |
+| `Aa` × `aa` | 50% `Aa`, 50% `aa` |
+| `aa` × `aa` | 100% `aa` |
+
+Wild Horses can spawn as a silent carrier (`Aa`, a rare 3% chance per gene) but
+never already showing the coat (`aa`) — inspect wild horses with the Breeder's
+Spyglass to find carriers worth building a line around. If a horse ends up
+`aa` pure in more than one gene at once, which coat is actually displayed is
+chosen at random the moment it's born and stays fixed for that horse's life.
+
+The exclusive coat fully replaces the horse's vanilla color and markings. It's
+purely cosmetic — no stat bonus of any kind.
+
+### Spyglass support
+
+The Breeder's Spyglass report gained a third section listing the genotype
+(`AA`, `Aa`, or `aa`) of all 3 genes for the inspected horse, alongside the
+attribute grades and lineage traits from Phase C.
+
+### Advancements
+
+Breeding the first `aa`-pure specimen of each coat grants a one-time
+advancement — three to chase for a completionist breeding program:
+
+| Advancement | Earned by |
+|---|---|
+| Obsidian Coat | Breeding the first pure Obsidian foal |
+| Albino Coat | Breeding the first pure Albino foal |
+| Silver Dapple Coat | Breeding the first pure Silver Dapple foal |
 
 ## Installation
 

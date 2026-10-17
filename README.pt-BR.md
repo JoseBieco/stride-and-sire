@@ -11,7 +11,7 @@ m,                                                                              
   <img alt="Forge" src="https://img.shields.io/badge/Mod%20Loader-Forge-1B1B1B?logo=curseforge&logoColor=white">
   <img alt="Java" src="https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white">
   <img alt="Licença" src="https://img.shields.io/badge/Licença-MIT-blue">
-  <img alt="Status" src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow">
+  <img alt="Status" src="https://img.shields.io/badge/Status-Todas%20as%20Fases%20Prontas-brightgreen">
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@ m,                                                                              
   <a href="#fase-a--ferraduras">Ferraduras</a> ·
   <a href="#fase-b--alforjes-modulares">Alforjes</a> ·
   <a href="#fase-c--genética-transparente">Genética</a> ·
-  <a href="#roadmap">Roadmap</a> ·
+  <a href="#fase-d--genética-mendeliana-de-pelagem">Genética de Pelagem</a> ·
   <a href="#instalação">Instalação</a> ·
   <a href="README.md">English</a>
 </p>
@@ -46,8 +46,9 @@ este mod é sobre a família dos cavalos.
 - **Genética Transparente** — veja os atributos reais de um cavalo com a Lente
   do Criador, crie de forma deliberada com itens de dieta, e desenvolva traços
   de linhagem passivos ao longo de gerações.
-- **Genética Mendeliana de Pelagem** *(chegando na Fase D)* — pelagens raras se
-  tornam um objetivo de criação pra colecionadores, não um sorteio de spawn.
+- **Genética Mendeliana de Pelagem** — três pelagens exclusivas que nunca
+  aparecem em spawns selvagens, criadas por um cruzamento Mendeliano focado e
+  fixadas pra sempre no momento em que o filhote puro nasce.
 
 ## Status
 
@@ -55,8 +56,8 @@ este mod é sobre a família dos cavalos.
 |---|---|---|
 | A | Ferraduras | ✅ Implementada |
 | B | Alforjes Modulares | ✅ Implementada |
-| C | Genética Transparente (Lente do Criador, criação guiada por dieta, traços de linhagem) | 📐 Desenhada |
-| D | Genética Mendeliana de Pelagem | ⬜ Não iniciada |
+| C | Genética Transparente (Lente do Criador, criação guiada por dieta, traços de linhagem) | ✅ Implementada |
+| D | Genética Mendeliana de Pelagem | ✅ Implementada |
 
 Plataforma: Minecraft Forge, Minecraft 26.3, Java 25.
 
@@ -239,15 +240,70 @@ Um filhote tem uma chance baixa (1–2%) de manifestar/carregar espontaneamente 
 traço que nenhum dos pais tem, e uma chance bem maior (15–35%) se pelo menos um
 dos pais já carrega — cruzar de forma seletiva mantém o traço na linhagem.
 
-## Roadmap
+## Fase D — Genética Mendeliana de Pelagem
 
-### Fase D — Genética Mendeliana de Pelagem (não iniciada)
+<p align="center">
+  <!-- TODO: adicionar screenshot das três pelagens exclusivas -->
+  <img src="docs/images/coat-genetics.png" alt="Um Cavalo exibindo uma das três pelagens Mendelianas exclusivas" width="600">
+</p>
 
-Pelagens raras (preto absoluto, branco albino) deixam de aparecer em spawns
-naturais — tornam-se "mutações recessivas", só alcançáveis cruzando linhagens
-específicas de cor/manchas por 3–4 gerações, criando um objetivo de endgame para
-colecionadores. Reaproveita o vocabulário latente/manifesto (dominante/recessivo)
-introduzido na Fase C.
+O sorteio de cor vanilla do cavalo não é mais a história completa. Três
+pelagens nunca aparecem num Cavalo spawnado selvagem — elas só existem como
+recompensa de um pequeno programa de criação deliberado. Esta fase é restrita
+ao Cavalo: Burro, Mula, Cavalo-Esqueleto e Cavalo-Zumbi não têm variação de
+cor no vanilla e ficam de fora.
+
+### Pelagens exclusivas
+
+| Pelagem | Aparência |
+|---|---|
+| Preto Absoluto | Preto sólido e profundo — mais escuro e brilhante que o "Black" vanilla, sem marcações |
+| Albino | Branco sólido com crina/cauda também brancas e olhos rosados/vermelhos (o "White" vanilla mantém a crina contrastante) |
+| Pangaré Prateado | Um padrão de manchas metálicas prateadas sem equivalente no vanilla |
+
+### Herança Mendeliana de gene único
+
+Cada pelagem é controlada por um único par de alelos dominante/recessivo
+(`AA`/`Aa`/`aa`) — deliberadamente mais simples que os atributos e traços da
+Fase C, pra continuar sendo um quebra-cabeça de criação curto, e não um
+segundo sistema de genética pra aprender. A reprodução é Mendeliana pura, sem
+nenhuma influência de itens de dieta:
+
+| Cruzamento | Chances no filhote |
+|---|---|
+| `AA` × `AA` | 100% `AA` |
+| `AA` × `Aa` | 50% `AA`, 50% `Aa` |
+| `AA` × `aa` | 100% `Aa` |
+| `Aa` × `Aa` | 25% `AA`, 50% `Aa`, 25% `aa` |
+| `Aa` × `aa` | 50% `Aa`, 50% `aa` |
+| `aa` × `aa` | 100% `aa` |
+
+Cavalos selvagens podem nascer como portadores silenciosos (`Aa`, uma chance
+rara de 3% por gene), mas nunca já exibindo a pelagem (`aa`) — inspecione
+cavalos selvagens com a Lente do Criador pra achar portadores que valham a
+pena usar numa linhagem. Se um cavalo acabar `aa` puro em mais de um gene ao
+mesmo tempo, qual pelagem é exibida é sorteado aleatoriamente no momento do
+nascimento e fica fixo pelo resto da vida daquele cavalo.
+
+A pelagem exclusiva substitui completamente a cor e marcação vanilla do
+cavalo. É puramente cosmética — nenhum bônus de atributo.
+
+### Suporte na Lente do Criador
+
+O relatório da Lente do Criador ganhou uma terceira seção listando o genótipo
+(`AA`, `Aa` ou `aa`) dos 3 genes do cavalo inspecionado, ao lado das notas de
+atributo e traços de linhagem da Fase C.
+
+### Conquistas
+
+Criar o primeiro espécime `aa` puro de cada pelagem concede uma conquista
+única — três pra perseguir num programa de criação completista:
+
+| Conquista | Obtida ao |
+|---|---|
+| Preto Absoluto | Criar o primeiro filhote puro Preto Absoluto |
+| Albino | Criar o primeiro filhote puro Albino |
+| Pangaré Prateado | Criar o primeiro filhote puro Pangaré Prateado |
 
 ## Instalação
 
