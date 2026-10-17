@@ -267,12 +267,17 @@ def draw_horse_coat_obsidian() -> Image.Image:
 
 
 def draw_horse_coat_albino() -> Image.Image:
-    """Albino coat: opaque #f5f2ea body/mane/tail (no contrast) with #d98a93 pink eyes on the head UV."""
+    """Albino coat: opaque #f5f2ea body/mane/tail (no contrast) with #d98a93 pink eyes on the head UV.
+
+    Adult head box: texOffs(0, 13), 6x5x7, so its side row is y 20..24 with faces right side x 0..6, front x 7..12,
+    left side x 13..19, back x 20..25. Each 2x2 eye sits wholly on one side face, against the front (mouth) edge:
+    x 5..6 (right side) and x 13..14 (left side), y 20..21.
+    """
     base = hex_rgba("#f5f2ea")
     eye = hex_rgba("#d98a93")
     image = Image.new("RGBA", HORSE_COAT_TEXTURE_SIZE, base)
     for y in (20, 21):
-        for x in (6, 7, 19, 20):
+        for x in (5, 6, 13, 14):
             image.putpixel((x, y), eye)
     return image
 

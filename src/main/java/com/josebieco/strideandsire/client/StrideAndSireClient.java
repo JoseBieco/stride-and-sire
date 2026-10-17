@@ -12,10 +12,12 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
+import net.minecraft.client.renderer.entity.state.HorseRenderState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,6 +32,7 @@ public final class StrideAndSireClient {
         TickEvent.ClientTickEvent.Pre.BUS.addListener(StrideAndSireClient::onClientTickPre);
         EntityRenderersEvent.RegisterLayerDefinitions.BUS.addListener(StrideAndSireClient::onRegisterLayerDefinitions);
         EntityRenderersEvent.AddLayers.BUS.addListener(StrideAndSireClient::onAddLayers);
+        RenderLivingEvent.Pre.BUS.addListener(StrideAndSireClient::onRenderLivingPre);
     }
 
     /** Renderers that get the mod's equipment layers: the horseshoe/saddlebag-eligible types (not Llama/Camel). */
@@ -68,6 +71,17 @@ public final class StrideAndSireClient {
             AbstractHorseRenderer<?, S, M> renderer, EntityModelSet models) {
         renderer.addLayer(new HorseshoeLayer<>(renderer));
         renderer.addLayer(new SaddlebagLayer<>(renderer, models));
+    }
+
+    /**
+     * Fired after render-state extraction and before the base model and layers submit: an exclusive coat replaces the
+     * vanilla markings entirely, so hide them for this frame (see {@link HorseCoatOverrideLayer}). Never cancels.
+     */
+    private static boolean onRenderLivingPre(RenderLivingEvent.Pre<?, ?, ?> event) {
+        if (event.getState() instanceof HorseRenderState state) {
+            HorseCoatOverrideLayer.suppressVanillaMarkings(state);
+        }
+        return false;
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {

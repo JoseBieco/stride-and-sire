@@ -23,8 +23,11 @@ import org.jspecify.annotations.Nullable;
  * The tier decision itself is {@link HorseshoeRendering#materialToRender}, which is common code and GameTest-covered.
  */
 public class HorseshoeLayer<S extends EquineRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
-    /** Same submission order as vanilla horse markings: above the base model, below armor and saddle (order 2). */
-    private static final int ORDER = 1;
+    /**
+     * {@link HorseshoeRendering#LAYER_ORDER} (2): strictly after the coat override layer (order 1), which re-renders the
+     * same parent model with the same cutout render type, so the hooves always win the coplanar depth test.
+     */
+    private static final int ORDER = HorseshoeRendering.LAYER_ORDER;
 
     public HorseshoeLayer(RenderLayerParent<S, M> renderer) {
         super(renderer);

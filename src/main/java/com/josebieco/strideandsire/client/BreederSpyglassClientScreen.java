@@ -21,7 +21,11 @@ import net.minecraft.world.entity.animal.equine.AbstractHorse;
  * recessive coat gene zygosity (AA / Aa / aa).
  */
 public final class BreederSpyglassClientScreen {
-    private static final int PANEL_WIDTH = 210;
+    /**
+     * Wide enough that the longest state label in the value column (x0 + 118), pt_br "Latente (Portador)" / "AA (nenhum
+     * traço)" (~98 px), keeps well over 4 px of margin to the right border.
+     */
+    private static final int PANEL_WIDTH = 232;
     private static final int PANEL_HEIGHT = 192;
 
     private BreederSpyglassClientScreen() {}

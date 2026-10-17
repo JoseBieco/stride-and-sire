@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class SaddlebagLayer<S extends EquineRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
     /** Submitted after vanilla's saddle and body-armor layers (order 2). */
-    private static final int ORDER = 3;
+    private static final int ORDER = SaddlebagRendering.LAYER_ORDER;
 
     private final SaddlebagModel model;
 
