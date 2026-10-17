@@ -243,6 +243,12 @@ public final class ModGameTests {
             () -> HorseCoatBreedingGameTest::tieBreakPersistsAcrossReload);
         TEST_FUNCTIONS.register("coat_genetics_advancement_granted_on_pure_birth",
             () -> BredPureCoatAdvancementGameTest::advancementGrantedOnPureBirth);
+        TEST_FUNCTIONS.register("coat_genetics_wild_spawn_chunk_generation_rolls_carriers",
+            () -> HorseCoatSpawnGameTest::chunkGenerationSpawnRollsCarriers);
+        TEST_FUNCTIONS.register("coat_genetics_advancement_goes_to_breeder_not_owner",
+            () -> BredPureCoatAdvancementGameTest::advancementGoesToBreederNotOwner);
+        TEST_FUNCTIONS.register("coat_genetics_advancement_skipped_when_birth_cancelled_or_replaced",
+            () -> BredPureCoatAdvancementGameTest::advancementSkippedWhenBirthCancelledOrReplaced);
         TEST_FUNCTIONS.register("coat_genetics_review_focus_cross_phase_and_edge_cases",
             () -> CoatGeneticsReviewFocusGameTest::crossPhaseAndEdgeCases);
     }

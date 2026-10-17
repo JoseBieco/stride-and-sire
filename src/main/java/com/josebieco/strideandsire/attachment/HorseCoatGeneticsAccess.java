@@ -36,7 +36,9 @@ public final class HorseCoatGeneticsAccess {
             return;
         }
         storage.setValue(attachment == null ? HorseCoatGeneticsAttachment.EMPTY : attachment);
-        if (!horse.level().isClientSide()) {
+        // Not yet added (chunk-generation FinalizeSpawn, possibly off-thread; a foal before addFreshEntity): nobody tracks
+        // it yet, and StartTracking (HorseEquipmentEvents) sends the value once a player starts tracking it.
+        if (!horse.level().isClientSide() && horse.isAddedToLevel()) {
             HorseCoatGeneticsSyncPacket.sendToTracking(horse);
         }
     }

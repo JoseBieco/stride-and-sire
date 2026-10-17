@@ -12,6 +12,7 @@ import com.josebieco.strideandsire.genetics.TraitState;
 import com.josebieco.strideandsire.genetics.Zygosity;
 import com.josebieco.strideandsire.menu.BreederSpyglassScreen;
 import com.josebieco.strideandsire.menu.BreederSpyglassScreen.SpyglassReport;
+import com.josebieco.strideandsire.registry.ModAttachments;
 import com.josebieco.strideandsire.registry.ModItems;
 import com.josebieco.strideandsire.render.HorseCoatRendering;
 import java.util.List;
@@ -221,6 +222,9 @@ public final class CoatGeneticsReviewFocusGameTest {
             helper.assertFalse(
                 HorseCoatGeneticsAccess.isEligible(nonHorseEquine),
                 type + " must not be eligible for coat genetics (Fase D)");
+            helper.assertFalse(
+                nonHorseEquine.getCapability(ModAttachments.COAT_GENETICS).isPresent(),
+                type + " must not carry the coat genetics capability at all (Fase D)");
             HorseCoatGeneticsAccess.set(nonHorseEquine, dualManifest);
             helper.assertValueEqual(
                 HorseCoatGeneticsAccess.get(nonHorseEquine),

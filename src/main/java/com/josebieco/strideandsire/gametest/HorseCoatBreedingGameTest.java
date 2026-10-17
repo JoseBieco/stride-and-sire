@@ -24,6 +24,9 @@ import net.minecraft.world.level.storage.TagValueOutput;
  * </ul>
  */
 public final class HorseCoatBreedingGameTest {
+    /** Aa x Aa trials: P(no aa foal) = 0.75^60 ~= 3.2e-8 (< 1e-6 budget). */
+    private static final int CARRIER_TRIALS = 60;
+
     private HorseCoatBreedingGameTest() {}
 
     /**
@@ -32,7 +35,7 @@ public final class HorseCoatBreedingGameTest {
      *   <li>{@code aa x aa} on {@link CoatGene#OBSIDIAN} deterministically produces a foal with
      *       {@link Zygosity#HOMOZYGOUS_RECESSIVE} on {@link CoatGene#OBSIDIAN} and
      *       {@code manifestGeneToRender() == CoatGene.OBSIDIAN}.</li>
-     *   <li>{@code Aa x Aa} on {@link CoatGene#OBSIDIAN} across 40 trials produces at least one
+     *   <li>{@code Aa x Aa} on {@link CoatGene#OBSIDIAN} across 60 trials produces at least one
      *       {@link Zygosity#HOMOZYGOUS_RECESSIVE} foal with {@code manifestGeneToRender() == CoatGene.OBSIDIAN}.</li>
      * </ol>
      */
@@ -56,7 +59,7 @@ public final class HorseCoatBreedingGameTest {
         recessiveA.setInLove(null);
         recessiveB.setInLove(null);
         recessiveA.spawnChildFromBreeding(level, recessiveB);
-        Horse pureFoal = findNewestBaby(level);
+        Horse pureFoal = findNewestBaby(helper);
         helper.assertTrue(pureFoal != null, "aa x aa breeding should spawn a foal");
 
         HorseCoatGeneticsAttachment pureFoalCoat = HorseCoatGeneticsAccess.get(pureFoal);
@@ -70,7 +73,7 @@ public final class HorseCoatBreedingGameTest {
             "aa x aa foal must render OBSIDIAN");
         pureFoal.discard();
 
-        // Part 2: Aa x Aa on OBSIDIAN across 40 trials -> at least one HOMOZYGOUS_RECESSIVE foal (0.75^40 = 1.0e-5).
+        // Part 2: Aa x Aa on OBSIDIAN across 60 trials -> at least one HOMOZYGOUS_RECESSIVE foal (false failure 0.75^60 ~= 3.2e-8).
         Horse carrierA = helper.spawn(EntityTypes.HORSE, 3, 1, 1);
         Horse carrierB = helper.spawn(EntityTypes.HORSE, 3, 1, 2);
         carrierA.setTamed(true);
@@ -82,13 +85,13 @@ public final class HorseCoatBreedingGameTest {
         HorseCoatGeneticsAccess.set(carrierB, obsidianCarrier);
 
         int manifestCount = 0;
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < CARRIER_TRIALS; i++) {
             carrierA.setAge(0);
             carrierB.setAge(0);
             carrierA.setInLove(null);
             carrierB.setInLove(null);
             carrierA.spawnChildFromBreeding(level, carrierB);
-            Horse foal = findNewestBaby(level);
+            Horse foal = findNewestBaby(helper);
             helper.assertTrue(foal != null, "Aa x Aa breeding trial " + i + " should spawn a foal");
 
             HorseCoatGeneticsAttachment foalCoat = HorseCoatGeneticsAccess.get(foal);
@@ -104,7 +107,7 @@ public final class HorseCoatBreedingGameTest {
 
         helper.assertTrue(
             manifestCount > 0,
-            "Expected at least one HOMOZYGOUS_RECESSIVE foal across 40 Aa x Aa trials, got 0");
+            "Expected at least one HOMOZYGOUS_RECESSIVE foal across " + CARRIER_TRIALS + " Aa x Aa trials, got 0");
         helper.succeed();
     }
 
@@ -136,7 +139,7 @@ public final class HorseCoatBreedingGameTest {
         parentA.setInLove(null);
         parentB.setInLove(null);
         parentA.spawnChildFromBreeding(level, parentB);
-        Horse foal = findNewestBaby(level);
+        Horse foal = findNewestBaby(helper);
         helper.assertTrue(foal != null, "dual-recessive breeding should spawn a foal");
 
         HorseCoatGeneticsAttachment foalCoat = HorseCoatGeneticsAccess.get(foal);
@@ -189,10 +192,11 @@ public final class HorseCoatBreedingGameTest {
         helper.succeed();
     }
 
-    private static Horse findNewestBaby(ServerLevel level) {
+    /** The (single) live foal inside this test's bounds; never scans the whole level. */
+    static Horse findNewestBaby(GameTestHelper helper) {
         Horse found = null;
-        for (var entity : level.getAllEntities()) {
-            if (entity instanceof Horse horse && horse.isBaby() && horse.isAlive()) {
+        for (Horse horse : helper.getEntities(EntityTypes.HORSE)) {
+            if (horse.isBaby() && horse.isAlive()) {
                 found = horse;
             }
         }
