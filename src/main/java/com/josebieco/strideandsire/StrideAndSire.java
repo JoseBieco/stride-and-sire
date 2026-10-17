@@ -34,6 +34,7 @@ public final class StrideAndSire {
         com.josebieco.strideandsire.event.SureFootedStepHandler.register();
         com.josebieco.strideandsire.event.FearlessPanicSuppressionHandler.register();
         com.josebieco.strideandsire.event.HorseCoatSpawnHandler.register();
+        com.josebieco.strideandsire.event.HorseCoatBreedingHandler.register();
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             StrideAndSireClient.init(modBusGroup);

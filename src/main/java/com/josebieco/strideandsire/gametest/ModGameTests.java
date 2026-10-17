@@ -237,6 +237,10 @@ public final class ModGameTests {
             () -> HorseCoatGeneticsAttachmentGameTest::ineligibleMuleHasNoCoatGenetics);
         TEST_FUNCTIONS.register("coat_genetics_wild_spawn_never_manifests",
             () -> HorseCoatSpawnGameTest::wildSpawnNeverManifests);
+        TEST_FUNCTIONS.register("coat_genetics_breeding_aa_x_aa_produces_manifest_statistically",
+            () -> HorseCoatBreedingGameTest::aaByAaProducesManifestStatistically);
+        TEST_FUNCTIONS.register("coat_genetics_tie_break_persists_across_reload",
+            () -> HorseCoatBreedingGameTest::tieBreakPersistsAcrossReload);
     }
 
     private ModGameTests() {}
