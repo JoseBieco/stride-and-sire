@@ -13,5 +13,17 @@
   "item.strideandsire.saddlebag.bonus.leather": "No special bonus",
   "item.strideandsire.saddlebag.bonus.iron": "Contents survive explosions",
   "item.strideandsire.saddlebag.bonus.gold": "Contents survive explosions; Piglins stay neutral while riding",
-  "item.strideandsire.saddlebag.bonus.netherite": "Contents survive explosions and fire"
+  "item.strideandsire.saddlebag.bonus.netherite": "Contents survive explosions and fire",
+  "gui.strideandsire.spyglass.title": "Breeder's Spyglass: %s",
+  "gui.strideandsire.spyglass.section.attributes": "Attribute Grades",
+  "gui.strideandsire.spyglass.attr.speed": "Speed",
+  "gui.strideandsire.spyglass.attr.jump": "Jump Strength",
+  "gui.strideandsire.spyglass.attr.health": "Max Health",
+  "gui.strideandsire.spyglass.section.traits": "Lineage Traits",
+  "gui.strideandsire.spyglass.trait.sure_footed": "Sure-footed",
+  "gui.strideandsire.spyglass.trait.fearless": "Fearless",
+  "gui.strideandsire.spyglass.trait.draft": "Draft",
+  "gui.strideandsire.spyglass.state.manifest": "Manifest",
+  "gui.strideandsire.spyglass.state.latent": "Latent (Carrier)",
+  "gui.strideandsire.spyglass.state.absent": "Absent"
 }

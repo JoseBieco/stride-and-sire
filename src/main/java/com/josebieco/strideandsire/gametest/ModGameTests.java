@@ -204,6 +204,8 @@ public final class ModGameTests {
             () -> HorseBreedingTraitGameTest::carrierParentPassesTraitMoreOftenThanAbsentParents);
         TEST_FUNCTIONS.register("genetics_breeding_food_glistering_melon_triggers_love",
             () -> HorseBreedingFoodGameTest::glisteringMelonTriggersLoveMode);
+        TEST_FUNCTIONS.register("genetics_spyglass_report_and_interaction",
+            () -> BreederSpyglassGameTest::buildReportAndInteraction);
     }
 
     private ModGameTests() {}

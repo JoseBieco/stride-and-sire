@@ -69,6 +69,9 @@ public final class HorseshoeMenuEvents {
             return false;
         }
         ItemStack held = player.getItemInHand(event.getHand());
+        if (held.is(Items.SPYGLASS)) {
+            return false;
+        }
         // Mob.checkAndHandleImportantInteractions
         if (held.is(Items.NAME_TAG) && held.get(DataComponents.CUSTOM_NAME) != null && horse.getType().canSerialize()) {
             return false;
