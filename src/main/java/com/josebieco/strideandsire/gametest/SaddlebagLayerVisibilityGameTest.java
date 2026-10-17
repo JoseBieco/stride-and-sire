@@ -10,6 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -43,6 +44,32 @@ public final class SaddlebagLayerVisibilityGameTest {
             assertMaterial(helper, horse, null, type + " after removing saddlebag");
         }
         helper.succeed();
+    }
+
+    /**
+     * Chest-aware placement of the 3D bags: a chested Donkey/Mule gets the under-chest variant, everything else (and a
+     * Donkey/Mule without chest) the flank one. Test instance:
+     * data/strideandsire/test_instance/saddlebag_layer_placement_follows_chest.json
+     */
+    public static void placementFollowsChest(GameTestHelper helper) {
+        helper.makeFloor();
+        for (EntityType<? extends AbstractHorse> type : List.of(
+                EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
+            AbstractHorse horse = helper.spawn(type, 2, 1, 2);
+            assertPlacement(helper, horse, SaddlebagRendering.Placement.FLANK, type + " without chest");
+            if (horse instanceof AbstractChestedHorse chested) {
+                chested.setChest(true);
+                assertPlacement(helper, horse, SaddlebagRendering.Placement.UNDER_CHEST, type + " with chest");
+                chested.setChest(false);
+                assertPlacement(helper, horse, SaddlebagRendering.Placement.FLANK, type + " after removing chest");
+            }
+        }
+        helper.succeed();
+    }
+
+    private static void assertPlacement(GameTestHelper helper, AbstractHorse horse, SaddlebagRendering.Placement expected, String what) {
+        SaddlebagRendering.Placement actual = SaddlebagRendering.placement(horse);
+        helper.assertTrue(actual == expected, what + ": expected " + expected + " but got " + actual);
     }
 
     /** Null-safe (GameTestHelper#assertValueEqual NPEs on a null actual value). */

@@ -182,19 +182,20 @@ BAG_MODEL_TEXTURE_SIZE = (32, 16)
 # inner/front/outer/back side faces in the row v+d). In side faces the left column is the
 # front (toward the head) and the top row is the top; the right bag is mirrored, so both
 # outer faces read the same texels.
+# The under-chest variant (chested Donkey/Mule) is the same boxes moved down: same texels.
 #
 # Bag box: texOffs(0, 0), 2 (w) x 5 (h) x 6 (d).
 BAG_MODEL_FACES: dict[tuple[int, int], list[str]] = {
     (6, 0): ["ll"] * 6,                       # top (2 x 6, x inner->outer by z)
     (8, 0): ["cc"] + ["dd"] * 4 + ["cc"],     # bottom: metal corner caps at both ends
     (0, 6): ["kkkkkk"] * 5,                   # inner face, against the body
-    (6, 6): ["lm", "lm", "md", "md", "cC"],   # front
+    (6, 6): ["lm", "lm", "md", "md", "cW"],   # front
     (8, 6): [                                 # outer face; rows 0-2 sit under the flap
         "mmmmmm",
         "mmmmmm",
         "kkkkkk",                              # shadow cast by the flap
         "lmmmmd",
-        "Cddddc",                              # bottom edge with corner caps
+        "Wddddc",                              # bottom edge with corner caps (lit front corner)
     ],
     (14, 6): ["ml", "ml", "dm", "dm", "Cc"],  # back
 }
@@ -207,7 +208,7 @@ FLAP_MODEL_FACES: dict[tuple[int, int], list[str]] = {
     (23, 6): [                                # outer face
         "LLLLLL",
         "lmmmmd",
-        "CsBbsC",                              # hem stitching, buckle, metal corner tips
+        "WsBbsC",                              # hem stitching, buckle, metal corner tips (lit front tip)
     ],
     (29, 6): ["L", "m", "C"],                 # back edge
 }
@@ -224,7 +225,7 @@ def draw_saddlebag_model(tier: str) -> Image.Image:
 
 def draw_saddlebag_model_preview(tier: str) -> Image.Image:
     """Debug only (never committed): the texture atlas x8 next to the bag as seen from the side
-    (outer face + flap, in quarter-pixel samples) on a horse-brown flank, x8."""
+    (outer face + flap, in quarter-pixel samples; the under-chest variant uses the same texels) on a horse-brown flank, x8."""
     tex = draw_saddlebag_model(tier)
     q = 4  # samples per model pixel
     z0, z1, y0, y1 = -1.0, 7.0, -7.0, 0.0  # body-local window around the bag

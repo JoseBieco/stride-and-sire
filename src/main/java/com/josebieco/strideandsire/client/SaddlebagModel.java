@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.entity.state.DonkeyRenderState;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
 import net.minecraft.resources.Identifier;
 
@@ -33,8 +34,11 @@ import net.minecraft.resources.Identifier;
  *       edges; it starts a quarter pixel above the bag's top: x 7.1..7.6, y -6.25..-3.25, z -0.25..6.25 (the lower
  *       2.25 px of the bag's outer face show below it).</li>
  * </ul>
- * Total outward extent 7.6 stays inside a chest's 8, and no bag face is coplanar with a body, saddle or chest face, so
- * on a chested donkey/mule the chest simply hides the front of each bag (the rear 2 px still show) without z-fighting.
+ * On a chested Donkey/Mule ({@link DonkeyRenderState#hasChest}, rule {@link SaddlebagRendering#placementFor}) that
+ * volume would sit inside the chest box, so {@link #setupAnim} swaps to an identical pair dropped by 6.3 px: bag
+ * y 0.3..5.3, flap y 0.05..3.05, entirely below the chest's bottom face (y 0) and never intersecting it. The bags then
+ * hang under the chests against the belly/upper hind legs (hind legs sit at x within ±5, y from 3, z 1..5), with the
+ * whole outer face, flap and buckle visible. No bag face is coplanar with a body, saddle or chest face.
  * The right bag uses {@code mirror()} so both outer faces sample the same texture region.
  *
  * <p>UV layout (texture {@value SaddlebagRendering#MODEL_TEXTURE_WIDTH}x{@value SaddlebagRendering#MODEL_TEXTURE_HEIGHT},
@@ -48,9 +52,19 @@ public class SaddlebagModel extends AbstractEquineModel<EquineRenderState> {
 
     static final String LEFT_BAG = "left_saddlebag";
     static final String RIGHT_BAG = "right_saddlebag";
+    static final String LEFT_BAG_UNDER_CHEST = "left_saddlebag_under_chest";
+    static final String RIGHT_BAG_UNDER_CHEST = "right_saddlebag_under_chest";
+
+    /** Vertical drop of the {@link SaddlebagRendering.Placement#UNDER_CHEST} variant: bag top from y -6 to y 0.3. */
+    private static final float UNDER_CHEST_DROP = 6.3F;
+
+    private final ModelPart[] flankBags;
+    private final ModelPart[] underChestBags;
 
     public SaddlebagModel(ModelPart root) {
         super(root);
+        this.flankBags = new ModelPart[] {this.body.getChild(LEFT_BAG), this.body.getChild(RIGHT_BAG)};
+        this.underChestBags = new ModelPart[] {this.body.getChild(LEFT_BAG_UNDER_CHEST), this.body.getChild(RIGHT_BAG_UNDER_CHEST)};
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -59,17 +73,32 @@ public class SaddlebagModel extends AbstractEquineModel<EquineRenderState> {
         // Keep the part tree and poses (setupAnim needs body, head_parts, legs and tail) but draw none of the horse.
         root.retainExactParts(Set.of());
         PartDefinition body = root.getChild("body");
-        CubeDeformation flap = new CubeDeformation(-0.25F, 0.0F, 0.25F);
-        body.addOrReplaceChild(LEFT_BAG,
-            CubeListBuilder.create()
-                .texOffs(0, 0).addBox(5.1F, -6.0F, 0.0F, 2.0F, 5.0F, 6.0F)
-                .texOffs(16, 0).addBox(6.85F, -6.25F, 0.0F, 1.0F, 3.0F, 6.0F, flap),
-            PartPose.ZERO);
-        body.addOrReplaceChild(RIGHT_BAG,
-            CubeListBuilder.create().mirror()
-                .texOffs(0, 0).addBox(-7.1F, -6.0F, 0.0F, 2.0F, 5.0F, 6.0F)
-                .texOffs(16, 0).addBox(-7.85F, -6.25F, 0.0F, 1.0F, 3.0F, 6.0F, flap),
-            PartPose.ZERO);
+        body.addOrReplaceChild(LEFT_BAG, bag(false), PartPose.ZERO);
+        body.addOrReplaceChild(RIGHT_BAG, bag(true), PartPose.ZERO);
+        // Same boxes (same UVs), dropped below the chest's bottom face (y 0) instead of inside it.
+        body.addOrReplaceChild(LEFT_BAG_UNDER_CHEST, bag(false), PartPose.offset(0.0F, UNDER_CHEST_DROP, 0.0F));
+        body.addOrReplaceChild(RIGHT_BAG_UNDER_CHEST, bag(true), PartPose.offset(0.0F, UNDER_CHEST_DROP, 0.0F));
         return LayerDefinition.create(mesh, SaddlebagRendering.MODEL_TEXTURE_WIDTH, SaddlebagRendering.MODEL_TEXTURE_HEIGHT);
+    }
+
+    /** One bag + flap in flank position; {@code right} mirrors it to the -x side. */
+    private static CubeListBuilder bag(boolean right) {
+        CubeDeformation flap = new CubeDeformation(-0.25F, 0.0F, 0.25F);
+        return CubeListBuilder.create().mirror(right)
+            .texOffs(0, 0).addBox(right ? -7.1F : 5.1F, -6.0F, 0.0F, 2.0F, 5.0F, 6.0F)
+            .texOffs(16, 0).addBox(right ? -7.85F : 6.85F, -6.25F, 0.0F, 1.0F, 3.0F, 6.0F, flap);
+    }
+
+    @Override
+    public void setupAnim(EquineRenderState state) {
+        super.setupAnim(state);
+        boolean hasChest = state instanceof DonkeyRenderState donkey && donkey.hasChest;
+        boolean underChest = SaddlebagRendering.placementFor(hasChest) == SaddlebagRendering.Placement.UNDER_CHEST;
+        for (ModelPart part : this.flankBags) {
+            part.visible = !underChest;
+        }
+        for (ModelPart part : this.underChestBags) {
+            part.visible = underChest;
+        }
     }
 }
