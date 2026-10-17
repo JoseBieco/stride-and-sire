@@ -29,6 +29,7 @@ public final class StrideAndSire {
         HorseshoeEnchantmentEffectHandler.register();
         HorseshoeDurabilityHandler.register();
         com.josebieco.strideandsire.event.AttributeRangeExpansionHandler.register();
+        com.josebieco.strideandsire.event.HorseBreedingFoodHandler.register();
         com.josebieco.strideandsire.event.HorseBreedingGeneticsHandler.register();
         ModGameTests.register(modBusGroup);
         if (FMLEnvironment.dist == Dist.CLIENT) {

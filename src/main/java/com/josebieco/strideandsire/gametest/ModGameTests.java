@@ -202,6 +202,8 @@ public final class ModGameTests {
             () -> HorseBreedingAttributeGameTest::dietGuidedProducesGradeAOrSWhileUnguidedNeverDoes);
         TEST_FUNCTIONS.register("genetics_breeding_trait_carrier_vs_absent",
             () -> HorseBreedingTraitGameTest::carrierParentPassesTraitMoreOftenThanAbsentParents);
+        TEST_FUNCTIONS.register("genetics_breeding_food_glistering_melon_triggers_love",
+            () -> HorseBreedingFoodGameTest::glisteringMelonTriggersLoveMode);
     }
 
     private ModGameTests() {}

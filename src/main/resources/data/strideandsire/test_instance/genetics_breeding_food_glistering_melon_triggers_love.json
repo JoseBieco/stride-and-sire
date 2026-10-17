@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:function",
+  "environment": "strideandsire:default",
+  "function": "strideandsire:genetics_breeding_food_glistering_melon_triggers_love",
+  "max_ticks": 100,
+  "setup_ticks": 0,
+  "required": true,
+  "structure": "strideandsire:empty"
+}
