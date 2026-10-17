@@ -16,6 +16,13 @@ import org.jspecify.annotations.Nullable;
  * which is all this needs: the item, hence the material).
  */
 public final class SaddlebagRendering {
+    /**
+     * Texture size of the 3D side-bag model ({@code client.SaddlebagModel}); every {@link #bagTexture} PNG has exactly
+     * this size. Mirrored by {@code tools/pixelart/generate.py} and pinned by {@code AssetCompletenessTest}.
+     */
+    public static final int MODEL_TEXTURE_WIDTH = 32;
+    public static final int MODEL_TEXTURE_HEIGHT = 16;
+
     private SaddlebagRendering() {}
 
     /** The material whose bags to draw for {@code horse}, or {@code null} when nothing (or a non-saddlebag) is equipped. */
@@ -24,8 +31,8 @@ public final class SaddlebagRendering {
     }
 
     /**
-     * {@code strideandsire:textures/entity/saddlebag/<tier>.png}: a 64x64 overlay in the adult equine UV layout, opaque
-     * only on the two body-side faces just behind the saddle.
+     * {@code strideandsire:textures/entity/saddlebag/<tier>.png}: the {@link #MODEL_TEXTURE_WIDTH}x{@link #MODEL_TEXTURE_HEIGHT}
+     * texture of the 3D side-bag model {@code client.SaddlebagModel}, laid out for its UVs.
      */
     public static Identifier bagTexture(SaddlebagMaterial material) {
         return Identifier.fromNamespaceAndPath(StrideAndSire.MODID,

@@ -7,7 +7,8 @@ Usage:
 
 All art is drawn from hand-written pixel maps and fixed palettes (no randomness), so running
 the script twice produces byte-identical files. Every file the script writes is listed in
-MANIFEST; add new outputs there (e.g. the 3D saddlebag model textures).
+MANIFEST; add new outputs there. `--preview DIR` writes debug previews of the 3D saddlebag
+textures (never commit them).
 """
 from __future__ import annotations
 
@@ -170,6 +171,83 @@ def draw_slot_saddlebag() -> Image.Image:
 
 
 # ---------------------------------------------------------------------------
+# 3D saddlebag model textures (client.SaddlebagModel)
+# ---------------------------------------------------------------------------
+
+# Must equal SaddlebagRendering.MODEL_TEXTURE_WIDTH/HEIGHT (pinned by AssetCompletenessTest).
+BAG_MODEL_TEXTURE_SIZE = (32, 16)
+
+# Faces of the two boxes per bag, keyed by their top-left texel in the standard box unwrap
+# (d = z-length, w = x-thickness, h = height; top at (u+d, v), bottom at (u+d+w, v), then
+# inner/front/outer/back side faces in the row v+d). In side faces the left column is the
+# front (toward the head) and the top row is the top; the right bag is mirrored, so both
+# outer faces read the same texels.
+#
+# Bag box: texOffs(0, 0), 2 (w) x 5 (h) x 6 (d).
+BAG_MODEL_FACES: dict[tuple[int, int], list[str]] = {
+    (6, 0): ["ll"] * 6,                       # top (2 x 6, x inner->outer by z)
+    (8, 0): ["cc"] + ["dd"] * 4 + ["cc"],     # bottom: metal corner caps at both ends
+    (0, 6): ["kkkkkk"] * 5,                   # inner face, against the body
+    (6, 6): ["lm", "lm", "md", "md", "cC"],   # front
+    (8, 6): [                                 # outer face; rows 0-2 sit under the flap
+        "mmmmmm",
+        "mmmmmm",
+        "kkkkkk",                              # shadow cast by the flap
+        "lmmmmd",
+        "Cddddc",                              # bottom edge with corner caps
+    ],
+    (14, 6): ["ml", "ml", "dm", "dm", "Cc"],  # back
+}
+# Flap box: texOffs(16, 0), 1 (w) x 3 (h) x 6 (d), deformed to 0.5 thick.
+FLAP_MODEL_FACES: dict[tuple[int, int], list[str]] = {
+    (22, 0): ["L"] * 6,                       # top fold
+    (23, 0): ["k"] * 6,                       # underside
+    (16, 6): ["kkkkkk"] * 3,                  # inner face, against the bag
+    (22, 6): ["L", "m", "C"],                 # front edge, metal-tipped corner
+    (23, 6): [                                # outer face
+        "LLLLLL",
+        "lmmmmd",
+        "CsBbsC",                              # hem stitching, buckle, metal corner tips
+    ],
+    (29, 6): ["L", "m", "C"],                 # back edge
+}
+
+
+def draw_saddlebag_model(tier: str) -> Image.Image:
+    palette = {**LEATHER, **METALS[tier]}
+    image = Image.new("RGBA", BAG_MODEL_TEXTURE_SIZE, TRANSPARENT)
+    for faces in (BAG_MODEL_FACES, FLAP_MODEL_FACES):
+        for (u, v), rows in faces.items():
+            image.paste(render_map(rows, palette), (u, v))
+    return image
+
+
+def draw_saddlebag_model_preview(tier: str) -> Image.Image:
+    """Debug only (never committed): the texture atlas x8 next to the bag as seen from the side
+    (outer face + flap, in quarter-pixel samples) on a horse-brown flank, x8."""
+    tex = draw_saddlebag_model(tier)
+    q = 4  # samples per model pixel
+    z0, z1, y0, y1 = -1.0, 7.0, -7.0, 0.0  # body-local window around the bag
+    side = Image.new("RGBA", (int((z1 - z0) * q), int((y1 - y0) * q)), hex_rgba("#6b4a2f"))
+    for sy in range(side.height):
+        for sx in range(side.width):
+            z, y = z0 + (sx + 0.5) / q, y0 + (sy + 0.5) / q
+            if -0.25 <= z < 6.25 and -6.25 <= y < -3.25:   # flap outer face: 6 texels over 6.5 px
+                texel = (23 + int((z + 0.25) / 6.5 * 6), 6 + int(y + 6.25))
+            elif 0 <= z < 6 and -6 <= y < -1:              # bag outer face
+                texel = (8 + int(z), 6 + int(y + 6))
+            else:
+                continue
+            side.putpixel((sx, sy), tex.getpixel(texel))
+    atlas = tex.resize((tex.width * 8, tex.height * 8), Image.NEAREST)
+    side = side.resize((side.width * 2 * 8 // q * 2, side.height * 2 * 8 // q * 2), Image.NEAREST)
+    out = Image.new("RGBA", (atlas.width + side.width + 16, max(atlas.height, side.height)), hex_rgba("#cfcfcf"))
+    out.paste(atlas, (0, 0), atlas)
+    out.paste(side, (atlas.width + 16, 0))
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Manifest of owned outputs
 # ---------------------------------------------------------------------------
 
@@ -192,6 +270,8 @@ MANIFEST: list[Output] = [
     Output("entity/horseshoe/diamond.png", hoof_size(), draw_diamond_hoof),
     Output("gui/sprites/container/slot/horseshoe.png", (16, 16), draw_slot_horseshoe),
     Output("gui/sprites/container/slot/saddlebag.png", (16, 16), draw_slot_saddlebag),
+    *[Output(f"entity/saddlebag/{tier}.png", BAG_MODEL_TEXTURE_SIZE, (lambda t=tier: draw_saddlebag_model(t)))
+      for tier in ("leather", "iron", "gold", "diamond", "netherite")],
 ]
 
 
@@ -236,9 +316,17 @@ def check() -> int:
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="validate owned PNGs instead of writing them")
+    parser.add_argument("--preview", metavar="DIR", type=Path,
+                        help="write debug previews of the 3D saddlebag textures to DIR (outside the repo) and exit")
     args = parser.parse_args(argv)
     if args.check:
         return check()
+    if args.preview:
+        args.preview.mkdir(parents=True, exist_ok=True)
+        for tier in METALS:
+            draw_saddlebag_model_preview(tier).save(args.preview / f"saddlebag_model_{tier}.png")
+            print(f"preview {args.preview / f'saddlebag_model_{tier}.png'}")
+        return 0
     generate()
     return 0
 

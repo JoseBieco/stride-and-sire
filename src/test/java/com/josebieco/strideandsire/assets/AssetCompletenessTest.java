@@ -2,6 +2,7 @@ package com.josebieco.strideandsire.assets;
 
 import com.josebieco.strideandsire.item.horseshoe.HorseshoeMaterial;
 import com.josebieco.strideandsire.item.saddlebag.SaddlebagMaterial;
+import com.josebieco.strideandsire.render.SaddlebagRendering;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -35,6 +36,21 @@ class AssetCompletenessTest {
     void everySaddlebagTierHasItemTexture() {
         for (SaddlebagMaterial m : SaddlebagMaterial.values()) {
             assertExists("item/" + m.name().toLowerCase(Locale.ROOT) + "_saddlebag.png");
+        }
+    }
+
+    /** The 3D side-bag model ({@code client.SaddlebagModel}) samples these with its own UV layout and texture size. */
+    @Test
+    void everySaddlebagTierHasModelTexture() throws IOException {
+        for (SaddlebagMaterial m : SaddlebagMaterial.values()) {
+            String path = "entity/saddlebag/" + m.name().toLowerCase(Locale.ROOT) + ".png";
+            URL url = assertExists(path);
+            try (InputStream in = url.openStream()) {
+                BufferedImage image = ImageIO.read(in);
+                assertNotNull(image, path + " is not a decodable PNG");
+                assertEquals(SaddlebagRendering.MODEL_TEXTURE_WIDTH, image.getWidth(), path + " width");
+                assertEquals(SaddlebagRendering.MODEL_TEXTURE_HEIGHT, image.getHeight(), path + " height");
+            }
         }
     }
 
