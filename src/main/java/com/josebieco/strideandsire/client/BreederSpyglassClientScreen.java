@@ -1,9 +1,11 @@
 package com.josebieco.strideandsire.client;
 
+import com.josebieco.strideandsire.genetics.CoatGene;
 import com.josebieco.strideandsire.genetics.GeneticAttribute;
 import com.josebieco.strideandsire.genetics.Grade;
 import com.josebieco.strideandsire.genetics.LineageTrait;
 import com.josebieco.strideandsire.genetics.TraitState;
+import com.josebieco.strideandsire.genetics.Zygosity;
 import com.josebieco.strideandsire.menu.BreederSpyglassScreen;
 import com.josebieco.strideandsire.menu.BreederSpyglassScreen.SpyglassReport;
 import net.minecraft.ChatFormatting;
@@ -15,11 +17,12 @@ import net.minecraft.world.entity.animal.equine.AbstractHorse;
 
 /**
  * Client-only read-only screen opener and implementation for the Breeder's Spyglass.
- * Displays qualitative attribute grades (E–S, never raw numeric values) and lineage traits (Manifest vs. Latent).
+ * Displays qualitative attribute grades (E–S, never raw numeric values), lineage traits (Manifest vs. Latent), and
+ * recessive coat gene zygosity (AA / Aa / aa).
  */
 public final class BreederSpyglassClientScreen {
     private static final int PANEL_WIDTH = 210;
-    private static final int PANEL_HEIGHT = 148;
+    private static final int PANEL_HEIGHT = 192;
 
     private BreederSpyglassClientScreen() {}
 
@@ -77,6 +80,21 @@ public final class BreederSpyglassClientScreen {
                 graphics.text(this.font, stateLabel, x0 + 118, y, 0xFFFFFFFF);
                 y += 12;
             }
+
+            y += 8;
+            graphics.text(this.font, Component.translatable("gui.strideandsire.spyglass.section.coat_genetics")
+                .withStyle(ChatFormatting.GOLD), x0 + 12, y, 0xFFFFAA00);
+
+            y += 12;
+            for (CoatGene gene : CoatGene.values()) {
+                Zygosity zygosity = report.coatZygosity(gene);
+                Component geneLabel = Component.translatable(gene.translationKey());
+                Component zygosityLabel = Component.translatable("gui.strideandsire.spyglass.state." + zygosity.getSerializedName())
+                    .withStyle(styleForZygosity(zygosity));
+                graphics.text(this.font, geneLabel, x0 + 16, y, 0xFFE0E0E0);
+                graphics.text(this.font, zygosityLabel, x0 + 118, y, 0xFFFFFFFF);
+                y += 12;
+            }
         }
 
         private int renderAttributeRow(GuiGraphicsExtractor graphics, int x, int y, String labelKey, Grade grade) {
@@ -104,6 +122,14 @@ public final class BreederSpyglassClientScreen {
             case MANIFEST -> ChatFormatting.GREEN;
             case LATENT -> ChatFormatting.YELLOW;
             case ABSENT -> ChatFormatting.DARK_GRAY;
+        };
+    }
+
+    private static ChatFormatting styleForZygosity(Zygosity zygosity) {
+        return switch (zygosity) {
+            case HOMOZYGOUS_RECESSIVE -> ChatFormatting.GREEN;
+            case HETEROZYGOUS -> ChatFormatting.YELLOW;
+            case HOMOZYGOUS_DOMINANT -> ChatFormatting.DARK_GRAY;
         };
     }
 }

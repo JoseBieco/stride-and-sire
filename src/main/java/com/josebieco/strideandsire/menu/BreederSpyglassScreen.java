@@ -1,13 +1,17 @@
 package com.josebieco.strideandsire.menu;
 
+import com.josebieco.strideandsire.attachment.HorseCoatGeneticsAccess;
+import com.josebieco.strideandsire.attachment.HorseCoatGeneticsAttachment;
 import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.HorseGeneticsAttachment;
+import com.josebieco.strideandsire.genetics.CoatGene;
 import com.josebieco.strideandsire.genetics.GeneticAttribute;
 import com.josebieco.strideandsire.genetics.Grade;
 import com.josebieco.strideandsire.genetics.HorseAttributeRanges;
 import com.josebieco.strideandsire.genetics.HorseAttributes;
 import com.josebieco.strideandsire.genetics.LineageTrait;
 import com.josebieco.strideandsire.genetics.TraitState;
+import com.josebieco.strideandsire.genetics.Zygosity;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -25,24 +29,44 @@ public final class BreederSpyglassScreen {
     private BreederSpyglassScreen() {}
 
     /**
-     * Snapshot of a horse's qualitative attribute grades (E–S, never raw numbers) and lineage trait states
-     * ({@link TraitState#ABSENT}, {@link TraitState#LATENT}, {@link TraitState#MANIFEST}).
+     * Snapshot of a horse's qualitative attribute grades (E–S, never raw numbers), lineage trait states
+     * ({@link TraitState#ABSENT}, {@link TraitState#LATENT}, {@link TraitState#MANIFEST}), and recessive coat gene
+     * zygosity ({@link Zygosity#HOMOZYGOUS_DOMINANT}, {@link Zygosity#HETEROZYGOUS},
+     * {@link Zygosity#HOMOZYGOUS_RECESSIVE}).
      */
     public record SpyglassReport(
             Grade speedGrade,
             Grade jumpGrade,
             Grade healthGrade,
-            Map<LineageTrait, TraitState> traits) {
+            Map<LineageTrait, TraitState> traits,
+            Map<CoatGene, Zygosity> coatGenes) {
         public SpyglassReport {
             Objects.requireNonNull(speedGrade, "speedGrade");
             Objects.requireNonNull(jumpGrade, "jumpGrade");
             Objects.requireNonNull(healthGrade, "healthGrade");
             Objects.requireNonNull(traits, "traits");
-            EnumMap<LineageTrait, TraitState> copy = new EnumMap<>(LineageTrait.class);
+            Objects.requireNonNull(coatGenes, "coatGenes");
+            EnumMap<LineageTrait, TraitState> traitCopy = new EnumMap<>(LineageTrait.class);
             for (LineageTrait trait : LineageTrait.values()) {
-                copy.put(trait, traits.getOrDefault(trait, TraitState.ABSENT));
+                TraitState state = traits.getOrDefault(trait, TraitState.ABSENT);
+                traitCopy.put(trait, state == null ? TraitState.ABSENT : state);
             }
-            traits = Collections.unmodifiableMap(copy);
+            traits = Collections.unmodifiableMap(traitCopy);
+
+            EnumMap<CoatGene, Zygosity> coatCopy = new EnumMap<>(CoatGene.class);
+            for (CoatGene gene : CoatGene.values()) {
+                Zygosity zygosity = coatGenes.getOrDefault(gene, Zygosity.HOMOZYGOUS_DOMINANT);
+                coatCopy.put(gene, zygosity == null ? Zygosity.HOMOZYGOUS_DOMINANT : zygosity);
+            }
+            coatGenes = Collections.unmodifiableMap(coatCopy);
+        }
+
+        public SpyglassReport(
+                Grade speedGrade,
+                Grade jumpGrade,
+                Grade healthGrade,
+                Map<LineageTrait, TraitState> traits) {
+            this(speedGrade, jumpGrade, healthGrade, traits, Map.of());
         }
 
         public Grade gradeOf(GeneticAttribute attribute) {
@@ -56,11 +80,15 @@ public final class BreederSpyglassScreen {
         public TraitState traitState(LineageTrait trait) {
             return traits.getOrDefault(trait, TraitState.ABSENT);
         }
+
+        public Zygosity coatZygosity(CoatGene gene) {
+            return coatGenes.getOrDefault(gene, Zygosity.HOMOZYGOUS_DOMINANT);
+        }
     }
 
     /**
-     * Builds the read-only inspection report for {@code horse} using {@link HorseAttributeRanges#gradeOf} and
-     * {@link HorseGeneticsAccess#get}.
+     * Builds the read-only inspection report for {@code horse} using {@link HorseAttributeRanges#gradeOf},
+     * {@link HorseGeneticsAccess#get}, and {@link HorseCoatGeneticsAccess#get}.
      */
     public static SpyglassReport buildReport(AbstractHorse horse) {
         Objects.requireNonNull(horse, "horse");
@@ -73,7 +101,13 @@ public final class BreederSpyglassScreen {
         for (LineageTrait trait : LineageTrait.values()) {
             traits.put(trait, genetics.state(trait));
         }
-        return new SpyglassReport(speedGrade, jumpGrade, healthGrade, traits);
+
+        HorseCoatGeneticsAttachment coatGenetics = HorseCoatGeneticsAccess.get(horse);
+        EnumMap<CoatGene, Zygosity> coatGenes = new EnumMap<>(CoatGene.class);
+        for (CoatGene gene : CoatGene.values()) {
+            coatGenes.put(gene, coatGenetics.zygosity(gene));
+        }
+        return new SpyglassReport(speedGrade, jumpGrade, healthGrade, traits, coatGenes);
     }
 
     private static Grade gradeAttribute(AbstractHorse horse, GeneticAttribute attribute) {

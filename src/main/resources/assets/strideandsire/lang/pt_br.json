@@ -28,5 +28,20 @@
   "trait.strideandsire.fearless": "Sangue Frio",
   "gui.strideandsire.spyglass.state.manifest": "Manifestado",
   "gui.strideandsire.spyglass.state.latent": "Latente (Portador)",
-  "gui.strideandsire.spyglass.state.absent": "Ausente"
+  "gui.strideandsire.spyglass.state.absent": "Ausente",
+  "gui.strideandsire.spyglass.section.coat_genetics": "Genética de Pelagem",
+  "coatgene.strideandsire.obsidian": "Preto Absoluto",
+  "coatgene.strideandsire.albino": "Albino",
+  "coatgene.strideandsire.silver_dapple": "Pangaré Prateado",
+  "gui.strideandsire.spyglass.state.homozygous_dominant": "AA (nenhum traço)",
+  "gui.strideandsire.spyglass.state.heterozygous": "Aa (portador)",
+  "gui.strideandsire.spyglass.state.homozygous_recessive": "aa (puro)",
+  "advancement.strideandsire.root.title": "Stride & Sire",
+  "advancement.strideandsire.root.description": "Equipamentos equestres, criação seletiva e genética rara de cavalos",
+  "advancement.strideandsire.obsidian_coat.title": "Linhagem da Meia-Noite",
+  "advancement.strideandsire.obsidian_coat.description": "Crie um potro com pelagem Preto Absoluto pura (aa)",
+  "advancement.strideandsire.albino_coat.title": "Fantasma das Planícies",
+  "advancement.strideandsire.albino_coat.description": "Crie um potro com pelagem Albino pura (aa)",
+  "advancement.strideandsire.silver_dapple_coat.title": "Prata Líquida",
+  "advancement.strideandsire.silver_dapple_coat.description": "Crie um potro com pelagem Pangaré Prateado pura (aa)"
 }

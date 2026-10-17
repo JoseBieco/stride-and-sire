@@ -28,5 +28,20 @@
   "trait.strideandsire.fearless": "Fearless",
   "gui.strideandsire.spyglass.state.manifest": "Manifest",
   "gui.strideandsire.spyglass.state.latent": "Latent (Carrier)",
-  "gui.strideandsire.spyglass.state.absent": "Absent"
+  "gui.strideandsire.spyglass.state.absent": "Absent",
+  "gui.strideandsire.spyglass.section.coat_genetics": "Coat Genetics",
+  "coatgene.strideandsire.obsidian": "Obsidian",
+  "coatgene.strideandsire.albino": "Albino",
+  "coatgene.strideandsire.silver_dapple": "Silver Dapple",
+  "gui.strideandsire.spyglass.state.homozygous_dominant": "AA (none)",
+  "gui.strideandsire.spyglass.state.heterozygous": "Aa (carrier)",
+  "gui.strideandsire.spyglass.state.homozygous_recessive": "aa (pure)",
+  "advancement.strideandsire.root.title": "Stride & Sire",
+  "advancement.strideandsire.root.description": "Equestrian equipment, selective breeding, and rare horse genetics",
+  "advancement.strideandsire.obsidian_coat.title": "Midnight Lineage",
+  "advancement.strideandsire.obsidian_coat.description": "Breed a foal with a pure Obsidian coat (aa)",
+  "advancement.strideandsire.albino_coat.title": "Ghost of the Plains",
+  "advancement.strideandsire.albino_coat.description": "Breed a foal with a pure Albino coat (aa)",
+  "advancement.strideandsire.silver_dapple_coat.title": "Quicksilver",
+  "advancement.strideandsire.silver_dapple_coat.description": "Breed a foal with a pure Silver Dapple coat (aa)"
 }
