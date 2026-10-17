@@ -18,14 +18,23 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
  * {@link Zygosity#HETEROZYGOUS} and 97% {@link Zygosity#HOMOZYGOUS_DOMINANT}. Wild horses never spawn
  * {@link Zygosity#HOMOZYGOUS_RECESSIVE}, so recessive coats can only be manifested through selective breeding.
  *
+ * <p>"Wild" means the two natural paths: {@link EntitySpawnReason#NATURAL} (the periodic mob spawner) and
+ * {@link EntitySpawnReason#CHUNK_GENERATION} (horses placed by {@code NaturalSpawner.spawnMobsForChunkGeneration}
+ * when a chunk is generated, which is where most wild herds come from). Structure, spawner, breeding, spawn egg,
+ * command and every other reason are excluded.
+ *
  * <p>Hooks both {@link MobSpawnEvent.FinalizeSpawn} (fired by {@code ForgeEventFactory.onFinalizeSpawn}) and
  * {@link EntityJoinLevelEvent} (when {@code Mob.finalizeSpawn} was invoked directly with
  * {@link EntitySpawnReason#NATURAL}), guarded by a persistent {@code ForgeData} boolean flag so a horse is rolled at
- * most once across its entire lifetime (never re-rolled on chunk reload or dimension change).
+ * most once across its entire lifetime (never re-rolled on chunk reload or dimension change). The chunk-generation
+ * path only reaches {@code FinalizeSpawn}: the entity is created with reason {@code NATURAL} but is not in any level
+ * yet (and may be on a worldgen thread), then joins later with {@code loadedFromDisk=true}. The roll only touches the
+ * entity itself; {@code HorseCoatGeneticsAccess.set} sends no sync packet for an entity not yet added to a level, and
+ * {@code StartTracking} syncs it once it is.
  */
 public final class HorseCoatSpawnHandler {
     public static final double WILD_CARRIER_CHANCE = 0.03D;
-    static final String ROLLED_KEY = StrideAndSire.MODID + ":coat_genetics_rolled";
+    public static final String ROLLED_KEY = StrideAndSire.MODID + ":coat_genetics_rolled";
 
     private HorseCoatSpawnHandler() {}
 
@@ -35,7 +44,7 @@ public final class HorseCoatSpawnHandler {
     }
 
     private static boolean onFinalizeSpawn(MobSpawnEvent.FinalizeSpawn event) {
-        if (event.getSpawnReason() == EntitySpawnReason.NATURAL
+        if (isWildSpawnReason(event.getSpawnReason())
                 && event.getEntity() instanceof AbstractHorse horse) {
             rollWildCarriersOnce(horse);
         }
@@ -45,10 +54,15 @@ public final class HorseCoatSpawnHandler {
     private static boolean onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (!event.loadedFromDisk()
                 && event.getEntity() instanceof AbstractHorse horse
-                && horse.getSpawnReason() == EntitySpawnReason.NATURAL) {
+                && isWildSpawnReason(horse.getSpawnReason())) {
             rollWildCarriersOnce(horse);
         }
         return false;
+    }
+
+    /** The spawn reasons that count as a wild horse: natural spawning and chunk-generation spawning. */
+    public static boolean isWildSpawnReason(EntitySpawnReason reason) {
+        return reason == EntitySpawnReason.NATURAL || reason == EntitySpawnReason.CHUNK_GENERATION;
     }
 
     private static void rollWildCarriersOnce(AbstractHorse horse) {

@@ -17,6 +17,9 @@ import org.jspecify.annotations.Nullable;
  * which is all this needs: the item, hence the material).
  */
 public final class SaddlebagRendering {
+    /** Submission order of the saddlebag layer (its own model): after vanilla's saddle and body armor (order 2). */
+    public static final int LAYER_ORDER = 3;
+
     /**
      * Texture size of the 3D side-bag model ({@code client.SaddlebagModel}); every {@link #bagTexture} PNG has exactly
      * this size. Mirrored by {@code tools/pixelart/generate.py} and pinned by {@code AssetCompletenessTest}.

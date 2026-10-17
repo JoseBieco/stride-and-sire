@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "strideandsire:coat_genetics_wild_spawn_chunk_generation_rolls_carriers",
+  "environment": "minecraft:default",
+  "structure": "strideandsire:empty",
+  "max_ticks": 40
+}
