@@ -24,13 +24,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 
-/** Review Focus item 4, end to end. Test instance: horseshoe_review_focus_iron_to_netherite_flow.json */
+/** Review Focus item 4, end to end. Test instance: horseshoe_review_focus_diamond_to_netherite_flow.json */
 public final class HorseshoeReviewFocusGameTest {
     private HorseshoeReviewFocusGameTest() {}
 
     private static final boolean[] U_SHAPE = {true, false, true, true, false, true, false, true, false};
 
-    public static void ironToNetheriteFlow(GameTestHelper helper) {
+    public static void diamondToNetheriteFlow(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         Holder<Enchantment> feather = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
             .getOrThrow(HorseshoeEnchantments.FEATHER_STEP);
@@ -38,28 +38,28 @@ public final class HorseshoeReviewFocusGameTest {
         // 1. craft
         List<ItemStack> items = new ArrayList<>();
         for (boolean f : U_SHAPE) {
-            items.add(f ? new ItemStack(Items.IRON_INGOT) : ItemStack.EMPTY);
+            items.add(f ? new ItemStack(Items.DIAMOND) : ItemStack.EMPTY);
         }
         CraftingInput input = CraftingInput.of(3, 3, items);
         Optional<RecipeHolder<CraftingRecipe>> found = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, level);
-        helper.assertTrue(found.isPresent(), "no crafting recipe for iron U shape");
+        helper.assertTrue(found.isPresent(), "no crafting recipe for diamond U shape");
         ItemStack shoe = found.get().value().assemble(input);
-        helper.assertTrue(shoe.is(ModItems.IRON_HORSESHOE.get()), "crafted wrong item " + shoe);
+        helper.assertTrue(shoe.is(ModItems.DIAMOND_HORSESHOE.get()), "crafted wrong item " + shoe);
 
         // 2. enchant + damage to half
         shoe.enchant(feather, 1);
-        shoe.setDamageValue(100);
-        helper.assertValueEqual(shoe.getMaxDamage(), 200, "iron max damage");
+        shoe.setDamageValue(150);
+        helper.assertValueEqual(shoe.getMaxDamage(), 300, "diamond max damage");
 
         // 3. equip, then take off
         Horse horse = helper.spawn(EntityTypes.HORSE, 2, 1, 2);
         HorseshoeAccess.set(horse, shoe);
         ItemStack equipped = HorseshoeAccess.get(horse);
-        helper.assertTrue(equipped.is(ModItems.IRON_HORSESHOE.get()), "iron shoe not equipped");
+        helper.assertTrue(equipped.is(ModItems.DIAMOND_HORSESHOE.get()), "diamond shoe not equipped");
         ItemStack removed = equipped.copy();
         HorseshoeAccess.set(horse, ItemStack.EMPTY);
         helper.assertTrue(HorseshoeAccess.get(horse).isEmpty(), "slot not emptied");
-        helper.assertValueEqual(removed.getDamageValue(), 100, "removed shoe damage");
+        helper.assertValueEqual(removed.getDamageValue(), 150, "removed shoe damage");
 
         // 4. smithing upgrade through the real menu
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);

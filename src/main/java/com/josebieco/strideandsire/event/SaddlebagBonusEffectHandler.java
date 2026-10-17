@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
  *
  * <p><b>Contents on death</b> ({@link #deathDrop}, called from the equipment death-drop path): an explosion death
  * ({@code #minecraft:is_explosion}) clears the container unless the material
- * {@link SaddlebagMaterial#protectsContentsFromExplosion() protects from explosions} (Iron, Gold, Netherite); a
+ * {@link SaddlebagMaterial#protectsContentsFromExplosion() protects from explosions} (Iron, Diamond, Gold, Netherite); a
  * fire/lava death ({@code #minecraft:is_fire}) clears it unless the material
  * {@link SaddlebagMaterial#protectsContentsFromFire() protects from fire} (Netherite). Any other cause keeps the
  * contents. The bag itself always drops.

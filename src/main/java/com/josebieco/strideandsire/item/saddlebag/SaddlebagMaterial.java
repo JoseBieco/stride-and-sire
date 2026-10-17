@@ -6,6 +6,7 @@ package com.josebieco.strideandsire.item.saddlebag;
 public enum SaddlebagMaterial {
     LEATHER(9, false, false, false),
     IRON(9, true, false, false),
+    DIAMOND(9, true, false, false),
     GOLD(9, true, false, true),
     NETHERITE(9, true, true, false);
 

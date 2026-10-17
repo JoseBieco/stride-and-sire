@@ -29,7 +29,7 @@ public final class SaddlebagFinalFixGameTest {
     private SaddlebagFinalFixGameTest() {}
 
     private static final List<RegistryObject<? extends Item>> BAGS = List.of(ModItems.LEATHER_SADDLEBAG,
-        ModItems.IRON_SADDLEBAG, ModItems.GOLD_SADDLEBAG, ModItems.NETHERITE_SADDLEBAG);
+        ModItems.IRON_SADDLEBAG, ModItems.DIAMOND_SADDLEBAG, ModItems.GOLD_SADDLEBAG, ModItems.NETHERITE_SADDLEBAG);
 
     private static ItemStack leatherBagWithItems() {
         ItemStack bag = new ItemStack(ModItems.LEATHER_SADDLEBAG.get());

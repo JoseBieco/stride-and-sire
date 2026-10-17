@@ -45,6 +45,7 @@ public class HorseshoeItem extends Item {
         return switch (material) {
             case COPPER -> 8;
             case IRON -> 9;
+            case DIAMOND -> 10;
             case GOLD -> 25;
             case NETHERITE -> 15;
         };

@@ -80,6 +80,7 @@ alongside the saddle and armor.
 |---|---|---|---|
 | Copper | 100 | — | Feather Step, Frost Step |
 | Iron | 200 | — | Feather Step, Frost Step |
+| Diamond | 300 | — | Feather Step, Frost Step |
 | Gold | 80 | +movement speed; Piglins stay neutral while mounted (same rule as wearing gold armor) | none |
 | Netherite | 400 | Full immunity to fire/lava damage | Lava Walker, Feather Step |
 
@@ -90,10 +91,10 @@ normally.
 ### Custom enchantments
 
 - **Feather Step** — negates fall damage for the horse (and its rider). Usable on
-  Copper, Iron, and Netherite — not Gold.
+  Copper, Iron, Diamond, and Netherite — not Gold.
 - **Frost Step** — the horse freezes water under its hooves while moving, exactly
   like vanilla Frost Walker II; the ice melts after a few seconds. Usable on
-  Copper and Iron only.
+  Copper, Iron, and Diamond only.
 - **Lava Walker** — the horse walks on lava without sinking, like a Strider.
   Netherite exclusively.
 
@@ -103,7 +104,7 @@ vanilla enchantment.
 <details>
 <summary><strong>Crafting recipes</strong></summary>
 
-Copper, Iron, and Gold horseshoes share a shaped "U" recipe (5 ingots of the
+Copper, Iron, Diamond, and Gold horseshoes share a shaped "U" recipe (5 ingots of the
 tier's material):
 
 ```
@@ -116,10 +117,12 @@ Netherite has **no standalone recipe**. It's a Smithing Table upgrade, exactly
 like vanilla Netherite tools and armor:
 
 ```
-Iron Horseshoe + Netherite Ingot + Netherite Upgrade Smithing Template
+Diamond Horseshoe + Netherite Ingot + Netherite Upgrade Smithing Template
 ```
 
-The upgrade preserves existing enchantments and the item's damage ratio.
+The upgrade preserves existing enchantments and the item's damage ratio. Iron
+horseshoes no longer upgrade, and a horseshoe carrying Frost Step can't be
+upgraded (Netherite can't hold it).
 
 </details>
 
@@ -139,6 +142,7 @@ inventory — without replacing the chest that Donkeys and Mules already carry.
 |---|---|---|
 | Leather | 9 | — |
 | Iron | 9 | Contents survive the horse's death if it dies to an explosion |
+| Diamond | 9 | Same explosion protection as Iron; not protected from fire/lava |
 | Gold | 9 | Piglins stay neutral while mounted (same mechanism as the Gold Horseshoe) |
 | Netherite | 9 | Contents are fire/lava-proof if the horse dies while burning |
 
@@ -162,10 +166,11 @@ contents travel with it intact. Removing the saddle is never blocked.
 <details>
 <summary><strong>Crafting recipes</strong></summary>
 
-Same pattern as the horseshoes: Leather, Iron, and Gold have their own crafting
-recipe; Netherite is a Smithing Table upgrade from an Iron saddlebag (+ Netherite
-Ingot + Netherite Upgrade Smithing Template), carrying its stored items over
-unchanged.
+Same pattern as the horseshoes: Leather, Iron, Diamond, and Gold have their own
+crafting recipe (Diamond: 2 diamonds + 5 leather); Netherite is a Smithing Table
+upgrade from a Diamond saddlebag (+ Netherite Ingot + Netherite Upgrade Smithing
+Template), carrying its stored items over unchanged. Iron saddlebags no longer
+upgrade.
 
 </details>
 

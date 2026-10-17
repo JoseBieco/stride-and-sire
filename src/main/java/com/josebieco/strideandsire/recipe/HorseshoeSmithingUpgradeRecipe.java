@@ -26,11 +26,11 @@ import net.minecraft.world.level.Level;
 
 /**
  * A {@code smithing_transform} that, unlike vanilla, preserves the input's damage <em>ratio</em> instead of its absolute
- * damage (an Iron horseshoe at 100/200 becomes a Netherite one at 200/400). Components (enchantments, ...) are copied
+ * damage (a Diamond horseshoe at 150/300 becomes a Netherite one at 200/400). Components (enchantments, ...) are copied
  * exactly like vanilla. Reuses vanilla's smithing recipe type, so the Smithing Table picks it up unchanged.
  *
  * <p>Unlike vanilla, it does not match a base carrying a horseshoe enchantment the result tier cannot hold (e.g. Frost
- * Step on the Iron-to-Netherite upgrade): copying it would leave the result with an ineligible enchantment that also
+ * Step on the Diamond-to-Netherite upgrade): copying it would leave the result with an ineligible enchantment that also
  * blocks, through the terrain exclusive set, the one it should be able to take (Lava Walker). The Smithing Table then
  * shows no result, so the player has to remove the enchantment (grindstone) first.
  */

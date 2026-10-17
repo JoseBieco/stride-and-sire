@@ -23,6 +23,14 @@ class SaddlebagMaterialTest {
     }
 
     @Test
+    void diamondProtectsFromExplosionOnly() {
+        assertEquals(9, SaddlebagMaterial.DIAMOND.slotCount());
+        assertTrue(SaddlebagMaterial.DIAMOND.protectsContentsFromExplosion());
+        assertFalse(SaddlebagMaterial.DIAMOND.protectsContentsFromFire());
+        assertFalse(SaddlebagMaterial.DIAMOND.hasGoldPiglinPassive());
+    }
+
+    @Test
     void goldHasPiglinPassiveAndExplosionProtection() {
         assertTrue(SaddlebagMaterial.GOLD.protectsContentsFromExplosion());
         assertTrue(SaddlebagMaterial.GOLD.hasGoldPiglinPassive());

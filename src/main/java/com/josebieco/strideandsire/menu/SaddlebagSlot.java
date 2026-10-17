@@ -3,6 +3,7 @@ package com.josebieco.strideandsire.menu;
 import com.josebieco.strideandsire.attachment.HorseEquipmentSlot;
 import com.josebieco.strideandsire.attachment.SaddlebagAccess;
 import com.josebieco.strideandsire.item.saddlebag.SaddlebagItem;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,9 @@ import net.minecraft.world.item.ItemStack;
  * contents travel inside the stack (its {@code container} component), so moving the bag moves its contents.
  */
 public class SaddlebagSlot extends Slot {
+    /** Silhouette sprite (GUI atlas) drawn while the slot is empty. */
+    public static final Identifier EMPTY_ICON = Identifier.fromNamespaceAndPath("strideandsire", "container/slot/saddlebag");
+
     private final AbstractHorse horse;
 
     public SaddlebagSlot(AbstractHorse horse, int x, int y) {
@@ -29,5 +33,10 @@ public class SaddlebagSlot extends Slot {
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    @Override
+    public Identifier getNoItemIcon() {
+        return EMPTY_ICON;
     }
 }

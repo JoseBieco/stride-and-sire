@@ -27,7 +27,7 @@ public final class HorseshoeLayerVisibilityGameTest {
     public static void materialToRenderMatchesEquippedTier(GameTestHelper helper) {
         helper.makeFloor();
         List<RegistryObject<HorseshoeItem>> shoes = List.of(
-            ModItems.COPPER_HORSESHOE, ModItems.IRON_HORSESHOE, ModItems.GOLD_HORSESHOE, ModItems.NETHERITE_HORSESHOE);
+            ModItems.COPPER_HORSESHOE, ModItems.IRON_HORSESHOE, ModItems.DIAMOND_HORSESHOE, ModItems.GOLD_HORSESHOE, ModItems.NETHERITE_HORSESHOE);
         for (EntityType<? extends AbstractHorse> type : List.of(
                 EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
             AbstractHorse horse = helper.spawn(type, 2, 1, 2);

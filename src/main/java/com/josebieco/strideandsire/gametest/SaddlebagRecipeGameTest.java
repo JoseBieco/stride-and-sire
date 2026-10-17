@@ -69,6 +69,11 @@ public final class SaddlebagRecipeGameTest {
         helper.succeed();
     }
 
+    public static void craftsDiamondSaddlebag(GameTestHelper helper) {
+        check(helper, Items.DIAMOND, Items.LEATHER, ModItems.DIAMOND_SADDLEBAG.get(), "diamond");
+        helper.succeed();
+    }
+
     public static void craftsGoldSaddlebag(GameTestHelper helper) {
         check(helper, Items.GOLD_INGOT, Items.LEATHER, ModItems.GOLD_SADDLEBAG.get(), "gold");
         helper.succeed();
@@ -92,8 +97,8 @@ public final class SaddlebagRecipeGameTest {
         helper.succeed();
     }
 
-    private static ItemStack ironBagWithContents() {
-        ItemStack bag = new ItemStack(ModItems.IRON_SADDLEBAG.get());
+    private static ItemStack diamondBagWithContents() {
+        ItemStack bag = new ItemStack(ModItems.DIAMOND_SADDLEBAG.get());
         NonNullList<ItemStack> contents = NonNullList.withSize(SaddlebagItem.containerSize(bag), ItemStack.EMPTY);
         contents.set(0, new ItemStack(Items.DIAMOND, 5));
         contents.set(7, new ItemStack(Items.APPLE, 33));
@@ -118,21 +123,36 @@ public final class SaddlebagRecipeGameTest {
 
     public static void netheriteSmithingPreservesContents(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        SmithingRecipeInput input = smithingInput(ironBagWithContents());
+        SmithingRecipeInput input = smithingInput(diamondBagWithContents());
         Optional<RecipeHolder<SmithingRecipe>> found = level.recipeAccess().getRecipeFor(RecipeType.SMITHING, input, level);
-        helper.assertTrue(found.isPresent(), "no smithing recipe for iron saddlebag");
+        helper.assertTrue(found.isPresent(), "no smithing recipe for diamond saddlebag");
         ItemStack out = found.get().value().assemble(input);
         helper.assertTrue(out.is(ModItems.NETHERITE_SADDLEBAG.get()), "wrong result " + out);
         assertContents(helper, out, "recipe");
 
-        ItemStack empty = found.get().value().assemble(smithingInput(new ItemStack(ModItems.IRON_SADDLEBAG.get())));
+        ItemStack empty = found.get().value().assemble(smithingInput(new ItemStack(ModItems.DIAMOND_SADDLEBAG.get())));
         helper.assertTrue(empty.is(ModItems.NETHERITE_SADDLEBAG.get()), "empty upgrade wrong item");
         helper.assertTrue(SaddlebagItem.getContents(empty).stream().allMatch(ItemStack::isEmpty), "empty bag gained items");
 
-        for (Item other : List.of(ModItems.LEATHER_SADDLEBAG.get(), ModItems.GOLD_SADDLEBAG.get())) {
+        for (Item other : List.of(ModItems.LEATHER_SADDLEBAG.get(), ModItems.IRON_SADDLEBAG.get(), ModItems.GOLD_SADDLEBAG.get())) {
             helper.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.SMITHING,
                 smithingInput(new ItemStack(other)), level).isEmpty(), other + " must not upgrade");
         }
+        helper.succeed();
+    }
+
+    public static void ironSaddlebagHasNoSmithingResult(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        helper.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.SMITHING,
+            smithingInput(new ItemStack(ModItems.IRON_SADDLEBAG.get())), level).isEmpty(), "iron bag must not upgrade");
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        SmithingMenu menu = new SmithingMenu(0, player.getInventory());
+        menu.getSlot(0).set(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
+        menu.getSlot(1).set(new ItemStack(ModItems.IRON_SADDLEBAG.get()));
+        menu.getSlot(2).set(new ItemStack(Items.NETHERITE_INGOT));
+        menu.createResult();
+        helper.assertTrue(menu.getSlot(menu.getResultSlot()).getItem().isEmpty(),
+            "smithing menu produced a result for an iron bag: " + menu.getSlot(menu.getResultSlot()).getItem());
         helper.succeed();
     }
 
@@ -140,7 +160,7 @@ public final class SaddlebagRecipeGameTest {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         SmithingMenu menu = new SmithingMenu(0, player.getInventory());
         menu.getSlot(0).set(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
-        menu.getSlot(1).set(ironBagWithContents());
+        menu.getSlot(1).set(diamondBagWithContents());
         menu.getSlot(2).set(new ItemStack(Items.NETHERITE_INGOT));
         menu.createResult();
         ItemStack out = menu.getSlot(menu.getResultSlot()).getItem();

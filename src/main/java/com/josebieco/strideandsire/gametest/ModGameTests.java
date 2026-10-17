@@ -40,6 +40,7 @@ public final class ModGameTests {
             () -> HorseshoeAttachmentGameTest::ineligibleEntitiesHaveNoHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_attachment_drops_horseshoe_on_death",
             () -> HorseshoeAttachmentGameTest::dropsHorseshoeOnDeath);
+        TEST_FUNCTIONS.register("equipment_slot_icons", () -> EquipmentSlotIconGameTest::equipmentSlotsReportEmptyIcons);
         TEST_FUNCTIONS.register("horseshoe_menu_slot_accepts_only_horseshoes",
             () -> HorseshoeMenuGameTest::slotAcceptsOnlyHorseshoes);
         TEST_FUNCTIONS.register("horseshoe_menu_keeps_vanilla_slot_layout",
@@ -104,6 +105,8 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::craftsCopperHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_iron_horseshoe",
             () -> HorseshoeRecipeGameTest::craftsIronHorseshoe);
+        TEST_FUNCTIONS.register("horseshoe_recipe_diamond_horseshoe",
+            () -> HorseshoeRecipeGameTest::craftsDiamondHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_gold_horseshoe",
             () -> HorseshoeRecipeGameTest::craftsGoldHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_no_netherite_crafting",
@@ -114,8 +117,10 @@ public final class ModGameTests {
             () -> HorseshoeRecipeGameTest::smithingMenuProducesNetheriteHorseshoe);
         TEST_FUNCTIONS.register("horseshoe_recipe_frost_step_blocks_netherite_upgrade",
             () -> HorseshoeRecipeGameTest::frostStepBlocksNetheriteUpgrade);
-        TEST_FUNCTIONS.register("horseshoe_review_focus_iron_to_netherite_flow",
-            () -> HorseshoeReviewFocusGameTest::ironToNetheriteFlow);
+        TEST_FUNCTIONS.register("horseshoe_recipe_iron_does_not_upgrade",
+            () -> HorseshoeRecipeGameTest::ironHorseshoeDoesNotUpgrade);
+        TEST_FUNCTIONS.register("horseshoe_review_focus_diamond_to_netherite_flow",
+            () -> HorseshoeReviewFocusGameTest::diamondToNetheriteFlow);
         TEST_FUNCTIONS.register("horseshoe_layer_material_to_render_matches_equipped_tier",
             () -> HorseshoeLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
         TEST_FUNCTIONS.register("saddlebag_items_are_registered_with_container",
@@ -168,6 +173,14 @@ public final class ModGameTests {
             () -> SaddlebagBonusEffectGameTest::emptyIronBagExplosionDeathDoesNotThrow);
         TEST_FUNCTIONS.register("saddlebag_bonus_gold_bag_piglin_neutral",
             () -> SaddlebagBonusEffectGameTest::goldBagMakesPiglinsNeutral);
+        TEST_FUNCTIONS.register("saddlebag_bonus_diamond_keeps_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::diamondBagKeepsContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_diamond_loses_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::diamondBagLosesContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_diamond",
+            () -> SaddlebagRecipeGameTest::craftsDiamondSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_iron_has_no_smithing_result",
+            () -> SaddlebagRecipeGameTest::ironSaddlebagHasNoSmithingResult);
         TEST_FUNCTIONS.register("saddlebag_recipe_crafts_leather",
             () -> SaddlebagRecipeGameTest::craftsLeatherSaddlebag);
         TEST_FUNCTIONS.register("saddlebag_recipe_crafts_iron",
@@ -182,6 +195,8 @@ public final class ModGameTests {
             () -> SaddlebagRecipeGameTest::smithingMenuPreservesContents);
         TEST_FUNCTIONS.register("saddlebag_layer_material_to_render_matches_equipped_tier",
             () -> SaddlebagLayerVisibilityGameTest::materialToRenderMatchesEquippedTier);
+        TEST_FUNCTIONS.register("saddlebag_layer_placement_follows_chest",
+            () -> SaddlebagLayerVisibilityGameTest::placementFollowsChest);
         TEST_FUNCTIONS.register("saddlebag_review_focus_chest_bag_isolation_and_explosion",
             () -> SaddlebagReviewFocusGameTest::chestBagIsolationAndSameTickExplosion);
         TEST_FUNCTIONS.register("saddlebag_fix_bundle_refuses_saddlebag",

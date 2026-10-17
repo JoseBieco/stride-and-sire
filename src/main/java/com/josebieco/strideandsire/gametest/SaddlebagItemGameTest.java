@@ -20,6 +20,7 @@ public final class SaddlebagItemGameTest {
     public static void saddlebagItemsAreRegisteredWithContainer(GameTestHelper helper) {
         check(helper, ModItems.LEATHER_SADDLEBAG, SaddlebagMaterial.LEATHER);
         check(helper, ModItems.IRON_SADDLEBAG, SaddlebagMaterial.IRON);
+        check(helper, ModItems.DIAMOND_SADDLEBAG, SaddlebagMaterial.DIAMOND);
         check(helper, ModItems.GOLD_SADDLEBAG, SaddlebagMaterial.GOLD);
         check(helper, ModItems.NETHERITE_SADDLEBAG, SaddlebagMaterial.NETHERITE);
         helper.succeed();

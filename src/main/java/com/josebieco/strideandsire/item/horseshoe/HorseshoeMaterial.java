@@ -9,6 +9,7 @@ import java.util.Set;
 public enum HorseshoeMaterial {
     COPPER(100, EnumSet.of(HorseshoeEnchantmentKind.FEATHER_STEP, HorseshoeEnchantmentKind.FROST_STEP), false, false),
     IRON(200, EnumSet.of(HorseshoeEnchantmentKind.FEATHER_STEP, HorseshoeEnchantmentKind.FROST_STEP), false, false),
+    DIAMOND(300, EnumSet.of(HorseshoeEnchantmentKind.FEATHER_STEP, HorseshoeEnchantmentKind.FROST_STEP), false, false),
     GOLD(80, EnumSet.noneOf(HorseshoeEnchantmentKind.class), true, false),
     NETHERITE(400, EnumSet.of(HorseshoeEnchantmentKind.FEATHER_STEP, HorseshoeEnchantmentKind.LAVA_WALKER), false, true);
 

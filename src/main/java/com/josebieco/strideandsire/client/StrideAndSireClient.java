@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
 import net.minecraft.world.entity.EntityType;
@@ -27,6 +28,7 @@ public final class StrideAndSireClient {
     public static void init(BusGroup modBusGroup) {
         FMLClientSetupEvent.getBus(modBusGroup).addListener(StrideAndSireClient::onClientSetup);
         TickEvent.ClientTickEvent.Pre.BUS.addListener(StrideAndSireClient::onClientTickPre);
+        EntityRenderersEvent.RegisterLayerDefinitions.BUS.addListener(StrideAndSireClient::onRegisterLayerDefinitions);
         EntityRenderersEvent.AddLayers.BUS.addListener(StrideAndSireClient::onAddLayers);
     }
 
@@ -34,20 +36,24 @@ public final class StrideAndSireClient {
     private static final List<EntityType<? extends AbstractHorse>> EQUIPMENT_LAYER_TYPES = List.of(
         EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE);
 
+    private static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(SaddlebagModel.LAYER, SaddlebagModel::createBodyLayer);
+    }
+
     /** Attaches the hoof and saddlebag layers to every eligible renderer. Fires on each resource reload. */
     private static void onAddLayers(EntityRenderersEvent.AddLayers event) {
         for (EntityType<? extends AbstractHorse> type : EQUIPMENT_LAYER_TYPES) {
             Object renderer = event.getEntityRenderer(type);
             if (renderer instanceof AbstractHorseRenderer<?, ?, ?> horseRenderer) {
-                addEquipmentLayers(horseRenderer);
+                addEquipmentLayers(horseRenderer, event.getEntityModels());
             }
         }
     }
 
     private static <S extends EquineRenderState, M extends EntityModel<? super S>> void addEquipmentLayers(
-            AbstractHorseRenderer<?, S, M> renderer) {
+            AbstractHorseRenderer<?, S, M> renderer, EntityModelSet models) {
         renderer.addLayer(new HorseshoeLayer<>(renderer));
-        renderer.addLayer(new SaddlebagLayer<>(renderer));
+        renderer.addLayer(new SaddlebagLayer<>(renderer, models));
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {

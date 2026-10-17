@@ -64,6 +64,11 @@ public final class HorseshoeRecipeGameTest {
         helper.succeed();
     }
 
+    public static void craftsDiamondHorseshoe(GameTestHelper helper) {
+        checkCrafting(helper, Items.DIAMOND, ModItems.DIAMOND_HORSESHOE.get(), "diamond");
+        helper.succeed();
+    }
+
     public static void craftsGoldHorseshoe(GameTestHelper helper) {
         checkCrafting(helper, Items.GOLD_INGOT, ModItems.GOLD_HORSESHOE.get(), "gold");
         helper.succeed();
@@ -92,8 +97,8 @@ public final class HorseshoeRecipeGameTest {
         return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(HorseshoeEnchantments.FEATHER_STEP);
     }
 
-    private static ItemStack iron(ServerLevel level, int damage, boolean enchanted) {
-        ItemStack stack = new ItemStack(ModItems.IRON_HORSESHOE.get());
+    private static ItemStack diamond(ServerLevel level, int damage, boolean enchanted) {
+        ItemStack stack = new ItemStack(ModItems.DIAMOND_HORSESHOE.get());
         if (enchanted) {
             stack.enchant(feather(level), 1);
         }
@@ -107,21 +112,21 @@ public final class HorseshoeRecipeGameTest {
 
     public static void netheriteSmithingKeepsEnchantsAndDamageRatio(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        ItemStack in = iron(level, 100, true);
+        ItemStack in = diamond(level, 150, true);
         SmithingRecipeInput input = smithingInput(in);
         Optional<RecipeHolder<SmithingRecipe>> found = level.recipeAccess().getRecipeFor(RecipeType.SMITHING, input, level);
-        helper.assertTrue(found.isPresent(), "no smithing recipe for iron horseshoe + netherite ingot + template");
+        helper.assertTrue(found.isPresent(), "no smithing recipe for diamond horseshoe + netherite ingot + template");
         ItemStack out = found.get().value().assemble(input);
         helper.assertTrue(out.is(ModItems.NETHERITE_HORSESHOE.get()), "wrong smithing result " + out);
         helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(feather(level), out), 1, "feather step level");
         helper.assertValueEqual(out.getMaxDamage(), 400, "netherite max damage");
-        helper.assertValueEqual(out.getDamageValue(), 200, "damage rescaled by ratio (100/200 -> 200/400)");
+        helper.assertValueEqual(out.getDamageValue(), 200, "damage rescaled by ratio (150/300 -> 200/400)");
 
-        ItemStack freshOut = found.get().value().assemble(smithingInput(iron(level, 0, false)));
+        ItemStack freshOut = found.get().value().assemble(smithingInput(diamond(level, 0, false)));
         helper.assertTrue(freshOut.is(ModItems.NETHERITE_HORSESHOE.get()), "undamaged upgrade wrong item");
         helper.assertValueEqual(freshOut.getDamageValue(), 0, "undamaged output damage");
 
-        ItemStack nearlyOut = found.get().value().assemble(smithingInput(iron(level, 199, false)));
+        ItemStack nearlyOut = found.get().value().assemble(smithingInput(diamond(level, 299, false)));
         helper.assertTrue(nearlyOut.getDamageValue() < nearlyOut.getMaxDamage(), "nearly-broken input produced a broken item");
 
         helper.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.SMITHING,
@@ -136,7 +141,7 @@ public final class HorseshoeRecipeGameTest {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         SmithingMenu menu = new SmithingMenu(0, player.getInventory());
         menu.getSlot(0).set(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
-        menu.getSlot(1).set(iron(helper.getLevel(), 100, true));
+        menu.getSlot(1).set(diamond(helper.getLevel(), 150, true));
         menu.getSlot(2).set(new ItemStack(Items.NETHERITE_INGOT));
         menu.createResult();
         ItemStack out = menu.getSlot(menu.getResultSlot()).getItem();
@@ -147,16 +152,16 @@ public final class HorseshoeRecipeGameTest {
     }
 
     /**
-     * An Iron horseshoe carrying Frost Step (not allowed on Netherite) has no smithing result, neither through the
+     * A Diamond horseshoe carrying Frost Step (not allowed on Netherite) has no smithing result, neither through the
      * recipe lookup nor in the Smithing Table: the upgrade would otherwise carry an ineligible enchantment (which,
      * through the terrain exclusive set, would also block Lava Walker forever).
      */
     public static void frostStepBlocksNetheriteUpgrade(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         Holder<Enchantment> frost = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(HorseshoeEnchantments.FROST_STEP);
-        ItemStack frostOnly = iron(level, 50, false);
+        ItemStack frostOnly = diamond(level, 50, false);
         frostOnly.enchant(frost, 1);
-        ItemStack frostAndFeather = iron(level, 0, true);
+        ItemStack frostAndFeather = diamond(level, 0, true);
         frostAndFeather.enchant(frost, 1);
 
         for (ItemStack base : List.of(frostOnly, frostAndFeather)) {
@@ -171,6 +176,27 @@ public final class HorseshoeRecipeGameTest {
             menu.createResult();
             helper.assertTrue(menu.getSlot(menu.getResultSlot()).getItem().isEmpty(),
                 "smithing menu must show no result for " + base + ", got " + menu.getSlot(menu.getResultSlot()).getItem());
+        }
+        helper.succeed();
+    }
+
+    /** Iron no longer upgrades to Netherite (the base is Diamond): no result via RecipeManager nor the Smithing Table. */
+    public static void ironHorseshoeDoesNotUpgrade(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        for (int damage : new int[] {0, 100}) {
+            ItemStack iron = new ItemStack(ModItems.IRON_HORSESHOE.get());
+            iron.setDamageValue(damage);
+            helper.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.SMITHING, smithingInput(iron), level).isEmpty(),
+                "iron horseshoe must not match the netherite upgrade: " + iron);
+
+            Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+            SmithingMenu menu = new SmithingMenu(0, player.getInventory());
+            menu.getSlot(0).set(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE));
+            menu.getSlot(1).set(iron.copy());
+            menu.getSlot(2).set(new ItemStack(Items.NETHERITE_INGOT));
+            menu.createResult();
+            helper.assertTrue(menu.getSlot(menu.getResultSlot()).getItem().isEmpty(),
+                "smithing menu must show no result for iron, got " + menu.getSlot(menu.getResultSlot()).getItem());
         }
         helper.succeed();
     }

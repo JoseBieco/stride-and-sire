@@ -1,0 +1,3 @@
+# Pixel-art generator
+
+`generate.py` deterministically draws the textures it owns (saddlebag item icons for every tier, the Diamond horseshoe icon and hoof texture, and the empty-slot sprites for the horseshoe and saddlebag slots) from hand-written pixel maps and fixed palettes, using Python 3 with Pillow (`pip install pillow`). Run `python tools/pixelart/generate.py` from the repository root to regenerate them, then `python tools/pixelart/generate.py --check` to check that every owned file exists, has the expected size and matches what the generator draws (it exits 1 on any problem). The owned outputs are listed in `MANIFEST`. To change the art, edit the pixel maps or palettes, never the PNGs. Running the generator twice gives byte-identical files.

@@ -3,6 +3,7 @@ package com.josebieco.strideandsire.menu;
 import com.josebieco.strideandsire.attachment.HorseEquipmentSlot;
 import com.josebieco.strideandsire.attachment.HorseshoeAccess;
 import com.josebieco.strideandsire.item.horseshoe.HorseshoeItem;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,9 @@ import net.minecraft.world.item.ItemStack;
  * horse's horseshoe storage: reads go through {@link HorseshoeAccess#get}, every write through {@link HorseshoeAccess#set}.
  */
 public class HorseshoeSlot extends Slot {
+    /** Silhouette sprite (GUI atlas) drawn while the slot is empty. */
+    public static final Identifier EMPTY_ICON = Identifier.fromNamespaceAndPath("strideandsire", "container/slot/horseshoe");
+
     public HorseshoeSlot(AbstractHorse horse, int x, int y) {
         super(new HorseEquipmentContainer(horse, HorseEquipmentSlot.HORSESHOE), 0, x, y);
     }
@@ -24,5 +28,10 @@ public class HorseshoeSlot extends Slot {
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    @Override
+    public Identifier getNoItemIcon() {
+        return EMPTY_ICON;
     }
 }

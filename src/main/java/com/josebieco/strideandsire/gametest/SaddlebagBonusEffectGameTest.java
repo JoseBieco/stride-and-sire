@@ -41,6 +41,23 @@ public final class SaddlebagBonusEffectGameTest {
         expectSingleDrop(helper, ModItems.IRON_SADDLEBAG.get(), true);
     }
 
+    /** Diamond bag with items, horse killed by a real explosion: dropped bag exists, contents intact. */
+    public static void diamondBagKeepsContentsOnExplosionDeath(GameTestHelper helper) {
+        helper.makeFloor();
+        Horse horse = bagHorse(helper, 2, ModItems.DIAMOND_SADDLEBAG.get(), true);
+        explodeAt(helper, horse.position());
+        helper.assertTrue(horse.isDeadOrDying(), "horse should die to the explosion");
+        expectSingleDrop(helper, ModItems.DIAMOND_SADDLEBAG.get(), true);
+    }
+
+    /** Diamond bag with items, lava death: container cleared (Diamond only protects from explosions). */
+    public static void diamondBagLosesContentsOnFireDeath(GameTestHelper helper) {
+        helper.makeFloor();
+        Horse horse = bagHorse(helper, 2, ModItems.DIAMOND_SADDLEBAG.get(), true);
+        killBy(helper, horse, helper.getLevel().damageSources().lava());
+        expectSingleDrop(helper, ModItems.DIAMOND_SADDLEBAG.get(), false);
+    }
+
     /** (b) Leather bag with items, horse killed by a real explosion: dropped bag exists, container empty. */
     public static void leatherBagLosesContentsOnExplosionDeath(GameTestHelper helper) {
         helper.makeFloor();
