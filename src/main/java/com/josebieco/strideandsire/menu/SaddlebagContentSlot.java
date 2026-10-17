@@ -1,6 +1,8 @@
 package com.josebieco.strideandsire.menu;
 
+import com.josebieco.strideandsire.attachment.HorseGeneticsAccess;
 import com.josebieco.strideandsire.attachment.SaddlebagAccess;
+import com.josebieco.strideandsire.genetics.LineageTrait;
 import com.josebieco.strideandsire.item.saddlebag.SaddlebagItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
@@ -10,8 +12,9 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * One of the equipped saddlebag's container slots. Active (shown, clickable, placeable, pickable) only while the horse
- * has a saddlebag with more than {@code containerSlot} slots. Never accepts a saddlebag, or any item that may not go
- * inside a container item (shulker boxes), so bags never nest.
+ * has a saddlebag whose effective capacity (9 by default, 18 when {@link LineageTrait#DRAFT} is {@code MANIFEST}) is
+ * greater than {@code containerSlot}. Never accepts a saddlebag, or any item that may not go inside a container item
+ * (shulker boxes), so bags never nest.
  */
 public class SaddlebagContentSlot extends Slot {
     private final AbstractHorse horse;
@@ -28,7 +31,8 @@ public class SaddlebagContentSlot extends Slot {
 
     @Override
     public boolean isActive() {
-        return SaddlebagItem.containerSize(SaddlebagAccess.get(horse)) > this.getContainerSlot();
+        boolean draftManifest = HorseGeneticsAccess.hasManifest(horse, LineageTrait.DRAFT);
+        return SaddlebagItem.containerSize(SaddlebagAccess.get(horse), draftManifest) > this.getContainerSlot();
     }
 
     @Override

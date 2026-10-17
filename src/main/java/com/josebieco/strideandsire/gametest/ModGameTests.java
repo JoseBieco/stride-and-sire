@@ -210,6 +210,8 @@ public final class ModGameTests {
             () -> SureFootedStepGameTest::manifestClimbsOnePointFiveBlockLedgeWhileLatentDoesNot);
         TEST_FUNCTIONS.register("genetics_fearless_panic_suppression",
             () -> FearlessPanicSuppressionGameTest::fearlessKeepsRiderAndTakesDamageWhileNonFearlessDismounts);
+        TEST_FUNCTIONS.register("genetics_draft_saddlebag_capacity",
+            () -> DraftSaddlebagCapacityGameTest::draftTraitUnlocksEighteenSlotsAndPreservesItems);
     }
 
     private ModGameTests() {}

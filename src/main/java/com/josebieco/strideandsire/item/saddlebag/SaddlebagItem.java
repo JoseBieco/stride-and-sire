@@ -20,10 +20,14 @@ import net.minecraft.world.item.component.TooltipDisplay;
  * the vanilla {@code container} data component (present, empty, on every fresh stack). Netherite is fire-resistant as
  * an item. The component tooltip lists contained items, shulker-box style; one extra line describes the tier bonus.
  *
- * <p>Like shulker boxes, a saddlebag never fits inside another container item (bundles, shulker boxes, other bags), so
- * nesting depth stays bounded; and a destroyed saddlebag item entity spills its contents instead of deleting them.
+ * <p>At the data-component level every saddlebag supports up to {@link #DRAFT_CONTAINER_SIZE} (18) slots so a horse
+ * with the {@code Draft} lineage trait manifest can use all 18 slots ("Alforje Duplo"), while horses without {@code Draft}
+ * expose the first 9 slots ({@link #containerSize(ItemStack)}).
  */
 public class SaddlebagItem extends Item {
+    /** Total container capacity unlocked when the mounted horse manifests the {@code Draft} lineage trait. */
+    public static final int DRAFT_CONTAINER_SIZE = 18;
+
     private final SaddlebagMaterial material;
 
     public SaddlebagItem(SaddlebagMaterial material, Item.Properties properties) {
@@ -35,24 +39,74 @@ public class SaddlebagItem extends Item {
         return material;
     }
 
-    /** Number of container slots of this stack's saddlebag (0 if the stack is not a saddlebag). */
+    /** Base number of container slots of this stack's saddlebag (9, or 0 if the stack is not a saddlebag). */
     public static int containerSize(ItemStack stack) {
         return stack.getItem() instanceof SaddlebagItem bag ? bag.material.slotCount() : 0;
     }
 
-    /** Copy of the container contents, always exactly {@link #containerSize} entries (empties padded). */
+    /**
+     * Effective number of addressable container slots of {@code stack} for a horse where {@code draftManifest}
+     * indicates whether {@code LineageTrait.DRAFT} is {@code MANIFEST} (18 when manifest, 9 otherwise, 0 for non-bags).
+     */
+    public static int containerSize(ItemStack stack, boolean draftManifest) {
+        if (!(stack.getItem() instanceof SaddlebagItem bag)) {
+            return 0;
+        }
+        return draftManifest ? DRAFT_CONTAINER_SIZE : bag.material.slotCount();
+    }
+
+    /** Maximum underlying container capacity for {@code stack} (18 for any saddlebag, 0 otherwise). */
+    public static int maxContainerSize(ItemStack stack) {
+        return stack.getItem() instanceof SaddlebagItem ? DRAFT_CONTAINER_SIZE : 0;
+    }
+
+    /**
+     * Copy of the container contents: 9 entries when slots 9–17 are empty, or 18 entries when any Draft slot holds an
+     * item (0 entries if not a saddlebag).
+     */
     public static NonNullList<ItemStack> getContents(ItemStack stack) {
-        NonNullList<ItemStack> list = NonNullList.withSize(containerSize(stack), ItemStack.EMPTY);
+        int baseSize = containerSize(stack);
+        if (baseSize == 0) {
+            return NonNullList.withSize(0, ItemStack.EMPTY);
+        }
+        NonNullList<ItemStack> full = getContents(stack, DRAFT_CONTAINER_SIZE);
+        for (int i = baseSize; i < full.size(); i++) {
+            if (!full.get(i).isEmpty()) {
+                return full;
+            }
+        }
+        NonNullList<ItemStack> base = NonNullList.withSize(baseSize, ItemStack.EMPTY);
+        for (int i = 0; i < baseSize; i++) {
+            base.set(i, full.get(i));
+        }
+        return base;
+    }
+
+    /** Copy of the container contents sized to {@code slotCount} entries (empties padded). */
+    public static NonNullList<ItemStack> getContents(ItemStack stack, int slotCount) {
+        int max = maxContainerSize(stack);
+        if (max == 0 || slotCount <= 0) {
+            return NonNullList.withSize(0, ItemStack.EMPTY);
+        }
+        int targetSize = Math.min(slotCount, max);
+        NonNullList<ItemStack> list = NonNullList.withSize(targetSize, ItemStack.EMPTY);
         ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
         if (contents != null) {
-            contents.copyInto(list);
+            NonNullList<ItemStack> all = NonNullList.withSize(max, ItemStack.EMPTY);
+            contents.copyInto(all);
+            for (int i = 0; i < targetSize; i++) {
+                list.set(i, all.get(i));
+            }
         }
         return list;
     }
 
-    /** Replaces the container contents (list may be shorter than the slot count; extra entries are ignored). */
+    /** Replaces the container contents (up to {@link #DRAFT_CONTAINER_SIZE} entries; extra entries are ignored). */
     public static void setContents(ItemStack stack, List<ItemStack> items) {
-        int size = containerSize(stack);
+        int size = maxContainerSize(stack);
+        if (size == 0) {
+            return;
+        }
         List<ItemStack> bounded = items.size() > size ? items.subList(0, size) : items;
         stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(bounded));
     }

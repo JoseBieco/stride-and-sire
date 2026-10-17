@@ -69,9 +69,13 @@ public class StrideAndSireHorseScreen extends AbstractContainerScreen<StrideAndS
         this.extractSlot(graphics, xo + StrideAndSireHorseMenu.HORSESHOE_SLOT_X - 1, yo + StrideAndSireHorseMenu.HORSESHOE_SLOT_Y - 1);
         this.extractSlot(graphics, xo + StrideAndSireHorseMenu.SADDLEBAG_SLOT_X - 1, yo + StrideAndSireHorseMenu.SADDLEBAG_SLOT_Y - 1);
         if (this.menu.hasSaddlebagContents()) {
-            for (int i = 0; i < StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS; i++) {
-                this.extractSlot(graphics, xo + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_X - 1 + i * 18,
-                    yo + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_Y - 1);
+            int activeSlots = this.menu.getActiveSaddlebagSlotCount();
+            for (int i = 0; i < activeSlots; i++) {
+                int col = i % StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS;
+                int row = i / StrideAndSireHorseMenu.SADDLEBAG_CONTENT_SLOTS;
+                this.extractSlot(graphics,
+                    xo + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_X - 1 + col * 18,
+                    yo + StrideAndSireHorseMenu.SADDLEBAG_CONTENT_Y - 1 + row * 18);
             }
         }
 
