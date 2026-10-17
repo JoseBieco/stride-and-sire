@@ -172,6 +172,14 @@ public final class ModGameTests {
             () -> SaddlebagBonusEffectGameTest::emptyIronBagExplosionDeathDoesNotThrow);
         TEST_FUNCTIONS.register("saddlebag_bonus_gold_bag_piglin_neutral",
             () -> SaddlebagBonusEffectGameTest::goldBagMakesPiglinsNeutral);
+        TEST_FUNCTIONS.register("saddlebag_bonus_diamond_keeps_contents_on_explosion",
+            () -> SaddlebagBonusEffectGameTest::diamondBagKeepsContentsOnExplosionDeath);
+        TEST_FUNCTIONS.register("saddlebag_bonus_diamond_loses_contents_on_fire",
+            () -> SaddlebagBonusEffectGameTest::diamondBagLosesContentsOnFireDeath);
+        TEST_FUNCTIONS.register("saddlebag_recipe_crafts_diamond",
+            () -> SaddlebagRecipeGameTest::craftsDiamondSaddlebag);
+        TEST_FUNCTIONS.register("saddlebag_recipe_iron_has_no_smithing_result",
+            () -> SaddlebagRecipeGameTest::ironSaddlebagHasNoSmithingResult);
         TEST_FUNCTIONS.register("saddlebag_recipe_crafts_leather",
             () -> SaddlebagRecipeGameTest::craftsLeatherSaddlebag);
         TEST_FUNCTIONS.register("saddlebag_recipe_crafts_iron",

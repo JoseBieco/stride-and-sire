@@ -24,6 +24,7 @@ public final class ModItems {
 
     public static final RegistryObject<SaddlebagItem> LEATHER_SADDLEBAG = saddlebag("leather_saddlebag", SaddlebagMaterial.LEATHER);
     public static final RegistryObject<SaddlebagItem> IRON_SADDLEBAG = saddlebag("iron_saddlebag", SaddlebagMaterial.IRON);
+    public static final RegistryObject<SaddlebagItem> DIAMOND_SADDLEBAG = saddlebag("diamond_saddlebag", SaddlebagMaterial.DIAMOND);
     public static final RegistryObject<SaddlebagItem> GOLD_SADDLEBAG = saddlebag("gold_saddlebag", SaddlebagMaterial.GOLD);
     public static final RegistryObject<SaddlebagItem> NETHERITE_SADDLEBAG = saddlebag("netherite_saddlebag", SaddlebagMaterial.NETHERITE);
 
@@ -51,6 +52,7 @@ public final class ModItems {
             event.accept(NETHERITE_HORSESHOE);
             event.accept(LEATHER_SADDLEBAG);
             event.accept(IRON_SADDLEBAG);
+            event.accept(DIAMOND_SADDLEBAG);
             event.accept(GOLD_SADDLEBAG);
             event.accept(NETHERITE_SADDLEBAG);
         }

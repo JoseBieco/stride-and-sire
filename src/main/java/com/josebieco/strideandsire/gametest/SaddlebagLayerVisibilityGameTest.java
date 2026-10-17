@@ -29,7 +29,7 @@ public final class SaddlebagLayerVisibilityGameTest {
     public static void materialToRenderMatchesEquippedTier(GameTestHelper helper) {
         helper.makeFloor();
         List<RegistryObject<SaddlebagItem>> bags = List.of(
-            ModItems.LEATHER_SADDLEBAG, ModItems.IRON_SADDLEBAG, ModItems.GOLD_SADDLEBAG, ModItems.NETHERITE_SADDLEBAG);
+            ModItems.LEATHER_SADDLEBAG, ModItems.IRON_SADDLEBAG, ModItems.DIAMOND_SADDLEBAG, ModItems.GOLD_SADDLEBAG, ModItems.NETHERITE_SADDLEBAG);
         for (EntityType<? extends AbstractHorse> type : List.of(
                 EntityTypes.HORSE, EntityTypes.DONKEY, EntityTypes.MULE, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
             AbstractHorse horse = helper.spawn(type, 2, 1, 2);
